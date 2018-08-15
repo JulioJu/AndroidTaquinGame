@@ -1,6 +1,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.uga.julioju.taquingame">
 
+<!-- read: -->
+
+<!-- https://developer.android.com/guide/topics/manifest/manifest-intro -->
+<!-- https://developer.android.com/guide/components/activities/intro-activities
+     -->
+
+<!-- ––––––––––––––––––––––––––– -->
+<!-- https://developer.android.com/guide/topics/manifest/intent-filter-element
+     -->
+
+<!-- https://developer.android.com/guide/topics/manifest/action-element -->
+<!-- The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants. -->
+
+<!-- https://developer.android.com/guide/topics/manifest/category-element -->
+<!-- The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants. -->
+
+<!-- https://developer.android.com/reference/android/content/Intent -->
+<!-- ––––––––––––––––––––––––––– -->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,8 +31,11 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
+                <!-- Activity Action: Start as a main entry point, does not
+                  expect to receive data.  -->
                 <action android:name="android.intent.action.MAIN" />
 
+                <!-- Should be displayed in the top&#45;level launcher.  -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

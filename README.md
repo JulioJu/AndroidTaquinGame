@@ -1,13 +1,14 @@
-TP Développement Web Mobile : Création d'un jeu de taquin
-===================
+# TP Développement Web Mobile : Création d'un jeu de taquin
+
+## Teacher's instruction
 
 Projet – Application Android
 
-## But du TP :
+### But du TP :
 
 --> Manipuler les widgets graphiques et la gestion d'événement sur android.
 
-## Le Principe de TP :
+### Le Principe de TP :
 
 1. Vous devez réaliser dans ce TP une prémisse de jeu de taquin. Pour cela, il vous faut comprendre le tutoriel sur le gestionnaire de placement `GridView` d'Android :
 http://developer.android.com/guide/topics/ui/layout/gridview.html
@@ -38,4 +39,13 @@ Testez votre application. Vérifiez que le découpage se déroule comme prévu. 
 * A la fin des modifications, il faut appeler la méthode `this.notifyDataSetChanged();` pour que la vue soit mise à jour.
 
 4. A partir de là, je vous laisse réaliser le code nécessaire pour que votre jeu de taquin soit fonctionnel.
+
+
+## Notes from JulioJu
+
+* The first commit could not compile. We must have at least one activity !
+* My comments in ./app/src/main/AndroidManifest.xml could be interesting.
+
+
+
 
