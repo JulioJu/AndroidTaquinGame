@@ -1,15 +1,12 @@
 # TP Développement Web Mobile : Création d'un jeu de taquin
 
 ## Teacher's instruction
-
 Projet – Application Android
 
 ### But du TP :
-
 --> Manipuler les widgets graphiques et la gestion d'événement sur android.
 
 ### Le Principe de TP :
-
 1. Vous devez réaliser dans ce TP une prémisse de jeu de taquin. Pour cela, il vous faut comprendre le tutoriel sur le gestionnaire de placement `GridView` d'Android :
 http://developer.android.com/guide/topics/ui/layout/gridview.html
 
@@ -42,21 +39,82 @@ Testez votre application. Vérifiez que le découpage se déroule comme prévu. 
 
 
 ## Notes from JulioJu
-
 * The first commit could not compile. We must have at least one activity !
 
-* My comments in ./app/src/main/AndroidManifest.xml could be interesting.
+### AndroidManifest.xml
+
+To understand ./app/src/main/AndroidManifest.xml, following resources are
+interesting:
+
+https://developer.android.com/guide/topics/manifest/manifest-intro
+https://developer.android.com/guide/components/activities/intro-activities
+
+#### `<intent-filter>`
+https://developer.android.com/guide/topics/manifest/intent-filter-element
+
+https://developer.android.com/guide/topics/manifest/action-element
+    « *The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants.* »
+
+https://developer.android.com/guide/topics/manifest/category-element
+    « *The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants.* »
+
+https://developer.android.com/reference/android/content/Intent
 
 ### Constraint Layout
-* To well understand `Constraint Layout` and how I use it, read comments in
-    **./app/src/main/res/layout/activity_main.xml**
+* **./app/src/main/res/layout/activity_main.xml** could be understood thanks this
+comments
+
 * How I don't use `Grid Layout` as asked by the teacher, because:
-    « Note: For better performance and tooling support, you should instead build
-    your layout with ConstraintLayout. » (read
+    « *Note: For better performance and tooling support, you should instead build
+    your layout with ConstraintLayout.* » (read
     https://developer.android.com/guide/topics/ui/layout/gridview)
 
 * Thanks `android.support.constraint.Barrier` appeared since
         `Constraint Layout 1.1.0 beta 1` (see [this release note](https://androidstudio.googleblog.com/2017/05/constraintlayout-110-beta-1-release.html)), we could easy draw a Grid.
         `Constraint Layout 1.1.0` is available since Thursday, April 12, 2018 (see
         [this release not](https://androidstudio.googleblog.com/2018/04/constraintlayout-110.html))
-* Read  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
+    **Ref:**  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
+
+
+* Official guide than explain what is a Layout (very interesting)
+    https://developer.android.com/guide/topics/ui/declaring-layout
+
+* ConstraintLayout vs RelativeLayout
+    https://stackoverflow.com/a/46330178
+
+* Constraint Layout API Reference
+    https://developer.android.com/reference/android/support/constraint/ConstraintLayout
+
+* To understand attribute android:orientation
+    https://developer.android.com/reference/android/widget/LinearLayout
+
+* To understand android.support.constraint.ConstraintLayout
+    https://developer.android.com/reference/android/support/constraint/Barrier
+
+* In Constraint Layout: Barrier vs Guideline:
+    https://stackoverflow.com/questions/47114672/what&#45;is&#45;difference&#45;between&#45;barrier&#45;and&#45;guideline&#45;in&#45;constraint&#45;layout
+    « *The only difference between Barrier and Guideline is that Barrier's
+    position is flexible and always based on the size of multiple UI elements
+    contained within it and Guideline's position is always fixed.* »
+
+### Genymotion
+* On my computer, Genymotion is very faster and lighter (for the CPU) than
+    the Android Emulator. I've also heard than it's very more reliable.
+* It's free. And with a registration, you could have lot of different
+    Virtual Images.
+* For Intellij Ultimate Edition, you must configure the debugger. See:
+    https://stackoverflow.com/a/51476111
+
+#### IntelliJ vs Android Studio
+* On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`
+    to install SDK, but without successes. I've tried many times. It works
+    well with `Android Studio`.
+
+* In August, the last `IntelliJ` generate a little bit older template than
+    `Android Studio`. I've seen than thanks the version of Gradle generated.
+    To generate a project with a template, go to `File -> -> New -> New Project`
+
+### Git history
+* For a newbie, the three firsts commits are interesting.

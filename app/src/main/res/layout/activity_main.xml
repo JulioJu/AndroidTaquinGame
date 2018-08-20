@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Official guide very interesting -->
-<!-- https://developer.android.com/guide/topics/ui/declaring-layout -->
-
-<!-- ConstraintLayout vs RelativeLayout -->
-<!-- https://stackoverflow.com/a/46330178 -->
-
-<!-- Constraint Layout API Reference -->
-<!-- https://developer.android.com/reference/android/support/constraint/ConstraintLayout -->
-
-<!-- To understand attribute android:orientation -->
-<!-- https://developer.android.com/reference/android/widget/LinearLayout -->
-
-<!-- To understand android.support.constraint.ConstraintLayout -->
-<!-- https://developer.android.com/reference/android/support/constraint/Barrier -->
-
-<!-- In Constraint Layout: Barrier vs Guideline -->
-<!-- https://stackoverflow.com/questions/47114672/what&#45;is&#45;difference&#45;between&#45;barrier&#45;and&#45;guideline&#45;in&#45;constraint&#45;layout -->
-<!-- The only difference between Barrier and Guideline is that Barrier's
-  position is flexible and always based on the size of multiple UI elements
-  contained within it and Guideline's position is always fixed. -->
-
 <!-- ©©© CODE BELOW COPIED FROM ©©© -->
 <!-- https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout -->
+
+<!-- README read my README.md to understand well this file -->
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
