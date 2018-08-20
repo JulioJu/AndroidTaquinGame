@@ -44,8 +44,19 @@ Testez votre application. Vérifiez que le découpage se déroule comme prévu. 
 ## Notes from JulioJu
 
 * The first commit could not compile. We must have at least one activity !
+
 * My comments in ./app/src/main/AndroidManifest.xml could be interesting.
 
+### Constraint Layout
+* To well understand `Constraint Layout` and how I use it, read comments in
+    **./app/src/main/res/layout/activity_main.xml**
+* How I don't use `Grid Layout` as asked by the teacher, because:
+    « Note: For better performance and tooling support, you should instead build
+    your layout with ConstraintLayout. » (read
+    https://developer.android.com/guide/topics/ui/layout/gridview)
 
-
-
+* Thanks `android.support.constraint.Barrier` appeared since
+        `Constraint Layout 1.1.0 beta 1` (see [this release note](https://androidstudio.googleblog.com/2017/05/constraintlayout-110-beta-1-release.html)), we could easy draw a Grid.
+        `Constraint Layout 1.1.0` is available since Thursday, April 12, 2018 (see
+        [this release not](https://androidstudio.googleblog.com/2018/04/constraintlayout-110.html))
+* Read  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
