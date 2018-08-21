@@ -99,6 +99,9 @@ comments
     position is flexible and always based on the size of multiple UI elements
     contained within it and Guideline's position is always fixed.* »
 
+* **Source Code**:
+    https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
+
 ### Genymotion
 * On my computer, Genymotion is very faster and lighter (for the CPU) than
     the Android Emulator. I've also heard than it's very more reliable.
@@ -118,3 +121,32 @@ comments
 
 ### Git history
 * For a newbie, the three firsts commits are interesting.
+
+### Android Source Code:
+* Android
+    https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android
+
+* Constraint Layout
+    https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
+    (replace `studio-3.1.2` by the release used)
+
+* View sources in Android-studio / IntelliJ:
+    https://stackoverflow.com/questions/21221679/android-studio-how-to-attach-android-sdk-sources
+    appcompat is also viewable by this method. Check if versions are correctly set.
+
+* View sources for other dependencies (e.g.) we could download and attach it
+    manually in IntelliJ. Maybe there is other easier solution.
+    For ConstraintLayout,
+    1. `git clone https://android.googlesource.com/platform/frameworks/opt/sherpa`
+    2. `git checkout studio-3.1.2`
+    3.  then two solutions:
+        * `import android.support.constraint.Barrier` in a Java file,
+    then `Right click -> Go To -> Declaration`, then click in the Warning pakne
+        * Or https://www.jetbrains.com/help/idea/project-library-and-global-library-pages.html
+
+* constraint-layout-solver:1.1.2
+    * For `com.android.support.constraint/constraint-layout-solver/1.1.2`,
+        "`Library source does not match the bytecode for class Barrier`" (message
+        from IntelliJ).
+    * I've downloaded source from:
+        https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2.
