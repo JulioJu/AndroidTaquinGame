@@ -15,18 +15,18 @@ public class MainActivity extends AppCompatActivity {
     private int createTextViewWithoutConstraints(ConstraintLayout layout,
             String androidText) {
         // Create View
-        TextView textView = new TextView(this);
+        TextView view = new TextView(this);
 
         // Create ID
-        // https://stackoverflow.com/questions/1714297/android-textView-setidint-id-programmatically-how-to-avoid-id-conflicts
-        int textViewId = View.generateViewId();
-        textView.setId(textViewId);
+        // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
+        int viewId = View.generateViewId();
+        view.setId(viewId);
 
         // ViewGroup.LayoutParams
         // XML attributes:
         // android:layout_height
         // android:layout_width
-        // https://developer.android.com/reference/android/textView/ViewGroup.LayoutParams
+        // https://developer.android.com/reference/android/view/ViewGroup.LayoutParams
         ConstraintLayout.LayoutParams layoutParamsWrap =
             new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
@@ -35,24 +35,25 @@ public class MainActivity extends AppCompatActivity {
         // ViewGroup.MarginLayoutParams
         // e.g. of XML attributes:
         // android:layout_margin
-        // https://developer.android.com/reference/android/textView/ViewGroup.MarginLayoutParams
+        // https://developer.android.com/reference/android/view/ViewGroup.MarginLayoutParams
         layoutParamsWrap.setMargins(0,0,0,0);
 
-        // Set dimensions to textView
-        textView.setLayoutParams(layoutParamsWrap);
+        // Set dimensions to view
+        view.setLayoutParams(layoutParamsWrap);
 
-        // Add text to textView
-        textView.setText(androidText);
-        // textView.setTextSize(15);
+        // Add text to view
+        view.setText(androidText);
+        // view.setTextSize(15);
 
-        // Add TextView to layout
+        // Add View to layout
         // SHOULD BE HERE, BEFORE ConstraintSet
-        layout.addView(textView);
+        layout.addView(view);
 
-        return textViewId;
+        return viewId;
     }
 
-    private void existingVerticalBarrierAddNewRow(int textViewId) {
+    private void existingBarrierAddNewView(Barrier verticalBarrier,
+            int viewId) {
         // *** BARRIERS ****
 
         // Add the new element to the existing verticalBarrier
@@ -62,50 +63,67 @@ public class MainActivity extends AppCompatActivity {
         // <android.support.constraint.Barrier
         //     android:id="@+id/barrierVertical"
         //     ........
-        //     app:constraint_referenced_ids="L1, L2, L3, L4, textViewId" />
-        Barrier verticalBarrier = findViewById(R.id.barrierVertical);
+        //     app:constraint_referenced_ids="L1, L2, …, viewId" />
         int barrierReferencedIdsOld[] = verticalBarrier.getReferencedIds();
         int barrierReferencedIds[] =
                 Arrays.copyOf(barrierReferencedIdsOld,
                         barrierReferencedIdsOld.length + 1);
-        barrierReferencedIds[barrierReferencedIds.length - 1] = textViewId;
+        barrierReferencedIds[barrierReferencedIds.length - 1] = viewId;
         verticalBarrier.setReferencedIds(barrierReferencedIds);
     }
 
-    private int newHorizontalBarrier(ConstraintLayout layout) {
+    private int newBarrier(ConstraintLayout layout, int barrierDirection,
+            int[] referenceIds) {
         // Create the following Horizontal Barrier:
         // <android.support.constraint.Barrier
         //     android:id="@+id/barrier4"
         //     android:layout_width="0dp"
         //     android:layout_height="0dp"
         //     app:barrierDirection="bottom"
-        //     app:constraint_referenced_ids="L4, R4" />
-        Barrier newHorizontalBarrier = new Barrier(this);
-        int newHorizontalBarrierId = View.generateViewId();
-        newHorizontalBarrier.setId(newHorizontalBarrierId);
+        //     app:constraint_referenced_ids="L2, R2" />
+        Barrier barrier = new Barrier(this);
+        int barrierId = View.generateViewId();
+        barrier.setId(barrierId);
         ConstraintLayout.LayoutParams layoutParamsWrap =
             new ConstraintLayout.LayoutParams(0, 0);
-        newHorizontalBarrier.setLayoutParams(layoutParamsWrap);
-        newHorizontalBarrier.setType(Barrier.BOTTOM);
-        newHorizontalBarrier.setReferencedIds(new int[] {R.id.L4, R.id.R4});
-        layout.addView(newHorizontalBarrier);
+        barrier.setLayoutParams(layoutParamsWrap);
+        barrier.setType(barrierDirection);
+        barrier.setReferencedIds(referenceIds);
+        layout.addView(barrier);
 
-        return newHorizontalBarrierId;
+        return barrierId;
     }
 
     private void createNewRow(ConstraintLayout layout) {
 
-        // ==== Create first column ====
+        // TODO factorize more
 
-        int firstColumnId = createTextViewWithoutConstraints(layout,
+        // Create square at first column, last row
+        int firstColumnLastRowId = createTextViewWithoutConstraints(layout,
                 "L5 L5 L5 L5 L5 L5 L5 L5 L5*");
+        // Create square at second column, last row
+        int secondColumnLastRowId = createTextViewWithoutConstraints(layout,
+                "R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5*");
+        int lastColumnFirstRowId = createTextViewWithoutConstraints(layout,
+                "RR1");
+        int lastColumnSecondRowId = createTextViewWithoutConstraints(layout,
+                "RR2");
+        int lastColumnLastRowId = createTextViewWithoutConstraints(layout,
+                "RR3");
 
-        existingVerticalBarrierAddNewRow(firstColumnId);
+        // ====
+        // Create last row
+        // ====
 
-        int newHorizontalBarrierId =
-                this.newHorizontalBarrier(layout);
+        // append the square ID to existing Barrier above this new square
+        existingBarrierAddNewView((Barrier)findViewById( R.id.barrierVertical),
+                firstColumnLastRowId);
 
-        // ConstraintSet
+        // create new horizontal Barrier
+        int newHorizontalBarrier = this.newBarrier(layout, Barrier.BOTTOM,
+                        new int[] {R.id.L2, R.id.R2});
+
+        // ConstraintSet for the square at fist column, last row
         // e.g in xml
         // app:layout_constraintLeft_toLeftOf="parent"
         // app:layout_constraintTop_toBottomOf="@+id/barrier4"
@@ -113,26 +131,62 @@ public class MainActivity extends AppCompatActivity {
         // https://developer.android.com/reference/android/support/constraint/ConstraintSet#setmargin
         // Very short model:
         // https://stackoverflow.com/a/45264822
-        ConstraintSet setFirstCol = new ConstraintSet();
-        setFirstCol.clone(layout);
-        setFirstCol.connect(firstColumnId, ConstraintSet.LEFT,
+        ConstraintSet setFirstColumnLastRow = new ConstraintSet();
+        setFirstColumnLastRow.clone(layout);
+        setFirstColumnLastRow.connect(firstColumnLastRowId, ConstraintSet.LEFT,
                   ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-        setFirstCol.connect(firstColumnId, ConstraintSet.TOP,
-                newHorizontalBarrierId, ConstraintSet.BOTTOM, 0);
-        setFirstCol.applyTo(layout);
+        setFirstColumnLastRow.connect(firstColumnLastRowId, ConstraintSet.TOP,
+                newHorizontalBarrier, ConstraintSet.BOTTOM, 0);
+        setFirstColumnLastRow.applyTo(layout);
 
-        // ===== Create second column =====
+        // Constraints for square at second column, last row
+        ConstraintSet setSecondColumnLastRow = new ConstraintSet();
+        setSecondColumnLastRow.clone(layout);
+        setSecondColumnLastRow.connect(secondColumnLastRowId,
+                ConstraintSet.LEFT,
+                R.id.barrierVertical, ConstraintSet.RIGHT, 0);
+        setSecondColumnLastRow.connect(secondColumnLastRowId, ConstraintSet.TOP,
+                newHorizontalBarrier, ConstraintSet.BOTTOM, 0);
+        setSecondColumnLastRow.applyTo(layout);
 
-        int secColId = createTextViewWithoutConstraints(layout,
-                "R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5*");
-        ConstraintSet setSecCol = new ConstraintSet();
-        setSecCol.clone(layout);
-        setSecCol.connect(secColId, ConstraintSet.LEFT,
-                  R.id.barrierVertical, ConstraintSet.RIGHT, 0);
-        setSecCol.connect(secColId, ConstraintSet.TOP,
-                newHorizontalBarrierId, ConstraintSet.BOTTOM, 0);
-        setSecCol.applyTo(layout);
+        // ====
+        // Create square at last column, first row
+        // ====
 
+        // append the square ID to existing Barrier above this new square
+        existingBarrierAddNewView((Barrier)findViewById(newHorizontalBarrier),
+                firstColumnLastRowId);
+
+        // create new vertical Barrier
+        int newVerticalBarrier = this.newBarrier(layout, Barrier.RIGHT,
+                        new int[] {R.id.R1, R.id.R2, secondColumnLastRowId});
+
+        // ConstraintSet lastColumnFirstRowId
+        ConstraintSet setLastColumnFirstRow = new ConstraintSet();
+        setLastColumnFirstRow.clone(layout);
+        setLastColumnFirstRow.connect(lastColumnFirstRowId, ConstraintSet.LEFT,
+                  newVerticalBarrier, ConstraintSet.RIGHT, 0);
+        setLastColumnFirstRow.connect(lastColumnFirstRowId, ConstraintSet.TOP,
+                ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
+        setLastColumnFirstRow.applyTo(layout);
+
+        // ConstraintSet lastColumnSecondRowId
+        ConstraintSet setLastColumnSecondRow = new ConstraintSet();
+        setLastColumnSecondRow.clone(layout);
+        setLastColumnSecondRow.connect(lastColumnSecondRowId,
+                ConstraintSet.LEFT, newVerticalBarrier, ConstraintSet.RIGHT, 0);
+        setLastColumnSecondRow.connect(lastColumnSecondRowId, ConstraintSet.TOP,
+                lastColumnFirstRowId, ConstraintSet.BOTTOM, 0);
+        setLastColumnSecondRow.applyTo(layout);
+
+        // ConstraintSet lastColumnLastRowId
+        ConstraintSet setLastColumnLastRow = new ConstraintSet();
+        setLastColumnLastRow.clone(layout);
+        setLastColumnLastRow.connect(lastColumnLastRowId, ConstraintSet.LEFT,
+                  newVerticalBarrier, ConstraintSet.RIGHT, 0);
+        setLastColumnLastRow.connect(lastColumnLastRowId, ConstraintSet.TOP,
+                lastColumnSecondRowId, ConstraintSet.BOTTOM, 0);
+        setLastColumnLastRow.applyTo(layout);
     }
 
     @Override

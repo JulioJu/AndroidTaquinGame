@@ -9,3 +9,5 @@
 /captures
 .externalNativeBuild
 /.idea/
+/* This filename is reserved by NeoVim for Universal Ctags */
+tags

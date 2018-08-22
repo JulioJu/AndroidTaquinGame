@@ -20,7 +20,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         app:barrierDirection="right"
-        app:constraint_referenced_ids="L1, L2, L3, L4" />
+        app:constraint_referenced_ids="L1, L2" />
 
     <TextView
         android:id="@+id/L1"
@@ -68,62 +68,6 @@
         android:text="R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2*"
         app:layout_constraintLeft_toRightOf="@+id/barrierVertical"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
-        tools:ignore="HardcodedText" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="L2, R2" />
-
-    <TextView
-        android:id="@+id/L3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text="L3 L3 L3*"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier2"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/R3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text="R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3*"
-        app:layout_constraintLeft_toRightOf="@id/barrierVertical"
-        app:layout_constraintTop_toBottomOf="@id/barrier2"
-        tools:ignore="HardcodedText" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier3"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="L3, R3" />
-
-    <TextView
-        android:id="@+id/L4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text="L4 L4 L4 L4 L4 L4*"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barrier3"
-        tools:ignore="HardcodedText,RtlHardcoded" />
-
-    <TextView
-        android:id="@+id/R4"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:text="R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4*"
-        app:layout_constraintLeft_toRightOf="@+id/barrierVertical"
-        app:layout_constraintTop_toBottomOf="@+id/barrier3"
         tools:ignore="HardcodedText" />
 
 </android.support.constraint.ConstraintLayout>
