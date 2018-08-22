@@ -39,7 +39,6 @@
         android:layout_margin="0dp"
         android:text="R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1 R1*"
         app:layout_constraintLeft_toRightOf="@+id/barrierVertical"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
@@ -68,7 +67,6 @@
         android:layout_margin="0dp"
         android:text="R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2 R2*"
         app:layout_constraintLeft_toRightOf="@+id/barrierVertical"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier1"
         tools:ignore="HardcodedText" />
 
@@ -97,7 +95,6 @@
         android:layout_margin="0dp"
         android:text="R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3 R3*"
         app:layout_constraintLeft_toRightOf="@id/barrierVertical"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier2"
         tools:ignore="HardcodedText" />
 
@@ -126,7 +123,6 @@
         android:layout_margin="0dp"
         android:text="R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4 R4*"
         app:layout_constraintLeft_toRightOf="@+id/barrierVertical"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/barrier3"
         tools:ignore="HardcodedText" />
 
