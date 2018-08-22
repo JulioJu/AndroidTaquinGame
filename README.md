@@ -122,7 +122,7 @@ comments
 ### Git history
 * For a newbie, the three firsts commits are interesting.
 
-### Android Source Code:
+### Android Source Code and documentation
 * Android
     https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android
 
@@ -150,3 +150,8 @@ comments
         from IntelliJ).
     * I've downloaded source from:
         https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2.
+
+* `AppCompatActivity`. We could read more complete documentation at
+    https://developer.android.com/reference/android/app/Activity, even if is
+    not the same class. AppCompatActivity is added in version 25.1.0. Maybe
+    **do not compile for version lower than 25.1.0**. TODO confirm that.

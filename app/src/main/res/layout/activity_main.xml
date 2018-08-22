@@ -5,6 +5,8 @@
 
 <!-- README read my README.md to understand well this file -->
 
+<!-- android:orientation attribute IS NUT USED HERE -->
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
