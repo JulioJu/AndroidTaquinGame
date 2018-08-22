@@ -94,9 +94,31 @@ public class MainActivity extends AppCompatActivity {
         return barrierId;
     }
 
-    private void createNewRow(ConstraintLayout layout) {
+    private void createConstraintSetToSquare(ConstraintLayout layout,
+            int viewId,
+            int toViewId1, int toConstraintDirection1,
+            int toViewId2, int toConstraintDirection2) {
 
-        // TODO factorize more
+        int constraintDirection1 = ConstraintSet.LEFT;
+        int constraintDirection2 = ConstraintSet.TOP;
+        // ConstraintSet for the square at fist column, last row
+        // e.g in xml
+        // app:layout_constraintLeft_toLeftOf="parent"
+        // app:layout_constraintTop_toBottomOf="@+id/barrier4"
+        // Official doc:
+        // https://developer.android.com/reference/android/support/constraint/ConstraintSet#setmargin
+        // Very short model:
+        // https://stackoverflow.com/a/45264822
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+        set.connect(viewId, constraintDirection1,
+                toViewId1, toConstraintDirection1, 0);
+        set.connect(viewId, constraintDirection2,
+                toViewId2, toConstraintDirection2, 0);
+        set.applyTo(layout);
+    }
+
+    private void createNewRow(ConstraintLayout layout) {
 
         // Create square at first column, last row
         int firstColumnLastRowId = createTextViewWithoutConstraints(layout,
@@ -124,30 +146,14 @@ public class MainActivity extends AppCompatActivity {
                         new int[] {R.id.L2, R.id.R2});
 
         // ConstraintSet for the square at fist column, last row
-        // e.g in xml
-        // app:layout_constraintLeft_toLeftOf="parent"
-        // app:layout_constraintTop_toBottomOf="@+id/barrier4"
-        // Official doc:
-        // https://developer.android.com/reference/android/support/constraint/ConstraintSet#setmargin
-        // Very short model:
-        // https://stackoverflow.com/a/45264822
-        ConstraintSet setFirstColumnLastRow = new ConstraintSet();
-        setFirstColumnLastRow.clone(layout);
-        setFirstColumnLastRow.connect(firstColumnLastRowId, ConstraintSet.LEFT,
-                  ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0);
-        setFirstColumnLastRow.connect(firstColumnLastRowId, ConstraintSet.TOP,
-                newHorizontalBarrier, ConstraintSet.BOTTOM, 0);
-        setFirstColumnLastRow.applyTo(layout);
+        this.createConstraintSetToSquare(layout, firstColumnLastRowId,
+                ConstraintSet.PARENT_ID, ConstraintSet.LEFT,
+                newHorizontalBarrier, ConstraintSet.BOTTOM);
 
         // Constraints for square at second column, last row
-        ConstraintSet setSecondColumnLastRow = new ConstraintSet();
-        setSecondColumnLastRow.clone(layout);
-        setSecondColumnLastRow.connect(secondColumnLastRowId,
-                ConstraintSet.LEFT,
-                R.id.barrierVertical, ConstraintSet.RIGHT, 0);
-        setSecondColumnLastRow.connect(secondColumnLastRowId, ConstraintSet.TOP,
-                newHorizontalBarrier, ConstraintSet.BOTTOM, 0);
-        setSecondColumnLastRow.applyTo(layout);
+        this.createConstraintSetToSquare(layout, secondColumnLastRowId,
+                R.id.barrierVertical, ConstraintSet.RIGHT,
+                newHorizontalBarrier, ConstraintSet.BOTTOM);
 
         // ====
         // Create square at last column, first row
@@ -162,31 +168,19 @@ public class MainActivity extends AppCompatActivity {
                         new int[] {R.id.R1, R.id.R2, secondColumnLastRowId});
 
         // ConstraintSet lastColumnFirstRowId
-        ConstraintSet setLastColumnFirstRow = new ConstraintSet();
-        setLastColumnFirstRow.clone(layout);
-        setLastColumnFirstRow.connect(lastColumnFirstRowId, ConstraintSet.LEFT,
-                  newVerticalBarrier, ConstraintSet.RIGHT, 0);
-        setLastColumnFirstRow.connect(lastColumnFirstRowId, ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0);
-        setLastColumnFirstRow.applyTo(layout);
+        this.createConstraintSetToSquare(layout, lastColumnFirstRowId,
+                newVerticalBarrier, ConstraintSet.RIGHT,
+                ConstraintSet.PARENT_ID, ConstraintSet.TOP);
 
         // ConstraintSet lastColumnSecondRowId
-        ConstraintSet setLastColumnSecondRow = new ConstraintSet();
-        setLastColumnSecondRow.clone(layout);
-        setLastColumnSecondRow.connect(lastColumnSecondRowId,
-                ConstraintSet.LEFT, newVerticalBarrier, ConstraintSet.RIGHT, 0);
-        setLastColumnSecondRow.connect(lastColumnSecondRowId, ConstraintSet.TOP,
-                lastColumnFirstRowId, ConstraintSet.BOTTOM, 0);
-        setLastColumnSecondRow.applyTo(layout);
+        this.createConstraintSetToSquare(layout, lastColumnSecondRowId,
+                newVerticalBarrier, ConstraintSet.RIGHT,
+                lastColumnFirstRowId, ConstraintSet.BOTTOM);
 
         // ConstraintSet lastColumnLastRowId
-        ConstraintSet setLastColumnLastRow = new ConstraintSet();
-        setLastColumnLastRow.clone(layout);
-        setLastColumnLastRow.connect(lastColumnLastRowId, ConstraintSet.LEFT,
-                  newVerticalBarrier, ConstraintSet.RIGHT, 0);
-        setLastColumnLastRow.connect(lastColumnLastRowId, ConstraintSet.TOP,
-                lastColumnSecondRowId, ConstraintSet.BOTTOM, 0);
-        setLastColumnLastRow.applyTo(layout);
+        this.createConstraintSetToSquare(layout, lastColumnLastRowId,
+                newVerticalBarrier, ConstraintSet.RIGHT,
+                lastColumnSecondRowId, ConstraintSet.BOTTOM);
     }
 
     @Override
