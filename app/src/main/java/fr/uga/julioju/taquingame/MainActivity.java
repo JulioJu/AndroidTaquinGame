@@ -94,27 +94,49 @@ public class MainActivity extends AppCompatActivity {
         return barrierId;
     }
 
+    // `String barrierType, could be deduced thanks `int viewId', `int
+    // toViewId1' and `toViewId2'. But I prefer use "barrierType", it's
+    // clearer.
     private void createConstraintSetToSquare(ConstraintLayout layout,
-            int viewId,
-            int toViewId1, int toConstraintDirection1,
-            int toViewId2, int toConstraintDirection2) {
+            int viewId, int toBarrierHorizontal, int toBarrierVertical) {
 
-        int constraintDirection1 = ConstraintSet.LEFT;
-        int constraintDirection2 = ConstraintSet.TOP;
+        int constraintDirectionHorizontal = ConstraintSet.TOP;
+        int constraintDirectionVertical = ConstraintSet.LEFT;
+
+        int toConstraintDirectionHorizontal = ConstraintSet.BOTTOM;
+        int toConstraintDirectionVertical = ConstraintSet.RIGHT;
+
+        if (toBarrierHorizontal == ConstraintSet.PARENT_ID) {
+            // The barrier horizontal is ConstraintSet.PARENT_ID
+            toConstraintDirectionHorizontal = ConstraintSet.TOP;
+            toConstraintDirectionVertical = ConstraintSet.RIGHT;
+        }
+        else if (toBarrierVertical == ConstraintSet.PARENT_ID) {
+            // The barrier vertical is ConstraintSet.PARENT_ID
+            toConstraintDirectionHorizontal = ConstraintSet.BOTTOM;
+            toConstraintDirectionVertical = ConstraintSet.LEFT;
+        }
+        else if (toBarrierHorizontal == ConstraintSet.PARENT_ID
+                && toBarrierVertical == ConstraintSet.PARENT_ID) {
+            // Only for the square L1 / R1.
+            toConstraintDirectionHorizontal = ConstraintSet.TOP;
+            toConstraintDirectionVertical = ConstraintSet.LEFT;
+        }
+
         // ConstraintSet for the square at fist column, last row
         // e.g in xml
-        // app:layout_constraintLeft_toLeftOf="parent"
         // app:layout_constraintTop_toBottomOf="@+id/barrier4"
+        // app:layout_constraintLeft_toLeftOf="parent"
         // Official doc:
         // https://developer.android.com/reference/android/support/constraint/ConstraintSet#setmargin
         // Very short model:
         // https://stackoverflow.com/a/45264822
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
-        set.connect(viewId, constraintDirection1,
-                toViewId1, toConstraintDirection1, 0);
-        set.connect(viewId, constraintDirection2,
-                toViewId2, toConstraintDirection2, 0);
+        set.connect(viewId, constraintDirectionHorizontal,
+                toBarrierHorizontal, toConstraintDirectionHorizontal, 0);
+        set.connect(viewId, constraintDirectionVertical,
+                toBarrierVertical, toConstraintDirectionVertical, 0);
         set.applyTo(layout);
     }
 
@@ -147,13 +169,11 @@ public class MainActivity extends AppCompatActivity {
 
         // ConstraintSet for the square at fist column, last row
         this.createConstraintSetToSquare(layout, firstColumnLastRowId,
-                ConstraintSet.PARENT_ID, ConstraintSet.LEFT,
-                newHorizontalBarrier, ConstraintSet.BOTTOM);
+                newHorizontalBarrier, ConstraintSet.PARENT_ID);
 
         // Constraints for square at second column, last row
         this.createConstraintSetToSquare(layout, secondColumnLastRowId,
-                R.id.barrierVertical, ConstraintSet.RIGHT,
-                newHorizontalBarrier, ConstraintSet.BOTTOM);
+                newHorizontalBarrier, R.id.barrierVertical);
 
         // ====
         // Create square at last column, first row
@@ -169,18 +189,15 @@ public class MainActivity extends AppCompatActivity {
 
         // ConstraintSet lastColumnFirstRowId
         this.createConstraintSetToSquare(layout, lastColumnFirstRowId,
-                newVerticalBarrier, ConstraintSet.RIGHT,
-                ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+                ConstraintSet.PARENT_ID, newVerticalBarrier);
 
         // ConstraintSet lastColumnSecondRowId
         this.createConstraintSetToSquare(layout, lastColumnSecondRowId,
-                newVerticalBarrier, ConstraintSet.RIGHT,
-                lastColumnFirstRowId, ConstraintSet.BOTTOM);
+                lastColumnFirstRowId, newVerticalBarrier);
 
         // ConstraintSet lastColumnLastRowId
         this.createConstraintSetToSquare(layout, lastColumnLastRowId,
-                newVerticalBarrier, ConstraintSet.RIGHT,
-                lastColumnSecondRowId, ConstraintSet.BOTTOM);
+                lastColumnSecondRowId, newVerticalBarrier);
     }
 
     @Override
