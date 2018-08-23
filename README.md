@@ -155,3 +155,10 @@ comments
     https://developer.android.com/reference/android/app/Activity, even if is
     not the same class. AppCompatActivity is added in version 25.1.0. Maybe
     **do not compile for version lower than 25.1.0**. TODO confirm that.
+
+## Square board prototype
+
+* File that draw a square board in a console. For prototypage.
+* Each square have a north, east, south, west square (or null).
+* It's constructs with recursivity.
+* Actually, square.north and square.west is always `null` (problematic).
