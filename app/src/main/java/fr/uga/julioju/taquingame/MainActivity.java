@@ -6,51 +6,10 @@ import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-
-    private int createTextViewWithoutConstraints(ConstraintLayout layout,
-            String androidText) {
-        // Create View
-        TextView view = new TextView(this);
-
-        // Create ID
-        // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
-        int viewId = View.generateViewId();
-        view.setId(viewId);
-
-        // ViewGroup.LayoutParams
-        // XML attributes:
-        // android:layout_height
-        // android:layout_width
-        // https://developer.android.com/reference/android/view/ViewGroup.LayoutParams
-        ConstraintLayout.LayoutParams layoutParamsWrap =
-            new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT);
-
-        // ViewGroup.MarginLayoutParams
-        // e.g. of XML attributes:
-        // android:layout_margin
-        // https://developer.android.com/reference/android/view/ViewGroup.MarginLayoutParams
-        layoutParamsWrap.setMargins(0,0,0,0);
-
-        // Set dimensions to view
-        view.setLayoutParams(layoutParamsWrap);
-
-        // Add text to view
-        view.setText(androidText);
-        // view.setTextSize(15);
-
-        // Add View to layout
-        // SHOULD BE HERE, BEFORE ConstraintSet
-        layout.addView(view);
-
-        return viewId;
-    }
 
     private void existingBarrierAddNewView(Barrier verticalBarrier,
             int viewId) {
@@ -109,11 +68,9 @@ public class MainActivity extends AppCompatActivity {
         if (toBarrierHorizontal == ConstraintSet.PARENT_ID) {
             // The barrier horizontal is ConstraintSet.PARENT_ID
             toConstraintDirectionHorizontal = ConstraintSet.TOP;
-            toConstraintDirectionVertical = ConstraintSet.RIGHT;
         }
         else if (toBarrierVertical == ConstraintSet.PARENT_ID) {
             // The barrier vertical is ConstraintSet.PARENT_ID
-            toConstraintDirectionHorizontal = ConstraintSet.BOTTOM;
             toConstraintDirectionVertical = ConstraintSet.LEFT;
         }
         else if (toBarrierHorizontal == ConstraintSet.PARENT_ID
@@ -143,17 +100,14 @@ public class MainActivity extends AppCompatActivity {
     private void createNewRow(ConstraintLayout layout) {
 
         // Create square at first column, last row
-        int firstColumnLastRowId = createTextViewWithoutConstraints(layout,
+        Square firstColumnLastRow = new Square(this, layout,
                 "L5 L5 L5 L5 L5 L5 L5 L5 L5*");
         // Create square at second column, last row
-        int secondColumnLastRowId = createTextViewWithoutConstraints(layout,
+        Square secondColumnLastRow = new Square(this, layout,
                 "R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5 R5*");
-        int lastColumnFirstRowId = createTextViewWithoutConstraints(layout,
-                "RR1");
-        int lastColumnSecondRowId = createTextViewWithoutConstraints(layout,
-                "RR2");
-        int lastColumnLastRowId = createTextViewWithoutConstraints(layout,
-                "RR3");
+        Square lastColumnFirstRow = new Square(this, layout, "RR1");
+        Square lastColumnSecondRow = new Square(this, layout, "RR2");
+        Square lastColumnLastRow = new Square(this, layout, "RR3");
 
         // ====
         // Create last row
@@ -161,18 +115,18 @@ public class MainActivity extends AppCompatActivity {
 
         // append the square ID to existing Barrier above this new square
         existingBarrierAddNewView((Barrier)findViewById( R.id.barrierVertical),
-                firstColumnLastRowId);
+                firstColumnLastRow.getViewId());
 
         // create new horizontal Barrier
         int newHorizontalBarrier = this.newBarrier(layout, Barrier.BOTTOM,
                         new int[] {R.id.L2, R.id.R2});
 
         // ConstraintSet for the square at fist column, last row
-        this.createConstraintSetToSquare(layout, firstColumnLastRowId,
+        this.createConstraintSetToSquare(layout, firstColumnLastRow.getViewId(),
                 newHorizontalBarrier, ConstraintSet.PARENT_ID);
 
         // Constraints for square at second column, last row
-        this.createConstraintSetToSquare(layout, secondColumnLastRowId,
+        this.createConstraintSetToSquare(layout, secondColumnLastRow.getViewId(),
                 newHorizontalBarrier, R.id.barrierVertical);
 
         // ====
@@ -181,23 +135,25 @@ public class MainActivity extends AppCompatActivity {
 
         // append the square ID to existing Barrier above this new square
         existingBarrierAddNewView((Barrier)findViewById(newHorizontalBarrier),
-                firstColumnLastRowId);
+                firstColumnLastRow.getViewId());
 
         // create new vertical Barrier
         int newVerticalBarrier = this.newBarrier(layout, Barrier.RIGHT,
-                        new int[] {R.id.R1, R.id.R2, secondColumnLastRowId});
+                        new int[] {R.id.R1, R.id.R2,
+                            secondColumnLastRow.getViewId()});
 
-        // ConstraintSet lastColumnFirstRowId
-        this.createConstraintSetToSquare(layout, lastColumnFirstRowId,
+        // ConstraintSet lastColumnFirstRow.getViewId()
+        this.createConstraintSetToSquare(layout, lastColumnFirstRow.getViewId(),
                 ConstraintSet.PARENT_ID, newVerticalBarrier);
 
-        // ConstraintSet lastColumnSecondRowId
-        this.createConstraintSetToSquare(layout, lastColumnSecondRowId,
-                lastColumnFirstRowId, newVerticalBarrier);
+        // ConstraintSet lastColumnSecondRow.getViewId()
+        this.createConstraintSetToSquare(layout,
+                lastColumnSecondRow.getViewId(), lastColumnFirstRow.getViewId(),
+                newVerticalBarrier);
 
-        // ConstraintSet lastColumnLastRowId
-        this.createConstraintSetToSquare(layout, lastColumnLastRowId,
-                lastColumnSecondRowId, newVerticalBarrier);
+        // ConstraintSet lastColumnLastRow.getViewId()
+        this.createConstraintSetToSquare(layout, lastColumnLastRow.getViewId(),
+                lastColumnSecondRow.getViewId(), newVerticalBarrier);
     }
 
     @Override
