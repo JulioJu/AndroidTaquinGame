@@ -5,6 +5,10 @@ import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
 
+/**
+  * A Square is simply a `android.view.View' (commonly named Widget).
+  * @see https://developer.android.com/reference/android/view/View
+  */
 public class Square {
 
     private TextView view;

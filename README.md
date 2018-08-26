@@ -102,13 +102,18 @@ comments
 * **Source Code**:
     https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
 
-### Genymotion
+#### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+* See logs to understand well how Barriers are build!
+* See also comments in this file!
+
+### Genymotion and IntelliJ
 * On my computer, Genymotion is very faster and lighter (for the CPU) than
     the Android Emulator. I've also heard than it's very more reliable.
 * It's free. And with a registration, you could have lot of different
     Virtual Images.
-* For Intellij Ultimate Edition, you must configure the debugger. See:
-    https://stackoverflow.com/a/51476111
+* **For Intellij Ultimate Edition, you must configure the debugger. See:
+    https://stackoverflow.com/a/51476111**
+    Read also the comments of this comment !
 
 #### IntelliJ vs Android Studio
 * On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`
@@ -162,3 +167,11 @@ comments
 * Each square have a north, east, south, west square (or null).
 * It's constructs with recursivity.
 * Actually, square.north and square.west is always `null` (problematic).
+
+## Android.util.Log.d
+* System.out.println could not be used. To se view in "Logcat",
+    use Android.util.Log
+* Warning 1: Android.util.Log.d print nothing if second param is `null`.
+* Warning 2: Android.util.Log.d could mix two logs if they have the same first
+    param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
+
