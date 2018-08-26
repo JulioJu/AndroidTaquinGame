@@ -95,121 +95,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-      * Create a board like below.
-      * If boardLength < 3, draw with letters and "."
-      * Else draw with numbers.
-      * <pre>
-      * HBP _ HB0_HB1 _HB2 _ VBP
-      *   | 0  | 1 | 2  |  3
-      *     _    _   _     _ VB0
-      *   | 4  | 5 |  6 |  7
-      *     _    _   _     _ VB1
-      *   | 8  | 9 |  10|  11
-      *    _     _    _    _ VB2
-      *   | 12 | 13|  14|  15
-      * HB0: Horizontal Barrier P (ConstraintSet.PARENT_ID)
-      * HB1: Horizontal Barrier 0 (android.support.constraint.Barrier)
-      * etc
-      * HB0: Vertical Barrier P (ConstraintSet.PARENT_ID)
-      * HB1: Vertical Barrier 1 (android.support.constraint.Barrier)
-      * etc
-      * Note: Barriers are aligns on the longer Square.
-      * VB0 contains constraint_referenced_ids of Square 0, 1, 2, 3.
-      * VB1 contains constraint_referenced_ids of Square 4, 5, 6, 7.
-      * etc.
-      * </pre>
+      * ConstraintSet.connect() between each barrier of
+      * horizontalBarriersArray[] and their Square
+      * @param set should be already instantiated
+      * @param boardLength length of the board
+      * @param squareArray Array that contains all Square of the board
+      * @param horizontalBarriersArray Array that contains all horizontal
+      *             barriers of the board
       */
-    private void createBoard(ConstraintLayout layout) {
-
-        // Should not be < 2
-        int boardLength = 10;
-
-        // ============================
-        // ============================
-        // Create Square of the board
-        // ============================
-        // ============================
-        int boardNumberOfSquares = boardLength * boardLength;
-        Square[] squareArray = new Square[boardNumberOfSquares];
-        // Loop that populate array above
-        for (int squareArrayIndex = 0 ;
-                squareArrayIndex  < boardNumberOfSquares ;
-                squareArrayIndex++) {
-            // squareText is the String text displayed in the Square.
-            // Square.getView().getText() of a row could be
-            //      longer than Square.getView().getText() of the row above.
-            // We could see the interest of the Barrier
-            // object : Barrier is aligned on the longer String)
-            String squareText = String.valueOf(squareArrayIndex);
-            // Create the Square
-            squareArray[squareArrayIndex] =
-                new Square(this, layout, squareText);
-                }
-
-
-        // TODO factorize Horizontal and Vertical Barriers
-
-        // ===
-        // Create Horizontal Barriers
-        // ===
-        // ============================
-        // Create barriers like in xml:
-        // <android.support.constraint.Barrier
-        //     android:id="@+id/barrier1"
-        //     android:layout_width="0dp"
-        //     android:layout_height="0dp"
-        //     app:barrierDirection="bottom"
-        //     app:constraint_referenced_ids="L1, R1" />
-        // ============================
-
-        // Array that contains all horizontal `Barrier'
-        // (Barrier super.findViewById(horizontalBarriersArray[0]))
-        //     .getReferencedIds() == new int[] {squareArray[0],
-        //         squareArray[1], squareArray[2], squareArray[3]})
-        // (Barrier super.findViewById(horizontalBarriersArray[1]))
-        //     .getReferencedIds() == new int[] {squareArray[1],
-        //         squareArray[2], squareArray[2], squareArray[3]})
-        // etc.
-        int[] horizontalBarriersArray =
-            this.createBarrier(layout, boardLength, Barrier.BOTTOM ,
-                    squareArray);
-
-        // ===
-        // Create Vertical Barriers
-        // ===
-        // ============================
-        // Create barriers like in xml:
-        // <android.support.constraint.Barrier
-        //     android:id="@+id/barrierVertical"
-        //     android:layout_width="0dp"
-        //     android:layout_height="0dp"
-        //     app:barrierDirection="right"
-        //     app:constraint_referenced_ids="L1, L2" />
-        // ==============================
-
-        // Array that contains all vertical `Barrier'
-        // (Barrier super.findViewById(verticalBarrierArray[0]))
-        //     .getReferencedIds() == new int[] {squareArray[0],
-        //         squareArray[4], squareArray[8], squareArray[12]})
-        // (Barrier super.findViewById(verticalBarrierArray[2]))
-        //     .getReferencedIds() == new int[] {squareArray[1],
-        //         squareArray[5], squareArray[2], squareArray[13]})
-        // etc.
-        //
-        int[] verticalBarrierArray =
-            this.createBarrier(layout, boardLength, Barrier.RIGHT, squareArray);
-
-        // ConstraintSet
-        // ============================================
-        // ======
-        // ======
-
-        ConstraintSet set = new ConstraintSet();
-        set.clone(layout);
-
-        // ConstraintSet for horizontal barriers and squares
-        // ======
-
+    private void constraintSetBetweenHorizontalBarriersAndTheirSquare(
+            ConstraintSet set, int boardLength, Square[] squareArray,
+            int[] horizontalBarriersArray) {
         int constraintDirectionHorizontal = ConstraintSet.TOP;
         int toBarrierHorizontalId ;
         int toConstraintDirectionHorizontal ;
@@ -278,9 +174,22 @@ public class MainActivity extends AppCompatActivity {
                     "ConstraintSet.connect to Square with squareArrayIndex:" +
                             String.valueOf(constraintSetConnect));
         }
+    }
 
-        // ConstraintSet for vertical barriers and squares
-        // ======
+    /**
+      * ConstraintSet.connect() between each barrier of
+      * verticalBarrierArray[] and their Square
+      * @param set should be already instantiated
+      * @param boardLength length of the board
+      * @param boardNumberOfSquares number of square of the board
+      *     (boardLength * boardLength)
+      * @param squareArray Array that contains all Square of the board
+      * @param verticalBarrierArray Array that contains all vertical
+      *             barriers of the board
+      */
+    private void constraintSetBetweenVerticalBarriersAndTheirSquare(
+            ConstraintSet set, int boardLength, int boardNumberOfSquares,
+            Square[] squareArray, int[] verticalBarrierArray) {
         int constraintDirectionVertical = ConstraintSet.LEFT;
         int toBarrierVerticalId ;
         int toConstraintDirectionVertical ;
@@ -351,6 +260,127 @@ public class MainActivity extends AppCompatActivity {
                     "ConstraintSet.connect to Square with squareArrayIndex:" +
                             String.valueOf(constraintSetConnect));
         }
+
+    }
+
+    /**
+      * Create a board like below.
+      * If boardLength < 3, draw with letters and "."
+      * Else draw with numbers.
+      * <pre>
+      * HBP _ HB0_HB1 _HB2 _ VBP
+      *   | 0  | 1 | 2  |  3
+      *     _    _   _     _ VB0
+      *   | 4  | 5 |  6 |  7
+      *     _    _   _     _ VB1
+      *   | 8  | 9 |  10|  11
+      *    _     _    _    _ VB2
+      *   | 12 | 13|  14|  15
+      * HB0: Horizontal Barrier P (ConstraintSet.PARENT_ID)
+      * HB1: Horizontal Barrier 0 (android.support.constraint.Barrier)
+      * etc
+      * HB0: Vertical Barrier P (ConstraintSet.PARENT_ID)
+      * HB1: Vertical Barrier 1 (android.support.constraint.Barrier)
+      * etc
+      * Note: Barriers are aligns on the longer Square.
+      * VB0 contains constraint_referenced_ids of Square 0, 1, 2, 3.
+      * VB1 contains constraint_referenced_ids of Square 4, 5, 6, 7.
+      * etc.
+      * </pre>
+      */
+    private void createBoard(ConstraintLayout layout) {
+
+        // Should not be < 2
+        int boardLength = 10;
+
+        // ============================
+        // ============================
+        // Create Square of the board
+        // ============================
+        // ============================
+        int boardNumberOfSquares = boardLength * boardLength;
+        Square[] squareArray = new Square[boardNumberOfSquares];
+        // Loop that populate array above
+        for (int squareArrayIndex = 0 ;
+                squareArrayIndex  < boardNumberOfSquares ;
+                squareArrayIndex++) {
+            // squareText is the String text displayed in the Square.
+            // Square.getView().getText() of a row could be
+            //      longer than Square.getView().getText() of the row above.
+            // We could see the interest of the Barrier
+            // object : Barrier is aligned on the longer String)
+            String squareText = String.valueOf(squareArrayIndex);
+            // Create the Square
+            squareArray[squareArrayIndex] =
+                new Square(this, layout, squareText);
+                }
+
+        // ===
+        // Create Horizontal Barriers
+        // ===
+        // ============================
+        // Create barriers like in xml:
+        // <android.support.constraint.Barrier
+        //     android:id="@+id/barrier1"
+        //     android:layout_width="0dp"
+        //     android:layout_height="0dp"
+        //     app:barrierDirection="bottom"
+        //     app:constraint_referenced_ids="L1, R1" />
+        // ============================
+        // Array that contains all horizontal `Barrier'
+        // (Barrier super.findViewById(horizontalBarriersArray[0]))
+        //     .getReferencedIds() == new int[] {squareArray[0],
+        //         squareArray[1], squareArray[2], squareArray[3]})
+        // (Barrier super.findViewById(horizontalBarriersArray[1]))
+        //     .getReferencedIds() == new int[] {squareArray[1],
+        //         squareArray[2], squareArray[2], squareArray[3]})
+        // etc.
+        int[] horizontalBarriersArray =
+            this.createBarrier(layout, boardLength, Barrier.BOTTOM ,
+                    squareArray);
+
+        // ===
+        // Create Vertical Barriers
+        // ===
+        // ============================
+        // Create barriers like in xml:
+        // <android.support.constraint.Barrier
+        //     android:id="@+id/barrierVertical"
+        //     android:layout_width="0dp"
+        //     android:layout_height="0dp"
+        //     app:barrierDirection="right"
+        //     app:constraint_referenced_ids="L1, L2" />
+        // ==============================
+        // Array that contains all vertical `Barrier'
+        // (Barrier super.findViewById(verticalBarrierArray[0]))
+        //     .getReferencedIds() == new int[] {squareArray[0],
+        //         squareArray[4], squareArray[8], squareArray[12]})
+        // (Barrier super.findViewById(verticalBarrierArray[2]))
+        //     .getReferencedIds() == new int[] {squareArray[1],
+        //         squareArray[5], squareArray[2], squareArray[13]})
+        // etc.
+        //
+        int[] verticalBarrierArray =
+            this.createBarrier(layout, boardLength, Barrier.RIGHT, squareArray);
+
+        // ConstraintSet
+        // ============================================
+        // ======
+        // ======
+
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+
+        // ConstraintSet for horizontal barriers and squares
+        // ======
+        this.constraintSetBetweenHorizontalBarriersAndTheirSquare(set,
+                boardLength, squareArray, horizontalBarriersArray);
+
+        // ConstraintSet for vertical barriers and squares
+        // ======
+        this.constraintSetBetweenVerticalBarriersAndTheirSquare(set,
+                boardLength, boardNumberOfSquares,
+                squareArray, verticalBarrierArray);
 
         // Apply to layout
         // =========
