@@ -114,6 +114,7 @@ comments
 * **For Intellij Ultimate Edition, you must configure the debugger. See:
     https://stackoverflow.com/a/51476111**
     Read also the comments of this comment !
+* When import, we must build to see some errors disappear.
 
 #### IntelliJ vs Android Studio
 * On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`

@@ -7,18 +7,28 @@ import android.widget.TextView;
 
 /**
   * A Square is simply a `android.view.View' (commonly named Widget).
-  * @see https://developer.android.com/reference/android/view/View
+  * https://developer.android.com/reference/android/view/View
+  * This class is package private.
   */
-public class Square {
+class Square {
 
-    private TextView view;
+    private final TextView view;
+    /**
+      * index of this Square in the board. In ./MainActivity.java,
+      *     there is an Array named <code>squareArray</code> that contain
+      *     all the Square of the board drawn.
+      */
+    private final int squareArrayIndex;
 
     // Actually create a TextView
-    public Square (AppCompatActivity activity,
-            ConstraintLayout layout, String androidText) {
+    Square (AppCompatActivity activity,
+            ConstraintLayout layout, int squareArrayIndex,
+            String androidText) {
 
         // Create View
         this.view = new TextView(activity);
+
+        this.squareArrayIndex=squareArrayIndex;
 
         // Create ID
         // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
@@ -54,16 +64,17 @@ public class Square {
 
     }
 
-    public void setView(TextView view) {
-        this.view = view;
+    int getViewId() {
+        return this.view.getId();
     }
 
-    public View getView() {
-        return view;
+    int getSquareArrayIndex() {
+        return this.squareArrayIndex;
     }
 
-    public int getViewId() {
-        return view.getId();
-    }
+    // Actually not used
+    // public TextView getView() {
+    //     return view;
+    // }
 
 }

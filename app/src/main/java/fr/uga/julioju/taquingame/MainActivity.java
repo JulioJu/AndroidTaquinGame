@@ -1,12 +1,14 @@
 package fr.uga.julioju.taquingame;
 
+import android.os.Bundle;
+import android.util.SparseArray;
+import android.view.View;
+
 import android.support.constraint.Barrier;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
 /** Build the Main Activity
   * See logs for details
@@ -94,6 +96,36 @@ public class MainActivity extends AppCompatActivity {
         return barriersArray;
     }
 
+    /** Print Barrier information.
+      * 1) Print the index of the barrier in its array
+      * 2) Print for each item of Barrier.getReferencedIds() its corresponding
+      *     index item in squareArray.
+      * 3) Print the index in squareArray of each Square that have a
+      *     ConstraintSet.connect with the Barrier.
+      */
+    private void printBarrierInfo(String barrierDirection, int toBarrierId,
+            int barriersArrayIndex, SparseArray mapViewIdSquare,
+            StringBuilder constraintSetConnect) {
+        int[] barrierReferencedIdsArray = ((Barrier) super
+                .findViewById(toBarrierId)).getReferencedIds();
+        StringBuilder barrierReferencedIds_stringArrayIndex =
+            new StringBuilder(barrierReferencedIdsArray.length * 2);
+        for (int aBarrierReferencedIdsArray : barrierReferencedIdsArray) {
+            barrierReferencedIds_stringArrayIndex
+                    .append(((Square) mapViewIdSquare
+                            .get(aBarrierReferencedIdsArray))
+                            .getSquareArrayIndex())
+                    .append(", ");
+        }
+        android.util.Log.i(barrierDirection + " Barrier " + barriersArrayIndex,
+                barrierDirection + "Barrier n°" + barriersArrayIndex +
+                ". Barrier.getReferencedIds() are Square with index in " +
+                " squareArray: " + barrierReferencedIds_stringArrayIndex +
+                "\nThis Barrier have ConstraintSet.connect() to Square" +
+                " with index in squareArray: " +
+                String.valueOf(constraintSetConnect));
+    }
+
     /**
       * ConstraintSet.connect() between each barrier of
       * horizontalBarriersArray[] and their Square
@@ -105,11 +137,10 @@ public class MainActivity extends AppCompatActivity {
       */
     private void constraintSetBetweenHorizontalBarriersAndTheirSquare(
             ConstraintSet set, int boardLength, Square[] squareArray,
-            int[] horizontalBarriersArray) {
+            SparseArray mapViewIdSquare, int[] horizontalBarriersArray) {
         int constraintDirectionHorizontal = ConstraintSet.TOP;
         int toBarrierHorizontalId ;
         int toConstraintDirectionHorizontal ;
-
         // ConstraintSet.connect between:
         // 1) squareArray[0].getViewId(),
         //   then squareArray[0+1].getViewId(),
@@ -141,21 +172,6 @@ public class MainActivity extends AppCompatActivity {
             //      then squareArrayIndex[boardLength + 1 + 1].getViewId(),
             //      then etc.
             // 2) AND horizontalBarriersArray[barriersArrayIndex]
-            int referencedIdsIntArray[] = ((Barrier) super
-                    .findViewById(toBarrierHorizontalId)).getReferencedIds();
-            StringBuilder referencedIdsStringText =
-                new StringBuilder(referencedIdsIntArray.length * 2);
-            for (int referencedIdsIntArrayIndex : referencedIdsIntArray) {
-                CharSequence textString = ((TextView)super
-                        .findViewById(referencedIdsIntArrayIndex))
-                        .getText();
-                referencedIdsStringText.append(textString)
-                .append(", ");
-            }
-            android.util.Log.i("Horizontal Barrier",
-                    "Horizontal Barrier n°" + barriersArrayIndex +
-                    ". Barrier.getReferencedIds() are square with number "
-                    + referencedIdsStringText.toString());
             StringBuilder constraintSetConnect = new StringBuilder(boardLength);
             for (int squareArrayIndex = (barriersArrayIndex +1) * boardLength ;
                     squareArrayIndex <= (barriersArrayIndex + 1) * boardLength
@@ -166,13 +182,10 @@ public class MainActivity extends AppCompatActivity {
                         constraintDirectionHorizontal,
                         toBarrierHorizontalId, toConstraintDirectionHorizontal,
                         0);
-                constraintSetConnect
-                    .append(squareArrayIndex)
-                    .append(", ");
+                constraintSetConnect.append(squareArrayIndex).append(", ");
             }
-            android.util.Log.i("Horizontal Barrier",
-                    "ConstraintSet.connect to Square with squareArrayIndex:" +
-                            String.valueOf(constraintSetConnect));
+            printBarrierInfo("Horizontal", toBarrierHorizontalId,
+                    barriersArrayIndex, mapViewIdSquare, constraintSetConnect);
         }
     }
 
@@ -189,7 +202,8 @@ public class MainActivity extends AppCompatActivity {
       */
     private void constraintSetBetweenVerticalBarriersAndTheirSquare(
             ConstraintSet set, int boardLength, int boardNumberOfSquares,
-            Square[] squareArray, int[] verticalBarrierArray) {
+            Square[] squareArray, SparseArray mapViewIdSquare,
+            int[] verticalBarrierArray) {
         int constraintDirectionVertical = ConstraintSet.LEFT;
         int toBarrierVerticalId ;
         int toConstraintDirectionVertical ;
@@ -227,21 +241,6 @@ public class MainActivity extends AppCompatActivity {
             //          + boardLength].getViewId(),
             //      then etc.
             // 2) AND verticalBarrierArray[barriersArrayIndex]
-            int referencedIdsIntArray[] = ((Barrier) super
-                    .findViewById(toBarrierVerticalId)).getReferencedIds();
-            StringBuilder referencedIdsStringText =
-                new StringBuilder(referencedIdsIntArray.length * 2);
-            for (int referencedIdsIntArrayIndex : referencedIdsIntArray) {
-                CharSequence textString = ((TextView)super
-                        .findViewById(referencedIdsIntArrayIndex))
-                        .getText();
-                referencedIdsStringText.append(textString)
-                .append(", ");
-            }
-            android.util.Log.i("Vertical Barrier",
-                    "Vertical Barrier n°" + barriersArrayIndex +
-                    ". Barrier.getReferencedIds() are square with number "
-                    + referencedIdsStringText.toString());
             StringBuilder constraintSetConnect = new StringBuilder(boardLength);
             for (int squareArrayIndex = barriersArrayIndex + 1 ;
                     squareArrayIndex <= boardNumberOfSquares
@@ -252,13 +251,10 @@ public class MainActivity extends AppCompatActivity {
                         constraintDirectionVertical,
                         toBarrierVerticalId, toConstraintDirectionVertical,
                         0);
-                constraintSetConnect
-                    .append(squareArrayIndex)
-                    .append(", ");
+                constraintSetConnect .append(squareArrayIndex) .append(", ");
             }
-            android.util.Log.i("Vertical Barrier",
-                    "ConstraintSet.connect to Square with squareArrayIndex:" +
-                            String.valueOf(constraintSetConnect));
+            printBarrierInfo("Vertical", toBarrierVerticalId,
+                    barriersArrayIndex, mapViewIdSquare, constraintSetConnect);
         }
 
     }
@@ -300,6 +296,10 @@ public class MainActivity extends AppCompatActivity {
         // ============================
         int boardNumberOfSquares = boardLength * boardLength;
         Square[] squareArray = new Square[boardNumberOfSquares];
+        // SparseArray (sort of HashMap) between viewId and Square
+        SparseArray<Square> mapViewIdSquare =
+                new SparseArray<>(boardNumberOfSquares);
+
         // Loop that populate array above
         for (int squareArrayIndex = 0 ;
                 squareArrayIndex  < boardNumberOfSquares ;
@@ -311,9 +311,11 @@ public class MainActivity extends AppCompatActivity {
             // object : Barrier is aligned on the longer String)
             String squareText = String.valueOf(squareArrayIndex);
             // Create the Square
-            squareArray[squareArrayIndex] =
-                new Square(this, layout, squareText);
-                }
+            Square square =
+                new Square(this, layout, squareArrayIndex, squareText);
+            squareArray[squareArrayIndex] = square;
+            mapViewIdSquare.append(square.getViewId(), square);
+        }
 
         // ===
         // Create Horizontal Barriers
@@ -374,13 +376,14 @@ public class MainActivity extends AppCompatActivity {
         // ConstraintSet for horizontal barriers and squares
         // ======
         this.constraintSetBetweenHorizontalBarriersAndTheirSquare(set,
-                boardLength, squareArray, horizontalBarriersArray);
+                boardLength, squareArray, mapViewIdSquare,
+                horizontalBarriersArray);
 
         // ConstraintSet for vertical barriers and squares
         // ======
         this.constraintSetBetweenVerticalBarriersAndTheirSquare(set,
-                boardLength, boardNumberOfSquares,
-                squareArray, verticalBarrierArray);
+                boardLength, boardNumberOfSquares, squareArray, mapViewIdSquare,
+                verticalBarrierArray);
 
         // Apply to layout
         // =========
