@@ -10,6 +10,7 @@ import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     /** Square of the Grid */
     private ArrayList<Square> squareArray;
+
+    /** The goal of the game is to ordered unorderedList */
+    private ArrayList<Integer> unorderedList;
 
     /** Create barrier.
       * @param barrierDirection in XML it's for instance
@@ -301,7 +305,8 @@ public class MainActivity extends AppCompatActivity {
             //      longer than Square.getView().getText() of the row above.
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
-            String squareText = String.valueOf(squareArrayIndex);
+            String squareText =
+                String.valueOf(this.unorderedList.get(squareArrayIndex));
             this.squareArray.add(new Square
                     (this, this.layout, squareArrayIndex, squareText));
         }
@@ -379,6 +384,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /** Create a list unordered */
+    private ArrayList<Integer> populateUnorderedList() {
+        // builderList is a list like {0: 0, 1: 1, 2: 2, etc.}
+        ArrayList<Integer> builderList = new ArrayList<>(gridNumberOfSquares);
+        for (int index = 0 ; index <= gridNumberOfSquares ; index++) {
+            builderList.add(index);
+        }
+        ArrayList<Integer> unorderedList = new ArrayList<>(this.gridNumberOfSquares);
+        for (int max = this.gridNumberOfSquares - 1 ; max > 0 ; max--) {
+            // Generate a random number between [0; max]
+            // https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
+            int randomNum = ThreadLocalRandom.current().nextInt(0, max);
+            unorderedList.add(builderList.get(randomNum));
+            builderList.remove(randomNum);
+        }
+        unorderedList.add(builderList.get(0));
+        return unorderedList;
+    }
+
     /** Should be seen as the Constructor of this class */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -393,6 +417,8 @@ public class MainActivity extends AppCompatActivity {
         this.gridNumberOfSquares = this.gridLength * this.gridLength;
 
         this.squareArray = new ArrayList<>(this.gridNumberOfSquares);
+
+        this.unorderedList = this.populateUnorderedList();
 
         // Complete example:
         // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet

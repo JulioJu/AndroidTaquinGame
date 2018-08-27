@@ -48,7 +48,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         // e.g. of XML attributes:
         // android:layout_margin
         // https://developer.android.com/reference/android/view/ViewGroup.MarginLayoutParams
-        layoutParamsWrap.setMargins(0,0,0,0);
+        layoutParamsWrap.setMargins(50, 0, 50, 0);
 
         // Set dimensions to view
         super.setLayoutParams(layoutParamsWrap);
