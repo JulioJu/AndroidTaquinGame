@@ -14,6 +14,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
+  * The goal of the game is than <code>ArrayList<\Integer> unorderedList</code>
+  * become ordered.
+  * Each <code>Square</code> of the <code>squareArray</code> doesn't move:
+  * only its content changes.
   */
 public class MainActivity extends AppCompatActivity {
 

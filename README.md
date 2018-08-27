@@ -176,3 +176,6 @@ comments
 * Warning 2: Android.util.Log.d could mix two logs if they have the same first
     param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
+## My implementation
+* See the comment of the class
+    ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
