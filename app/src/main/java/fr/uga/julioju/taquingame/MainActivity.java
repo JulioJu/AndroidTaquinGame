@@ -1,13 +1,11 @@
 package fr.uga.julioju.taquingame;
 
 import android.os.Bundle;
-import android.view.View;
-
 import android.support.constraint.Barrier;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -309,10 +307,15 @@ public class MainActivity extends AppCompatActivity {
             //      longer than Square.getView().getText() of the row above.
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
-            String squareText =
-                String.valueOf(this.unorderedList.get(squareArrayIndex));
-            this.squareArray.add(new Square
-                    (this, this.layout, squareArrayIndex, squareText));
+            int unorderedListIndex = this.unorderedList.get(squareArrayIndex);
+            String squareText = String.valueOf(unorderedListIndex);
+            Square square = new Square (this, this.layout, squareArrayIndex,
+                    unorderedListIndex, squareText);
+            this.squareArray.add(square);
+
+            // https://developer.android.com/guide/topics/ui/ui-events
+            square.setOnClickListener(new SquareOnClickListener());
+
         }
 
         // ===

@@ -20,14 +20,18 @@ class Square extends android.support.v7.widget.AppCompatTextView {
       */
     private final int squareArrayIndex;
 
+    private final int unorderedListIndex;
+
     // Actually create a TextView
     Square (AppCompatActivity activity,
             ConstraintLayout layout, int squareArrayIndex,
-            String androidText) {
+            int unorderedListIndex, String androidText) {
 
         super(activity);
 
         this.squareArrayIndex=squareArrayIndex;
+
+        this.unorderedListIndex = unorderedListIndex;
 
         // Create ID
         // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
@@ -79,6 +83,10 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
     int getSquareArrayIndex() {
         return this.squareArrayIndex;
+    }
+
+    public int getUnorderedListIndex() {
+        return unorderedListIndex;
     }
 
 }

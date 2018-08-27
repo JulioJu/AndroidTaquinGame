@@ -103,8 +103,9 @@ comments
     https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
 
 #### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
-* See logs to understand well how Barriers are build!
+* ***See Logcat*** to understand well how Barriers are build!
 * See also comments in this file!
+* ***See Logcat*** to obtain informations about a Square when we click on it.
 
 ### Genymotion and IntelliJ
 * On my computer, Genymotion is very faster and lighter (for the CPU) than
@@ -161,6 +162,8 @@ comments
     https://developer.android.com/reference/android/app/Activity, even if is
     not the same class. AppCompatActivity is added in version 25.1.0. Maybe
     **do not compile for version lower than 25.1.0**. TODO confirm that.
+
+* Input and Events: https://developer.android.com/guide/topics/ui/ui-events
 
 ## Square board prototype
 
