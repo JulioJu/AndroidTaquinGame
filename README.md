@@ -126,6 +126,11 @@ comments
     `Android Studio`. I've seen than thanks the version of Gradle generated.
     To generate a project with a template, go to `File -> -> New -> New Project`
 
+#### Editorconfig file
+* The code have line with `max_line_length = 80`.
+* As Jet Brains could show parameter name hint, this barrier could be crossed.
+    But it's a false positive.
+
 ### Git history
 * For a newbie, the three firsts commits are interesting.
 
