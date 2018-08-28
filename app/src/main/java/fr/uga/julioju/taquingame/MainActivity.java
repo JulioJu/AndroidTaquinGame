@@ -314,7 +314,8 @@ public class MainActivity extends AppCompatActivity {
             this.squareArray.add(square);
 
             // https://developer.android.com/guide/topics/ui/ui-events
-            square.setOnClickListener(new SquareOnClickListener());
+            square.setOnClickListener(new
+                    SquareOnClickListener(this.gridLength, this.squareArray));
 
         }
 
