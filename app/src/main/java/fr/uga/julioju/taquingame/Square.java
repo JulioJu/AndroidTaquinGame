@@ -1,10 +1,10 @@
 package fr.uga.julioju.taquingame;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.View;
+
+import android.support.constraint.ConstraintLayout;
 
 /**
   * A Square is simply a `android.view.View' (commonly named Widget).
@@ -13,25 +13,14 @@ import android.view.View;
   */
 class Square extends android.support.v7.widget.AppCompatTextView {
 
-    /**
-      * index of this Square in the board. In ./MainActivity.java,
-      *     there is an Array named <code>squareArray</code> that contain
-      *     all the Square of the board drawn.
-      */
-    private final int squareArrayIndex;
+    private int order;
 
-    private final int unorderedListIndex;
-
-    // Actually create a TextView
-    Square (AppCompatActivity activity,
-            ConstraintLayout layout, int squareArrayIndex,
-            int unorderedListIndex, String androidText) {
+    /** Create a TextView with an id, text and Constraint*/
+    Square (Context activity, ConstraintLayout layout, int order) {
 
         super(activity);
 
-        this.squareArrayIndex=squareArrayIndex;
-
-        this.unorderedListIndex = unorderedListIndex;
+        this.order = order;
 
         // Create ID
         // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
@@ -58,7 +47,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         super.setLayoutParams(layoutParamsWrap);
 
         // Add text to view
-        super.setText(androidText);
+        super.setText(String.valueOf(this.order));
         // view.setTextSize(15);
 
         // Add View to layout
@@ -69,6 +58,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
     // Override default constructors otherwise there is a Warning:
     // https://stackoverflow.com/questions/17063090/custom-view-is-missing-constructor-used-by-tools-for-adapter
+    /** UnsupportedOperationException */
     public Square(Context context) {
         super(context);
         throw new UnsupportedOperationException();
@@ -76,17 +66,19 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
     // Override default constructors otherwise there is a Warning:
     // https://stackoverflow.com/questions/17063090/custom-view-is-missing-constructor-used-by-tools-for-adapter
+    /** UnsupportedOperationException */
     public Square(Context context, AttributeSet attrs) {
         super(context, attrs);
         throw new UnsupportedOperationException();
     }
 
-    int getSquareArrayIndex() {
-        return this.squareArrayIndex;
+    int getOrder() {
+        return order;
     }
 
-    public int getUnorderedListIndex() {
-        return unorderedListIndex;
+    void setOrder(int order) {
+        super.setText(String.valueOf(order));
+        this.order = order;
     }
 
 }

@@ -12,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
-  * The goal of the game is than <code>ArrayList<\Integer> unorderedList</code>
-  * become ordered.
-  * Each <code>Square</code> of the <code>squareArray</code> doesn't move:
-  * only its content changes.
+  * The goal of the game is than for each
+  * <code>index</code> ((Square) squareArray.get(index)).getOrder() == 0
+  * Each <code>Square</code> of the <code>squareArray</code> doesn't change:
+  * only <code((Square) squareArray.get(index)).order</code> change
   */
 public class MainActivity extends AppCompatActivity {
 
@@ -31,16 +31,38 @@ public class MainActivity extends AppCompatActivity {
     /** Square of the Grid */
     private ArrayList<Square> squareArray;
 
-    /** The goal of the game is to ordered unorderedList */
-    private ArrayList<Integer> unorderedList;
+    /**
+      * Create an Array, with values that are aun unordered sequence of
+      * number between 0 and (gridNumberOfSquares - 1).
+      */
+    private int[] createUnorderedSequence() {
+        // builderList is a list like {0: 0, 1: 1, 2: 2, etc.}
+        ArrayList<Integer> builderList = new ArrayList<>(gridNumberOfSquares);
+        for (int index = 0 ; index <= gridNumberOfSquares ; index++) {
+            builderList.add(index);
+        }
+        int unorderedArray[] = new int[this.gridNumberOfSquares];
+        int unorderedArrayIndex = 0;
+        for (int max = this.gridNumberOfSquares - 1 ; max > 0 ; max--) {
+            // Generate a random number between [0; max]
+            // https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
+            int randomNum = ThreadLocalRandom.current().nextInt(0, max);
+            unorderedArray[unorderedArrayIndex] = builderList.get(randomNum);
+            builderList.remove(randomNum);
+            unorderedArrayIndex++;
+        }
+        unorderedArray[this.gridNumberOfSquares - 1] = builderList.get(0);
+        return unorderedArray;
+    }
 
     /** Create barrier.
       * @param barrierDirection in XML it's for instance
-      *     `app:barrierDirection="bottom"`. Value could be
-      *     either `Barrier.BOTTOM' (for horizontal Barrier)
-      *     or `Barrier.RIGHT' (for vertical Barrier)
+      *     <code>app:barrierDirection="bottom"</code>. Value could be
+      *     either <code>Barrier.BOTTOM</code> (for horizontal Barrier)
+      *     or <code>Barrier.RIGHT</code> (for vertical Barrier)
       * @param referenceIds array of referenced view ids that constraint
-      *     the barrier. In XML, it's: `app:constraint_referenced_ids="L1, R1"'
+      *     the barrier. In XML, it's:
+      *         <code>app:constraint_referenced_ids="L1, R1"</code>
       * @return reference id of the Barrier created. The barrier created is
       * e.g.
       * <pre>
@@ -119,19 +141,25 @@ public class MainActivity extends AppCompatActivity {
             int barriersArrayIndex, StringBuilder constraintSetConnect) {
         Barrier barrier =  super.findViewById(toBarrierId);
         int[] barrierReferencedIdsArray = barrier.getReferencedIds();
-        StringBuilder barrierReferencedIds_stringArrayIndex =
+        StringBuilder barrierReferencedIds_stringArrayIndexS =
+            new StringBuilder(barrierReferencedIdsArray.length * 2);
+        StringBuilder barrierReferencedIds_squareOrder =
             new StringBuilder(barrierReferencedIdsArray.length * 2);
         for (int aBarrierReferencedIdsArray : barrierReferencedIdsArray) {
-            barrierReferencedIds_stringArrayIndex
-                    .append(((Square)
-                                super.findViewById(aBarrierReferencedIdsArray))
-                            .getSquareArrayIndex())
+            Square square = super.findViewById(aBarrierReferencedIdsArray);
+            barrierReferencedIds_stringArrayIndexS
+                    .append(this.squareArray.indexOf(square))
+                    .append(", ");
+           barrierReferencedIds_squareOrder
+                    .append(square.getOrder())
                     .append(", ");
         }
         android.util.Log.i(barrierDirection + " Barrier " + barriersArrayIndex,
                 barrierDirection + "Barrier n°" + barriersArrayIndex +
-                ". Barrier.getReferencedIds() are Square with index in " +
-                " this.squareArray: " + barrierReferencedIds_stringArrayIndex +
+                ". \nbarrier.getReferencedIds() have Square with index in " +
+                " this.squareArray: " + barrierReferencedIds_stringArrayIndexS +
+                ". \nbarrier.getReferencedIds() have Square with order: " +
+                barrierReferencedIds_squareOrder +
                 "\nThis Barrier have ConstraintSet.connect() to Square" +
                 " with index in this.squareArray: " +
                 String.valueOf(constraintSetConnect));
@@ -298,6 +326,8 @@ public class MainActivity extends AppCompatActivity {
         // ============================
         // ============================
 
+        int[] unorderedSequence = this.createUnorderedSequence();
+
         // Loop that populate array above
         for (int squareArrayIndex = 0 ;
                 squareArrayIndex  < this.gridNumberOfSquares ;
@@ -307,15 +337,12 @@ public class MainActivity extends AppCompatActivity {
             //      longer than Square.getView().getText() of the row above.
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
-            int unorderedListIndex = this.unorderedList.get(squareArrayIndex);
-            String squareText = String.valueOf(unorderedListIndex);
-            Square square = new Square (this, this.layout, squareArrayIndex,
-                    unorderedListIndex, squareText);
+            Square square = new Square (this, this.layout,
+                    unorderedSequence[squareArrayIndex]);
             this.squareArray.add(square);
 
             // https://developer.android.com/guide/topics/ui/ui-events
-            square.setOnClickListener(new
-                    SquareOnClickListener(this.gridLength, this.squareArray));
+            square.setOnClickListener(new SquareOnClickListener(this));
 
         }
 
@@ -392,25 +419,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /** Create a list unordered */
-    private ArrayList<Integer> populateUnorderedList() {
-        // builderList is a list like {0: 0, 1: 1, 2: 2, etc.}
-        ArrayList<Integer> builderList = new ArrayList<>(gridNumberOfSquares);
-        for (int index = 0 ; index <= gridNumberOfSquares ; index++) {
-            builderList.add(index);
-        }
-        ArrayList<Integer> unorderedList = new ArrayList<>(this.gridNumberOfSquares);
-        for (int max = this.gridNumberOfSquares - 1 ; max > 0 ; max--) {
-            // Generate a random number between [0; max]
-            // https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
-            int randomNum = ThreadLocalRandom.current().nextInt(0, max);
-            unorderedList.add(builderList.get(randomNum));
-            builderList.remove(randomNum);
-        }
-        unorderedList.add(builderList.get(0));
-        return unorderedList;
-    }
-
     /** Should be seen as the Constructor of this class */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -426,11 +434,25 @@ public class MainActivity extends AppCompatActivity {
 
         this.squareArray = new ArrayList<>(this.gridNumberOfSquares);
 
-        this.unorderedList = this.populateUnorderedList();
-
         // Complete example:
         // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
         this.createGrid();
+    }
+
+    // Getters
+    // ==========
+    // ==========
+
+    int getGridNumberOfSquares() {
+        return gridNumberOfSquares;
+    }
+
+    int getGridLength() {
+        return gridLength;
+    }
+
+    ArrayList<Square> getSquareArray() {
+        return squareArray;
     }
 
 }
