@@ -184,6 +184,10 @@ comments
 * Warning 2: Android.util.Log.d could mix two logs if they have the same first
     param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
+## OnClickListener
+* Be careful, keep in mind that an instance of `OnClickListener` could be
+    have a delay before to be garbaged.
+
 ## My implementation
 * See the comment of the class
     ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
