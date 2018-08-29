@@ -13,9 +13,9 @@ import java.util.concurrent.ThreadLocalRandom;
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
   * The goal of the game is than for each
-  * <code>index</code> ((Square) squareArray.get(index)).getOrder() == 0
-  * Each <code>Square</code> of the <code>squareArray</code> doesn't change:
-  * only <code((Square) squareArray.get(index)).order</code> change
+  * <code>index</code> ((Square) grid.get(index)).getOrderOfTheContent() == 0
+  * Each <code>Square</code> of the <code>grid</code> doesn't change:
+  * only <code((Square) grid.get(index)).orderOfTheContent</code> change
   */
 public class MainActivity extends AppCompatActivity {
 
@@ -25,25 +25,23 @@ public class MainActivity extends AppCompatActivity {
     /** Length of the grid. SHOULD NOT BE < 2 */
     private int gridLength;
 
-    /** Number of square of the grid (this.gridLength * this.gridLength) */
-    private int gridNumberOfSquares;
-
     /** Square of the Grid */
-    private ArrayList<Square> squareArray;
+    private Square[][] grid;
 
     /**
       * Create an Array, with values that are aun unordered sequence of
       * number between 0 and (gridNumberOfSquares - 1).
       */
     private int[] createUnorderedSequence() {
+        int gridNumberOfSquares = this.gridLength * this.gridLength;
         // builderList is a list like {0: 0, 1: 1, 2: 2, etc.}
         ArrayList<Integer> builderList = new ArrayList<>(gridNumberOfSquares);
         for (int index = 0 ; index <= gridNumberOfSquares ; index++) {
             builderList.add(index);
         }
-        int unorderedArray[] = new int[this.gridNumberOfSquares];
+        int unorderedArray[] = new int[gridNumberOfSquares];
         int unorderedArrayIndex = 0;
-        for (int max = this.gridNumberOfSquares - 1 ; max > 0 ; max--) {
+        for (int max = gridNumberOfSquares - 1 ; max > 0 ; max--) {
             // Generate a random number between [0; max]
             // https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
             int randomNum = ThreadLocalRandom.current().nextInt(0, max);
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             builderList.remove(randomNum);
             unorderedArrayIndex++;
         }
-        unorderedArray[this.gridNumberOfSquares - 1] = builderList.get(0);
+        unorderedArray[gridNumberOfSquares - 1] = builderList.get(0);
         return unorderedArray;
     }
 
@@ -109,20 +107,28 @@ public class MainActivity extends AppCompatActivity {
                 barriersArrayIndex++) {
             // Number of the first square that start the row / column
             int[] barrierReferencedIds = new int[this.gridLength];
-            int squareArrayIndex;
-            squareArrayIndex = barrierDirection == Barrier.BOTTOM
-                ? barriersArrayIndex * this.gridLength
-                : barriersArrayIndex;
+            int row, column;
+            if(barrierDirection == Barrier.BOTTOM) {
+                row = 0;
+                column = barriersArrayIndex;
+            }
+            // else barrierDirection == Barrier.RIGHT
+            else {
+                row =  barriersArrayIndex;
+                column = 0;
+            }
             // Loop that populate array above
             for (int barrierReferencedIdsIndex = 0 ;
                     barrierReferencedIdsIndex < barrierReferencedIds.length ;
                     barrierReferencedIdsIndex++) {
                 barrierReferencedIds[barrierReferencedIdsIndex] =
-                    this.squareArray.get(squareArrayIndex).getId();
-                squareArrayIndex = barrierDirection == Barrier.BOTTOM
-                    ?   squareArrayIndex + 1
-                    // either barrierDirection == Barrier.RIGHT
-                    : squareArrayIndex + this.gridLength;
+                    this.grid[column][row].getId();
+                if(barrierDirection == Barrier.BOTTOM) {
+                    row++;
+                }
+                else {
+                    column++;
+                }
             }
             barriersArray[barriersArrayIndex] =
                 this.newBarrier(barrierDirection, barrierReferencedIds);
@@ -133,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
     /** Print Barrier information.
       * 1) Print the index of the barrier in its array
       * 2) Print for each item of Barrier.getReferencedIds() its corresponding
-      *     index item in this.squareArray.
-      * 3) Print the index in this.squareArray of each Square that have a
+      *     index item in this.grid.
+      * 3) Print the index in this.grid of each Square that have a
       *     ConstraintSet.connect with the Barrier.
       */
     private void printBarrierInfo(String barrierDirection, int toBarrierId,
@@ -143,25 +149,31 @@ public class MainActivity extends AppCompatActivity {
         int[] barrierReferencedIdsArray = barrier.getReferencedIds();
         StringBuilder barrierReferencedIds_stringArrayIndexS =
             new StringBuilder(barrierReferencedIdsArray.length * 2);
-        StringBuilder barrierReferencedIds_squareOrder =
+        StringBuilder barrierReferencedIdsArray_squareOrderOfTheContent =
             new StringBuilder(barrierReferencedIdsArray.length * 2);
         for (int aBarrierReferencedIdsArray : barrierReferencedIdsArray) {
             Square square = super.findViewById(aBarrierReferencedIdsArray);
             barrierReferencedIds_stringArrayIndexS
-                    .append(this.squareArray.indexOf(square))
-                    .append(", ");
-           barrierReferencedIds_squareOrder
-                    .append(square.getOrder())
+                .append("this.grid[")
+                .append(square.getColumn())
+                .append("]")
+                .append("[")
+                .append(square.getRow())
+                .append("]")
+                .append(", ");
+           barrierReferencedIdsArray_squareOrderOfTheContent
+                    .append(square.getOrderOfTheContent())
                     .append(", ");
         }
         android.util.Log.i(barrierDirection + " Barrier " + barriersArrayIndex,
                 barrierDirection + "Barrier n°" + barriersArrayIndex +
                 ". \nbarrier.getReferencedIds() have Square with index in " +
-                " this.squareArray: " + barrierReferencedIds_stringArrayIndexS +
-                ". \nbarrier.getReferencedIds() have Square with order: " +
-                barrierReferencedIds_squareOrder +
+                " this.grid: " + barrierReferencedIds_stringArrayIndexS +
+                ". \nbarrier.getReferencedIds() have Square with order of the" +
+                " content: " +
+                barrierReferencedIdsArray_squareOrderOfTheContent +
                 "\nThis Barrier have ConstraintSet.connect() to Square" +
-                " with index in this.squareArray: " +
+                " with index in this.grid: " +
                 String.valueOf(constraintSetConnect));
     }
 
@@ -178,17 +190,12 @@ public class MainActivity extends AppCompatActivity {
         int toBarrierHorizontalId ;
         int toConstraintDirectionHorizontal ;
         // ConstraintSet.connect between:
-        // 1) this.squareArray.get(0).getId(),
-        //   then this.squareArray.get(0+1).getId(),
-        //   then this.squareArray.get(0+1+1),
-        //   then etc.
+        // 1) grid[0][row].getId()
         // 2) AND vertical ConstraintSet.PARENT_ID
         toBarrierHorizontalId = ConstraintSet.PARENT_ID;
         toConstraintDirectionHorizontal = ConstraintSet.TOP;
-        for (int squareArrayIndex = 0 ;
-                squareArrayIndex <= this.gridLength - 1  ;
-                squareArrayIndex++) {
-            set.connect(this.squareArray.get(squareArrayIndex).getId(),
+        for (int row = 0 ; row < this.gridLength ; row++) {
+            set.connect(this.grid[0][row].getId(),
                     constraintDirectionHorizontal,
                     toBarrierHorizontalId, toConstraintDirectionHorizontal,
                     0);
@@ -203,25 +210,26 @@ public class MainActivity extends AppCompatActivity {
                 barriersArrayIndex++) {
             toBarrierHorizontalId = horizontalBarriersArray[barriersArrayIndex];
             // ConstraintSet.connect between
-            // 1) this.squareArray.get(this.gridLength).getId(),
-            //      then this.squareArray.get(this.gridLength + 1).getId(),
-            //      then this.squareArray.get(this.gridLength + 1 + 1).getId(),
-            //      then etc.
+            // 1) this.grid[horizontalBarriersArray + 1][0].getId(),
+            //      then this.grid[horizontalBarriersArray + 1][1].getId(),
+            //      then this.grid[horizontalBarriersArray + 1][2].getId()
             // 2) AND horizontalBarriersArray[barriersArrayIndex]
             StringBuilder constraintSetConnect =
                 new StringBuilder(this.gridLength);
-            for (int squareArrayIndex =
-                        (barriersArrayIndex +1) * this.gridLength ;
-                    squareArrayIndex <=
-                        (barriersArrayIndex + 1) * this.gridLength
-                        + (this.gridLength - 1) ;
-                    squareArrayIndex++
-                ) {
-                set.connect(this.squareArray.get(squareArrayIndex).getId(),
+            for (int row = 0 ; row < this.gridLength ; row++) {
+                set.connect(this.grid[barriersArrayIndex + 1][row].getId(),
                         constraintDirectionHorizontal,
                         toBarrierHorizontalId, toConstraintDirectionHorizontal,
                         0);
-                constraintSetConnect.append(squareArrayIndex).append(", ");
+                constraintSetConnect
+                    .append("this.grid[")
+                    .append(barriersArrayIndex)
+                    .append(1)
+                    .append("][")
+                    .append("[")
+                    .append(row)
+                    .append("]")
+                    .append(", ");
             }
             printBarrierInfo("Horizontal", toBarrierHorizontalId,
                     barriersArrayIndex, constraintSetConnect);
@@ -237,22 +245,19 @@ public class MainActivity extends AppCompatActivity {
       */
     private void constraintSetBetweenVerticalBarriersAndTheirSquare(
             ConstraintSet set, int[] verticalBarrierArray) {
+
         int constraintDirectionVertical = ConstraintSet.LEFT;
         int toBarrierVerticalId ;
         int toConstraintDirectionVertical ;
 
+
         // ConstraintSet.connect between:
-        // 1) this.squareArray.get(0).getId(),
-        //   then this.squareArray.get(this.gridLength).getId(),
-        //   then this.squareArray.get(this.gridLength + this.gridLength),
-        //   then etc.
+        // 1) grid[column][0].getId()
         // 2) AND vertical ConstraintSet.PARENT_ID
         toBarrierVerticalId = ConstraintSet.PARENT_ID;
         toConstraintDirectionVertical = ConstraintSet.LEFT;
-        for (int squareArrayIndex = 0 ;
-                squareArrayIndex <= this.gridNumberOfSquares - this.gridLength ;
-                squareArrayIndex = squareArrayIndex + this.gridLength) {
-            set.connect(this.squareArray.get(squareArrayIndex).getId(),
+        for (int column = 0 ; column < this.gridLength ; column++) {
+            set.connect(this.grid[column][0].getId(),
                     constraintDirectionVertical,
                     toBarrierVerticalId, toConstraintDirectionVertical,
                     0);
@@ -267,25 +272,27 @@ public class MainActivity extends AppCompatActivity {
                 barriersArrayIndex++) {
             toBarrierVerticalId = verticalBarrierArray[barriersArrayIndex];
             // ConstraintSet.connect between
-            // 1) this.squareArray.get(barriersArrayIndex + 1).getId(),
-            //      then this.squareArray.get(barriersArrayIndex + 1
-            //          + this.gridLength).getId(),
-            //      then this.squareArray.get(barriersArrayIndex + 1
-            //          + this.gridLength + this.gridLength).getId(),
-            //      then etc.
+            // 1) this.grid[0][verticalBarrierArray + 1].getId(),
+            //      then this.grid[1][verticalBarrierArray + 1].getId(),
+            //      then this.grid[2][verticalBarrierArray + 1].getId()
             // 2) AND verticalBarrierArray[barriersArrayIndex]
             StringBuilder constraintSetConnect =
                 new StringBuilder(this.gridLength);
-            for (int squareArrayIndex = barriersArrayIndex + 1 ;
-                    squareArrayIndex <= this.gridNumberOfSquares
-                            - (this.gridLength - (barriersArrayIndex + 1 )) ;
-                    squareArrayIndex = squareArrayIndex + this.gridLength
-                ) {
-                set.connect(this.squareArray.get(squareArrayIndex).getId(),
+            for (int column = 0 ; column < this.gridLength ; column++) {
+                set.connect(
+                        this.grid[column][barriersArrayIndex + 1].getId(),
                         constraintDirectionVertical,
                         toBarrierVerticalId, toConstraintDirectionVertical,
                         0);
-                constraintSetConnect .append(squareArrayIndex) .append(", ");
+                constraintSetConnect
+                    .append("this.grid[")
+                    .append(column)
+                    .append("][")
+                    .append("[")
+                    .append(barriersArrayIndex)
+                    .append(1)
+                    .append("]")
+                    .append(", ");
             }
             printBarrierInfo("Vertical", toBarrierVerticalId,
                     barriersArrayIndex, constraintSetConnect);
@@ -326,24 +333,24 @@ public class MainActivity extends AppCompatActivity {
         // ============================
         // ============================
 
-        int[] unorderedSequence = this.createUnorderedSequence();
+        int squareNumberIndex = 0;
 
+        int[] unorderedSequence = this.createUnorderedSequence();
         // Loop that populate array above
-        for (int squareArrayIndex = 0 ;
-                squareArrayIndex  < this.gridNumberOfSquares ;
-                squareArrayIndex++) {
+        for (int column = 0 ; column  < this.gridLength ; column++) {
+            for (int row = 0 ; row < this.gridLength ; row++) {
             // squareText is the String text displayed in the Square.
-            // Square.getView().getText() of a row could be
-            //      longer than Square.getView().getText() of the row above.
+            // Square.getText() of a row could be
+            //      longer than Square.getText() of the row above.
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
             Square square = new Square (this, this.layout,
-                    unorderedSequence[squareArrayIndex]);
-            this.squareArray.add(square);
-
+                    unorderedSequence[squareNumberIndex], row, column);
+            this.grid[column][row] = square;
             // https://developer.android.com/guide/topics/ui/ui-events
             square.setOnClickListener(new SquareOnClickListener(this));
-
+            squareNumberIndex++;
+            }
         }
 
         // ===
@@ -360,14 +367,11 @@ public class MainActivity extends AppCompatActivity {
         // ============================
         // Array that contains all horizontal `Barrier'
         // (Barrier super.findViewById(horizontalBarriersArray[0]))
-        //     .getReferencedIds() == new int[] {this.squareArray.get(0),
-        //         this.squareArray.get(1), this.squareArray.get(2),
-        //              this.squareArray.get(3)})
+        //     .getReferencedIds() == new int[][] {this.grid[0][0],
+        //         this.grid[0][1], this.grid[0][2], etc.}
         // (Barrier super.findViewById(horizontalBarriersArray[1]))
-        //     .getReferencedIds() == new int[] {this.squareArray.get(1),
-        //         this.squareArray.get(2), this.squareArray.get(2),
-        //              this.squareArray.get(3)})
-        // etc.
+        //     .getReferencedIds() == new int[][] {this.grid[1][0],
+        //         this.grid[1][1], this.grid[1][2], etc.}
         int[] horizontalBarriersArray = this.createBarrier(Barrier.BOTTOM);
 
         // ===
@@ -384,13 +388,11 @@ public class MainActivity extends AppCompatActivity {
         // ==============================
         // Array that contains all vertical `Barrier'
         // (Barrier super.findViewById(verticalBarrierArray[0]))
-        //     .getReferencedIds() == new int[] {this.squareArray.get(0),
-        //         this.squareArray.get(4), this.squareArray.get(8),
-        //              this.squareArray.get(12)})
-        // (Barrier super.findViewById(verticalBarrierArray[2]))
-        //     .getReferencedIds() == new int[] {this.squareArray.get(1),
-        //         this.squareArray.get(5), this.squareArray.get(2),
-        //              this.squareArray.get(13)})
+        //     .getReferencedIds() == new int[][] {this.grid[0][0],
+        //         this.grid[1][0], this.grid[2][0], etc.}
+        // (Barrier super.findViewById(verticalBarrierArray[1]))
+        //     .getReferencedIds() == new int[][] {this.grid[0][1],
+        //         this.grid[1][1], this.grid[2][1], etc.}
         // etc.
         //
         int[] verticalBarrierArray = this.createBarrier(Barrier.RIGHT);
@@ -430,9 +432,7 @@ public class MainActivity extends AppCompatActivity {
 
         this.gridLength = 10;
 
-        this.gridNumberOfSquares = this.gridLength * this.gridLength;
-
-        this.squareArray = new ArrayList<>(this.gridNumberOfSquares);
+        this.grid = new Square[gridLength][gridLength];
 
         // Complete example:
         // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
@@ -443,16 +443,12 @@ public class MainActivity extends AppCompatActivity {
     // ==========
     // ==========
 
-    int getGridNumberOfSquares() {
-        return gridNumberOfSquares;
-    }
-
     int getGridLength() {
-        return gridLength;
+        return this.gridLength;
     }
 
-    ArrayList<Square> getSquareArray() {
-        return squareArray;
+    Square[][] getGrid() {
+        return this.grid;
     }
 
 }

@@ -7,8 +7,8 @@ Projet – Application Android
 --> Manipuler les widgets graphiques et la gestion d'événement sur android.
 
 ### Le Principe de TP :
-1. Vous devez réaliser dans ce TP une prémisse de jeu de taquin. Pour cela, il vous faut comprendre le tutoriel sur le gestionnaire de placement `GridView` d'Android :
-http://developer.android.com/guide/topics/ui/layout/gridview.html
+1. ~~Vous devez réaliser dans ce TP une prémisse de jeu de taquin. Pour cela, il vous faut comprendre le tutoriel sur le gestionnaire de placement `GridView` d'Android :
+http://developer.android.com/guide/topics/ui/layout/gridview.html~~. Not done like it
 
 2. Contrairement au tutoriel précédent, vous avez une seule image à la place d'un ensemble de fichiers images dans `res/drawable`. Il va donc falloir découper cette grande image en une grille 3x3 petites images.
 Pour faire cela, vous avez à votre disposition les méthodes suivantes :

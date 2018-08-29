@@ -13,14 +13,26 @@ import android.support.constraint.ConstraintLayout;
   */
 class Square extends android.support.v7.widget.AppCompatTextView {
 
-    private int order;
+    /** Order of the content displayed in the Square */
+    private int orderOfTheContent;
+
+    /** Row index in the grid */
+    private final int row;
+
+    /** Column index in the grid */
+    private final int column;
 
     /** Create a TextView with an id, text and Constraint*/
-    Square (Context activity, ConstraintLayout layout, int order) {
+    Square (Context activity, ConstraintLayout layout, int orderOfTheContent,
+            int row, int column) {
 
         super(activity);
 
-        this.order = order;
+        this.orderOfTheContent = orderOfTheContent;
+
+        this.row = row;
+
+        this.column = column;
 
         // Create ID
         // https://stackoverflow.com/questions/1714297/android-view-setidint-id-programmatically-how-to-avoid-id-conflicts
@@ -47,7 +59,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         super.setLayoutParams(layoutParamsWrap);
 
         // Add text to view
-        super.setText(String.valueOf(this.order));
+        super.setText(String.valueOf(this.orderOfTheContent));
         // view.setTextSize(15);
 
         // Add View to layout
@@ -72,13 +84,21 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         throw new UnsupportedOperationException();
     }
 
-    int getOrder() {
-        return order;
+    int getRow() {
+        return row;
     }
 
-    void setOrder(int order) {
-        super.setText(String.valueOf(order));
-        this.order = order;
+    int getColumn() {
+        return column;
+    }
+
+    int getOrderOfTheContent() {
+        return orderOfTheContent;
+    }
+
+    void setOrderOfTheContent(int orderOfTheContent) {
+        this.orderOfTheContent = orderOfTheContent;
+        this.setText(String.valueOf(this.orderOfTheContent));
     }
 
 }
