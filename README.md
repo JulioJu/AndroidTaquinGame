@@ -116,6 +116,12 @@ comments
     https://stackoverflow.com/a/51476111**
     Read also the comments of this comment !
 * When import, we must build to see some errors disappear.
+* I've experienced errors with `Google AVD` (Android Emulator)
+    https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
+    Not read all the comments. I've only experienced to disable `Instant run`
+    (no try others complex solutions).
+    But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
+    kicked off `Google Emulator`.
 
 #### IntelliJ vs Android Studio
 * On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`
@@ -170,6 +176,38 @@ comments
 
 * Input and Events: https://developer.android.com/guide/topics/ui/ui-events
 
+* To understand START, END, BOTTOM, LEFT, RIGHT, START constants, read
+    https://developer.android.com/reference/android/support/constraint/ConstraintLayout.LayoutParams
+
+* To understand WRAP_CONTENT and MATCH_PARENT constants, read
+    https://developer.android.com/reference/android/support/constraint/ConstraintLayout.LayoutParams
+
+* To understand constructor ConstraintLayout.LayoutParams(int, int), read
+    source code.
+
+* Immersive mode, read:
+    * https://developer.android.com/training/system-ui/immersive
+    * https://github.com/googlesamples/android-ImmersiveMode/blob/master/Application/src/main/java/com/example/android/immersivemode/ImmersiveModeFragment.java
+    * ***Do not compile for version < 18*** Otherwise, add `if` to remove not
+        compatibles flags
+
+* No title, no action bar
+    https://stackoverflow.com/questions/26878386/androidwindownotitle-will-not-hide-actionbar-with-appcompat-v7-21-0-0
+
+* Background.
+    * To have **very cool backgrounds** there is : http://angrytools.com/gradient/
+    (Founded at https://stackoverflow.com/a/13930148).
+    * This resource is also interesting
+        https://stackoverflow.com/questions/3496269/how-do-i-put-a-border-around-an-android-textview
+
+### Examples downloaded at Google Samples
+* An easy solution to test examples at https://github.com/googlesamples/
+    without compatibilities errors (build-tools, platforms, gradle, etc.)
+    is simply :
+    1. create an empty project in the IDE.
+    2. `rm -R project_name/app/src/main/*`
+    3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
+
 ## Square board prototype
 
 * File that draw a square board in a console. For prototypage.
@@ -191,3 +229,14 @@ comments
 ## My implementation
 * See the comment of the class
     ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+
+## TODO
+* Keep `Square[][] grid` when the Activity is stopped (but resize Squares
+    when it's simply the Orientation (vertical / horizontal) that changes)
+* Add levels. Level beginner, intermediate, master. Or let the gamer
+    choose the length of the grid.
+* Add winner message.
+
+## Bug known
+* In Genymotion, there is a blank line at the right of the screen. Not
+    in AVD (Google Emulator).

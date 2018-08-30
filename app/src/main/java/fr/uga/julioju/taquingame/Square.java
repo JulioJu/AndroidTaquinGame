@@ -2,6 +2,7 @@ package fr.uga.julioju.taquingame;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 
 import android.support.constraint.ConstraintLayout;
@@ -24,7 +25,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
     /** Create a TextView with an id, text and Constraint*/
     Square (Context activity, ConstraintLayout layout, int orderOfTheContent,
-            int row, int column) {
+            int row, int column, int squareWidth, int squareHeight) {
 
         super(activity);
 
@@ -45,18 +46,25 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         // android:layout_width
         // https://developer.android.com/reference/android/view/ViewGroup.LayoutParams
         ConstraintLayout.LayoutParams layoutParamsWrap =
-            new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            // The source code says:
+            // « @param width the width [..], or a fixed size in pixels
+            // @param height the height[..], or a fixed size in pixels »
+            new ConstraintLayout.LayoutParams(squareWidth, squareHeight);
 
         // ViewGroup.MarginLayoutParams
         // e.g. of XML attributes:
         // android:layout_margin
         // https://developer.android.com/reference/android/view/ViewGroup.MarginLayoutParams
-        layoutParamsWrap.setMargins(50, 0, 50, 0);
+        layoutParamsWrap.setMargins(0, 0, 0, 0);
 
         // Set dimensions to view
         super.setLayoutParams(layoutParamsWrap);
+
+        // Text centered horizontally and vertically
+        super.setGravity(Gravity.CENTER);
+
+        // See README.md
+        super.setBackground(activity.getDrawable(R.drawable.back));
 
         // Add text to view
         super.setText(String.valueOf(this.orderOfTheContent));

@@ -1,14 +1,16 @@
 package fr.uga.julioju.taquingame;
 
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.constraint.Barrier;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
+import android.widget.Toast;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -335,6 +337,18 @@ public class MainActivity extends AppCompatActivity {
 
         int squareNumberIndex = 0;
 
+        // See :
+        // https://developer.android.com/reference/android/view/WindowManager.html#getDefaultDisplay()
+        // https://developer.android.com/reference/android/view/Display.html#getSize(android.graphics.Point)
+        Point point = new Point();
+        this.getWindowManager()
+            .getDefaultDisplay()
+            .getSize(point);
+        int squareWidth = point.x / this.gridLength;
+        int squareHeight = point.y / this.gridLength;
+        Toast.makeText(this, point.toString(), Toast.LENGTH_SHORT)
+            .show();
+
         int[] unorderedSequence = this.createUnorderedSequence();
         // Loop that populate array above
         for (int column = 0 ; column  < this.gridLength ; column++) {
@@ -345,7 +359,8 @@ public class MainActivity extends AppCompatActivity {
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
             Square square = new Square (this, this.layout,
-                    unorderedSequence[squareNumberIndex], row, column);
+                    unorderedSequence[squareNumberIndex], row, column,
+                    squareWidth, squareHeight);
             this.grid[column][row] = square;
             // https://developer.android.com/guide/topics/ui/ui-events
             square.setOnClickListener(new SquareOnClickListener(this));
@@ -421,10 +436,49 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+      * Goto Immersive mode
+      * Read https://developer.android.com/training/system-ui/immersive
+      * Inspired from:
+      *     https://github.com/googlesamples/android-ImmersiveMode/blob/master/Application/src/main/java/com/example/android/immersivemode/ImmersiveModeFragment.java
+      */
+    private void gotoImmersiveMode () {
+        // The UI options currently enabled are represented by a bitfield.
+        // getSystemUiVisibility() gives us that bitfield.
+        int newUiOptions = this.getWindow().getDecorView()
+            .getSystemUiVisibility();
+        // Navigation bar hiding:  Backwards compatible to ICS.
+        // if (Build.VERSION.SDK_INT >= 14) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        // }
+
+        // Status bar hiding: Backwards compatible to Jellybean
+        // if (Build.VERSION.SDK_INT >= 16) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        // }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments
+        // the behavior of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the
+        // purposes of this sample all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is
+        // referred to as "sticky".  Sticky immersive mode differs in that it
+        // makes the navigation and status bars semi-transparent, and the UI
+        // flag does not get cleared when the user interacts with the screen.
+        // if (Build.VERSION.SDK_INT >= 18) {
+            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        // }
+
+        this.getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
+
+    }
+
+
     /** Should be seen as the Constructor of this class */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.gotoImmersiveMode();
         super.setContentView(R.layout.activity_main);
 
         // Retrieve layout
@@ -433,6 +487,7 @@ public class MainActivity extends AppCompatActivity {
         this.gridLength = 10;
 
         this.grid = new Square[gridLength][gridLength];
+
 
         // Complete example:
         // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
