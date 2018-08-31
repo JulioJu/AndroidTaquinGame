@@ -144,11 +144,15 @@ comments
     your layout with ConstraintLayout.* » (read
     https://developer.android.com/guide/topics/ui/layout/gridview)
 
-* Thanks `android.support.constraint.Barrier` appeared since
+* ~~Thanks `android.support.constraint.Barrier` appeared since
         `Constraint Layout 1.1.0 beta 1` (see [this release note](https://androidstudio.googleblog.com/2017/05/constraintlayout-110-beta-1-release.html)), we could easy draw a Grid.
         `Constraint Layout 1.1.0` is available since Thursday, April 12, 2018 (see
         [this release not](https://androidstudio.googleblog.com/2018/04/constraintlayout-110.html))
-    **Ref:**  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
+        **Ref:**  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout~~
+    * Implemented without `Barrier`!! Not useful. Only ConstraintSet between
+        Squares, as Square have fix width and high ! Vertical `Barrier` are
+        interesting only if TextWidth have not fix width !
+        The example found in Stackoverflow was very bad.
 
 
 * Official guide than explain what is a Layout (very interesting)
@@ -197,7 +201,7 @@ comments
 
 * Background.
     * To have **very cool backgrounds** there is : http://angrytools.com/gradient/
-    (Founded at https://stackoverflow.com/a/13930148).
+    (Found at https://stackoverflow.com/a/13930148).
     * This resource is also interesting
         https://stackoverflow.com/questions/3496269/how-do-i-put-a-border-around-an-android-textview
 
