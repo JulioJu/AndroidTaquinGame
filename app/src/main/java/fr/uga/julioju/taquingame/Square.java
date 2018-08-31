@@ -25,7 +25,8 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
     /** Create a TextView with an id, text and Constraint*/
     Square (Context activity, ConstraintLayout layout, int orderOfTheContent,
-            int row, int column, int squareWidth, int squareHeight) {
+            int row, int column, int squareWidth, int squareHeight,
+            int marginLeft, int marginTop) {
 
         super(activity);
 
@@ -55,7 +56,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         // e.g. of XML attributes:
         // android:layout_margin
         // https://developer.android.com/reference/android/view/ViewGroup.MarginLayoutParams
-        layoutParamsWrap.setMargins(0, 0, 0, 0);
+        layoutParamsWrap.setMargins(marginLeft, marginTop, 0, 0);
 
         // Set dimensions to view
         super.setLayoutParams(layoutParamsWrap);

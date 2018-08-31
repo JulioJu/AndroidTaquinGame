@@ -62,67 +62,6 @@ https://developer.android.com/guide/topics/manifest/category-element
 
 https://developer.android.com/reference/android/content/Intent
 
-### Constraint Layout
-* **./app/src/main/res/layout/activity_main.xml** could be understood thanks this
-comments
-
-* How I don't use `Grid Layout` as asked by the teacher, because:
-    « *Note: For better performance and tooling support, you should instead build
-    your layout with ConstraintLayout.* » (read
-    https://developer.android.com/guide/topics/ui/layout/gridview)
-
-* Thanks `android.support.constraint.Barrier` appeared since
-        `Constraint Layout 1.1.0 beta 1` (see [this release note](https://androidstudio.googleblog.com/2017/05/constraintlayout-110-beta-1-release.html)), we could easy draw a Grid.
-        `Constraint Layout 1.1.0` is available since Thursday, April 12, 2018 (see
-        [this release not](https://androidstudio.googleblog.com/2018/04/constraintlayout-110.html))
-    **Ref:**  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
-
-
-* Official guide than explain what is a Layout (very interesting)
-    https://developer.android.com/guide/topics/ui/declaring-layout
-
-* ConstraintLayout vs RelativeLayout
-    https://stackoverflow.com/a/46330178
-
-* Constraint Layout API Reference
-    https://developer.android.com/reference/android/support/constraint/ConstraintLayout
-
-* To understand attribute android:orientation
-    https://developer.android.com/reference/android/widget/LinearLayout
-
-* To understand android.support.constraint.ConstraintLayout
-    https://developer.android.com/reference/android/support/constraint/Barrier
-
-* In Constraint Layout: Barrier vs Guideline:
-    https://stackoverflow.com/questions/47114672/what&#45;is&#45;difference&#45;between&#45;barrier&#45;and&#45;guideline&#45;in&#45;constraint&#45;layout
-    « *The only difference between Barrier and Guideline is that Barrier's
-    position is flexible and always based on the size of multiple UI elements
-    contained within it and Guideline's position is always fixed.* »
-
-* **Source Code**:
-    https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
-
-#### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
-* ***See Logcat*** to understand well how Barriers are build!
-* See also comments in this file!
-* ***See Logcat*** to obtain informations about a Square when we click on it.
-
-### Genymotion and IntelliJ
-* On my computer, Genymotion is very faster and lighter (for the CPU) than
-    the Android Emulator. I've also heard than it's very more reliable.
-* It's free. And with a registration, you could have lot of different
-    Virtual Images.
-* **For Intellij Ultimate Edition, you must configure the debugger. See:
-    https://stackoverflow.com/a/51476111**
-    Read also the comments of this comment !
-* When import, we must build to see some errors disappear.
-* I've experienced errors with `Google AVD` (Android Emulator)
-    https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
-    Not read all the comments. I've only experienced to disable `Instant run`
-    (no try others complex solutions).
-    But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
-    kicked off `Google Emulator`.
-
 #### IntelliJ vs Android Studio
 * On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`
     to install SDK, but without successes. I've tried many times. It works
@@ -176,6 +115,70 @@ comments
 
 * Input and Events: https://developer.android.com/guide/topics/ui/ui-events
 
+### Genymotion and IntelliJ
+* On my computer, Genymotion is very faster and lighter (for the CPU) than
+    the Android Emulator. I've also heard than it's very more reliable.
+* It's free. And with a registration, you could have lot of different
+    Virtual Images.
+* **For Intellij Ultimate Edition, you must configure the debugger. See:
+    https://stackoverflow.com/a/51476111**
+    Read also the comments of this comment !
+* When import, we must build to see some errors disappear.
+* I've experienced errors with `Google AVD` (Android Emulator)
+    https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
+    Not read all the comments. I've only experienced to disable `Instant run`
+    (no try others complex solutions).
+    But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
+    kicked off `Google Emulator`.
+
+### Examples downloaded at Google Samples
+* An easy solution to test examples at https://github.com/googlesamples/
+    without compatibilities errors (build-tools, platforms, gradle, etc.)
+    is simply :
+    1. create an empty project in the IDE.
+    2. `rm -R project_name/app/src/main/*`
+    3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
+
+### Constraint Layout and Layout docs
+* **./app/src/main/res/layout/activity_main.xml** could be understood thanks this
+comments
+
+* How I don't use `Grid Layout` as asked by the teacher, because:
+    « *Note: For better performance and tooling support, you should instead build
+    your layout with ConstraintLayout.* » (read
+    https://developer.android.com/guide/topics/ui/layout/gridview)
+
+* Thanks `android.support.constraint.Barrier` appeared since
+        `Constraint Layout 1.1.0 beta 1` (see [this release note](https://androidstudio.googleblog.com/2017/05/constraintlayout-110-beta-1-release.html)), we could easy draw a Grid.
+        `Constraint Layout 1.1.0` is available since Thursday, April 12, 2018 (see
+        [this release not](https://androidstudio.googleblog.com/2018/04/constraintlayout-110.html))
+    **Ref:**  https://stackoverflow.com/questions/42846261/trying&#45;to&#45;replicate&#45;gridlayout&#45;column&#45;alignment&#45;with&#45;constraintlayout
+
+
+* Official guide than explain what is a Layout (very interesting)
+    https://developer.android.com/guide/topics/ui/declaring-layout
+
+* ConstraintLayout vs RelativeLayout
+    https://stackoverflow.com/a/46330178
+
+* Constraint Layout API Reference
+    https://developer.android.com/reference/android/support/constraint/ConstraintLayout
+
+* To understand attribute android:orientation
+    https://developer.android.com/reference/android/widget/LinearLayout
+
+* To understand android.support.constraint.ConstraintLayout
+    https://developer.android.com/reference/android/support/constraint/Barrier
+
+* In Constraint Layout: Barrier vs Guideline:
+    https://stackoverflow.com/questions/47114672/what&#45;is&#45;difference&#45;between&#45;barrier&#45;and&#45;guideline&#45;in&#45;constraint&#45;layout
+    « *The only difference between Barrier and Guideline is that Barrier's
+    position is flexible and always based on the size of multiple UI elements
+    contained within it and Guideline's position is always fixed.* »
+
+* **Source Code**:
+    https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
+
 * To understand START, END, BOTTOM, LEFT, RIGHT, START constants, read
     https://developer.android.com/reference/android/support/constraint/ConstraintLayout.LayoutParams
 
@@ -190,6 +193,8 @@ comments
     * https://github.com/googlesamples/android-ImmersiveMode/blob/master/Application/src/main/java/com/example/android/immersivemode/ImmersiveModeFragment.java
     * ***Do not compile for version < 18*** Otherwise, add `if` to remove not
         compatibles flags
+    * Navigation bar seems not be used. Therefore Immersive Mode seems not te be
+    * interesting
 
 * No title, no action bar
     https://stackoverflow.com/questions/26878386/androidwindownotitle-will-not-hide-actionbar-with-appcompat-v7-21-0-0
@@ -200,35 +205,42 @@ comments
     * This resource is also interesting
         https://stackoverflow.com/questions/3496269/how-do-i-put-a-border-around-an-android-textview
 
-### Examples downloaded at Google Samples
-* An easy solution to test examples at https://github.com/googlesamples/
-    without compatibilities errors (build-tools, platforms, gradle, etc.)
-    is simply :
-    1. create an empty project in the IDE.
-    2. `rm -R project_name/app/src/main/*`
-    3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
+## Notes:
+* For Square.java:
+    * « match_parent is not supported. With 0dp, you can think of your
+        constraints as 'scalable' rather than 'filling whats left'. »
+        https://stackoverflow.com/questions/37603751/set-width-to-match-constraints-in-constraintlayout
+    * As squareWidth is the result of an Integer division, it could be have
+        space at the right of the screen and at the bottom of the screen.
+        To correct this, I've added a `margin_left` to Square on the
+        first column, and a `margin_top` to Square on the first row. I've
+        also added a background for the activity, to not have white background.
 
-## Square board prototype
-
-* File that draw a square board in a console. For prototypage.
-* Each square have a north, east, south, west square (or null).
-* It's constructs with recursivity.
-* Actually, square.north and square.west is always `null` (problematic).
-
-## Android.util.Log.d
-* System.out.println could not be used. To se view in "Logcat",
-    use Android.util.Log
-* Warning 1: Android.util.Log.d print nothing if second param is `null`.
-* Warning 2: Android.util.Log.d could mix two logs if they have the same first
-    param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
-
-## OnClickListener
-* Be careful, keep in mind that an instance of `OnClickListener` could be
+* OnClickListener
+    Be careful, keep in mind that an instance of `OnClickListener` could be
     have a delay before to be garbaged.
+
+* Android.util.Log.d
+    * System.out.println could not be used. To se view in "Logcat",
+        use Android.util.Log
+    * Warning 1: Android.util.Log.d print nothing if second param is `null`.
+    * Warning 2: Android.util.Log.d could mix two logs if they have the same
+        first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
 ## My implementation
 * See the comment of the class
     ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+
+#### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+* ***See Logcat*** to understand well how Barriers are build!
+* See also comments in this file!
+* ***See Logcat*** to obtain informations about a Square when we click on it.
+
+## Square board prototype
+* File that draw a square board in a console. For prototypage.
+* Each square have a north, east, south, west square (or null).
+* It's constructs with recursivity.
+* Actually, square.north and square.west is always `null` (problematic).
 
 ## TODO
 * Keep `Square[][] grid` when the Activity is stopped (but resize Squares
@@ -236,7 +248,3 @@ comments
 * Add levels. Level beginner, intermediate, master. Or let the gamer
     choose the length of the grid.
 * Add winner message.
-
-## Bug known
-* In Genymotion, there is a blank line at the right of the screen. Not
-    in AVD (Google Emulator).

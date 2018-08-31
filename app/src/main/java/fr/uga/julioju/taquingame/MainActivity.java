@@ -1,16 +1,18 @@
 package fr.uga.julioju.taquingame;
 
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-
 import android.graphics.Point;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+
 import android.support.constraint.Barrier;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -188,9 +190,11 @@ public class MainActivity extends AppCompatActivity {
       */
     private void constraintSetBetweenHorizontalBarriersAndTheirSquare(
             ConstraintSet set, int[] horizontalBarriersArray) {
+
         int constraintDirectionHorizontal = ConstraintSet.TOP;
         int toBarrierHorizontalId ;
         int toConstraintDirectionHorizontal ;
+
         // ConstraintSet.connect between:
         // 1) grid[0][row].getId()
         // 2) AND vertical ConstraintSet.PARENT_ID
@@ -236,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
             printBarrierInfo("Horizontal", toBarrierHorizontalId,
                     barriersArrayIndex, constraintSetConnect);
         }
+
     }
 
     /**
@@ -251,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
         int constraintDirectionVertical = ConstraintSet.LEFT;
         int toBarrierVerticalId ;
         int toConstraintDirectionVertical ;
-
 
         // ConstraintSet.connect between:
         // 1) grid[column][0].getId()
@@ -315,15 +319,21 @@ public class MainActivity extends AppCompatActivity {
       *   | 8  | 9 |  10|  11
       *    _     _    _    _ VB2
       *   | 12 | 13|  14|  15
-      * HB0: Horizontal Barrier P (ConstraintSet.PARENT_ID)
-      * HB1: Horizontal Barrier 0 (android.support.constraint.Barrier)
+      *
+      *
+      * HBP: Horizontal Barrier P (ConstraintSet.PARENT_ID)
+      * HB0: Horizontal Barrier 0 (android.support.constraint.Barrier)
       * etc
-      * HB0: Vertical Barrier P (ConstraintSet.PARENT_ID)
-      * HB1: Vertical Barrier 1 (android.support.constraint.Barrier)
+      * HBP: Vertical Barrier P (ConstraintSet.PARENT_ID)
+      * HB0: Vertical Barrier 1 (android.support.constraint.Barrier)
       * etc
-      * Note: Barriers are aligns on the longer Square.
-      * VB0 contains constraint_referenced_ids of Square 0, 1, 2, 3.
-      * VB1 contains constraint_referenced_ids of Square 4, 5, 6, 7.
+      * Note: Barriers are aligns like it:
+      * HB0 contains constraint_referenced_ids of Square 0, 1, 2, 3.
+      * HB1 contains constraint_referenced_ids of Square 4, 5, 6, 7.
+      **
+      * Barriers are connected (ConstraintSet.connect()) like it:
+      * HB0 connected to Square 4, 5, 6, 7
+      * HB1 connected to Square 8, 9, 10, 11
       * etc.
       * </pre>
       */
@@ -350,6 +360,8 @@ public class MainActivity extends AppCompatActivity {
             .show();
 
         int[] unorderedSequence = this.createUnorderedSequence();
+        int marginLeftFirstColumn = point.x % this.gridLength / 2;
+        int marginTopFirstRow = point.y % this.gridLength / 2;
         // Loop that populate array above
         for (int column = 0 ; column  < this.gridLength ; column++) {
             for (int row = 0 ; row < this.gridLength ; row++) {
@@ -358,9 +370,16 @@ public class MainActivity extends AppCompatActivity {
             //      longer than Square.getText() of the row above.
             // We could see the interest of the Barrier
             // object : Barrier is aligned on the longer String)
+            int marginLeft = row == 0
+                ? marginLeftFirstColumn
+                : 0;
+            int marginTop = column == 0
+                ? marginTopFirstRow
+                : 0;
             Square square = new Square (this, this.layout,
                     unorderedSequence[squareNumberIndex], row, column,
-                    squareWidth, squareHeight);
+                    squareWidth, squareHeight, marginLeft, marginTop);
+
             this.grid[column][row] = square;
             // https://developer.android.com/guide/topics/ui/ui-events
             square.setOnClickListener(new SquareOnClickListener(this));
@@ -438,39 +457,44 @@ public class MainActivity extends AppCompatActivity {
 
     /**
       * Goto Immersive mode
-      * Read https://developer.android.com/training/system-ui/immersive
-      * Inspired from:
+      * Use https://developer.android.com/training/system-ui/status#java
+      * See also https://developer.android.com/training/system-ui/immersive
+      * Commented code is inspired from:
       *     https://github.com/googlesamples/android-ImmersiveMode/blob/master/Application/src/main/java/com/example/android/immersivemode/ImmersiveModeFragment.java
       */
     private void gotoImmersiveMode () {
-        // The UI options currently enabled are represented by a bitfield.
-        // getSystemUiVisibility() gives us that bitfield.
-        int newUiOptions = this.getWindow().getDecorView()
-            .getSystemUiVisibility();
-        // Navigation bar hiding:  Backwards compatible to ICS.
-        // if (Build.VERSION.SDK_INT >= 14) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-        // }
+        // // The UI options currently enabled are represented by a bitfield.
+        // // getSystemUiVisibility() gives us that bitfield.
+        // int newUiOptions = this.getWindow().getDecorView()
+        //     .getSystemUiVisibility();
+        // // Navigation bar hiding:  Backwards compatible to ICS.
+        // // if (Build.VERSION.SDK_INT >= 14) {
+        //     newUiOptions ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        // // }
+        //
+        // // Status bar hiding: Backwards compatible to Jellybean
+        // // if (Build.VERSION.SDK_INT >= 16) {
+        //     newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        // // }
+        //
+        // // Immersive mode: Backward compatible to KitKat.
+        // // Note that this flag doesn't do anything by itself, it only augments
+        // // the behavior of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the
+        // // purposes of this sample all three flags are being toggled together.
+        // // Note that there are two immersive mode UI flags, one of which is
+        // // referred to as "sticky".  Sticky immersive mode differs in that it
+        // // makes the navigation and status bars semi-transparent, and the UI
+        // // flag does not get cleared when the user interacts with the screen.
+        // // if (Build.VERSION.SDK_INT >= 18) {
+        //     newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        // // }
+        //
+        // this.getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
 
-        // Status bar hiding: Backwards compatible to Jellybean
-        // if (Build.VERSION.SDK_INT >= 16) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        // }
-
-        // Immersive mode: Backward compatible to KitKat.
-        // Note that this flag doesn't do anything by itself, it only augments
-        // the behavior of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the
-        // purposes of this sample all three flags are being toggled together.
-        // Note that there are two immersive mode UI flags, one of which is
-        // referred to as "sticky".  Sticky immersive mode differs in that it
-        // makes the navigation and status bars semi-transparent, and the UI
-        // flag does not get cleared when the user interacts with the screen.
-        // if (Build.VERSION.SDK_INT >= 18) {
-            newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        // }
-
-        this.getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-
+        View decorView = super.getWindow().getDecorView();
+        // Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
     }
 
 
