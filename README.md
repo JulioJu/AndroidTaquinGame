@@ -241,10 +241,3 @@ comments
 * Each square have a north, east, south, west square (or null).
 * It's constructs with recursivity.
 * Actually, square.north and square.west is always `null` (problematic).
-
-## TODO
-* Keep `Square[][] grid` when the Activity is stopped (but resize Squares
-    when it's simply the Orientation (vertical / horizontal) that changes)
-* Add levels. Level beginner, intermediate, master. Or let the gamer
-    choose the length of the grid.
-* Add winner message.

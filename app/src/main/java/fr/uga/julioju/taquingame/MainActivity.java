@@ -225,12 +225,18 @@ public class MainActivity extends AppCompatActivity {
     /** Should be seen as the Constructor of this class */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.gotoImmersiveMode();
-        super.setContentView(R.layout.activity_main);
 
-        // Retrieve layout
-        this.layout = super.findViewById(R.id.constrained);
+        super.onCreate(savedInstanceState);
+
+        this.gotoImmersiveMode();
+
+        this.layout = new ConstraintLayout(this);
+        this.layout.setId(View.generateViewId());
+        this.layout.setLayoutParams(new ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT,
+                    ConstraintLayout.LayoutParams.MATCH_PARENT));
+        this.layout.setBackground(this.getDrawable(R.drawable.back));
+        super.setContentView(layout);
 
         this.gridLength = 10;
 
