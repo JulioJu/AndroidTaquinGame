@@ -1,4 +1,4 @@
-package fr.uga.julioju.taquingame;
+package fr.uga.julioju.taquingame.taquin;
 
 import android.view.View;
 import android.widget.Toast;
@@ -9,7 +9,7 @@ import android.widget.Toast;
   */
 public class SquareOnClickListener implements View.OnClickListener {
 
-    private final MainActivity activity;
+    private final TaquinActivity activity;
 
     /**
       * If a Neighbour of the Square clicked is the
@@ -112,7 +112,7 @@ public class SquareOnClickListener implements View.OnClickListener {
         }
     }
 
-    SquareOnClickListener(MainActivity activity) {
+    SquareOnClickListener(TaquinActivity activity) {
         this.activity = activity;
     }
 

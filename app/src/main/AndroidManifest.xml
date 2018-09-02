@@ -1,8 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fr.uga.julioju.taquingame">
+          package="fr.uga.julioju.taquingame">
 
-<!-- README read my README.md -->
-
+    <!-- README read my README.md -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,17 +10,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-    <activity android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            >
+        <activity android:name=".main.MainActivity">
             <intent-filter>
-                <!-- Activity Action: Start as a main entry point, does not
-                  expect to receive data.  -->
-                <action android:name="android.intent.action.MAIN" />
-
-                <!-- Should be displayed in the top&#45;level launcher.  -->
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--
+                  Activity Action: Start as a main entry point, does not
+                  expect to receive data.
+                -->
+                <action android:name="android.intent.action.MAIN"/>
+                <!-- Should be displayed in the top&#45;level launcher. -->
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".taquin.TaquinActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
     </application>
 

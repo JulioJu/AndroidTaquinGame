@@ -136,8 +136,8 @@ https://developer.android.com/reference/android/content/Intent
     3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
 
 ### Constraint Layout and Layout docs
-* **./app/src/main/res/layout/activity_main.xml** could be understood thanks this
-comments
+* **./app/src/main/java/fr/uga/julioju/taquingame/taquin/Square.java**
+    could be understood thanks this comments.
 
 * How I don't use `Grid Layout` as asked by the teacher, because:
     « *Note: For better performance and tooling support, you should instead build
@@ -164,8 +164,11 @@ comments
 * Constraint Layout API Reference
     https://developer.android.com/reference/android/support/constraint/ConstraintLayout
 
-* To understand attribute android:orientation
+* To understand attribute `android:orientation`
     https://developer.android.com/reference/android/widget/LinearLayout
+
+* To understand attribute `android:layout_weight`
+    https://developer.android.com/guide/topics/ui/layout/linear
 
 * To understand android.support.constraint.ConstraintLayout
     https://developer.android.com/reference/android/support/constraint/Barrier
@@ -179,13 +182,13 @@ comments
 * **Source Code**:
     https://android.googlesource.com/platform/frameworks/opt/sherpa/+/studio-3.1.2
 
-* To understand START, END, BOTTOM, LEFT, RIGHT, START constants, read
+* To understand `START`, `END`, `BOTTOM`, `LEFT`, `RIGHT`, `START` constants, read
     https://developer.android.com/reference/android/support/constraint/ConstraintLayout.LayoutParams
 
-* To understand WRAP_CONTENT and MATCH_PARENT constants, read
+* To understand `WRAP_CONTENT` and `MATCH_PARENT` constants, read
     https://developer.android.com/reference/android/support/constraint/ConstraintLayout.LayoutParams
 
-* To understand constructor ConstraintLayout.LayoutParams(int, int), read
+* To understand constructor `ConstraintLayout.LayoutParams(int, int)`, read
     source code.
 
 * Immersive mode, read:
@@ -204,6 +207,61 @@ comments
     (Found at https://stackoverflow.com/a/13930148).
     * This resource is also interesting
         https://stackoverflow.com/questions/3496269/how-do-i-put-a-border-around-an-android-textview
+
+* Size of screen and dpi and dip
+    * `dp` unit is used
+        1. to determine the screen size and
+            https://developer.android.com/training/multiscreen/screensizes
+            * Screen could be for exemple `small`(<600 dp),
+                `normal` (>= 600 dp)(7” tablets),
+                `medium` (>=960dp)(10” tablets), `large` (>=1280dp),
+                and `xlarge` (>= 1920dp)
+            * On my Lenovo T470 Full HD, "Custon Phone 768X1280"
+                with 320 dpi is a `sw384dp`.
+            * On my Lenovo T470 Full HD, "Custon Tablet 1536X2048"
+                with 320 dpi is a `sw768dp`.
+            * Some references:
+                * 320dp: a typical phone screen (240x320 ldpi, 320x480 mdpi,
+                    480x800 hdpi, etc).
+                * 480dp: a large phone screen ~5" (480x800 mdpi).
+                * 600dp: a 7” tablet (600x1024 mdpi).
+                * 720dp: a 10” tablet (720x1280 mdpi, 800x1280 mdpi, etc).
+        2. to have objects (font or drawable) that have the same length in
+            meters, it's independent of `dpi` of the screen.
+            https://developer.android.com/training/multiscreen/screendensities
+    * When defining text sizes, however, you should instead use scalable pixels
+        (sp) as your units (but never use sp for layout sizes). The sp unit is
+        the same size as dp, by default, but it resizes based on the user's
+        preferred text size.
+        https://developer.android.com/training/multiscreen/screendensities
+    * Remember than `px = dp * (dpi / 160)` (it's a **division** !!!!!)
+    * https://stackoverflow.com/questions/24579608/android-resource-qualifiers-swdp-vs-wdp
+            * smallestWidth - sw<N>dp - The smallestWidth is a fixed screen size
+            characteristic of the device; the device's smallestWidth does not
+            change when the screen's orientation changes.
+            * Available width - w<N>dp - This configuration value will change when
+            the orientation changes between landscape and portrait to match the
+            current actual width.
+    * https://developer.android.com/training/multiscreen/screensizes
+        ```
+        res/layout/main_activity.xml                # For handsets
+        res/layout-land/main_activity.xml           # For handsets in landscape
+        res/layout-sw600dp/main_activity.xml        # For 7” tablets
+        res/layout-sw600dp-land/main_activity.xml   # For 7” tablets in landscape
+        ```
+    * https://developer.android.com/training/multiscreen/screendensities
+        "To provide good graphical qualities on devices with different pixel densities, you should provide multiple versions of each bitmap in your app".
+        There is:
+        `ldpi`, `mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`, `nodpi`, `tvdpi`
+    * How detect screen size?
+        1. https://stackoverflow.com/questions/9279111/determine-if-the-device-is-a-smartphone-or-tablet
+        2. https://stackoverflow.com/questions/5832368/tablet-or-phone-android
+        3. **Solution that I like** :
+        https://stackoverflow.com/questions/15055458/detect-7-inch-and-10-inch-tablet-programmatically/15133776#15133776
+        * **Warning**:
+            « The returned size may be adjusted to exclude certain system decor
+            elements that are always visible ». For example, Navigation bar !
+            https://developer.android.com/reference/android/view/Display
 
 ## Notes:
 * For Square.java:
@@ -226,6 +284,15 @@ comments
     * Warning 1: Android.util.Log.d print nothing if second param is `null`.
     * Warning 2: Android.util.Log.d could mix two logs if they have the same
         first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
+
+* ConstraintSet should be set after layout.addView(view);
+
+* When we display size resolution in a Toast at the launch of
+    TaquinActivity, the `hight` is lower than the real height.
+    It's because:
+    « The returned size may be adjusted to exclude certain system decor
+    elements that are always visible ». For example, Navigation bar !
+    https://developer.android.com/reference/android/view/Display
 
 ## My implementation
 * See the comment of the class

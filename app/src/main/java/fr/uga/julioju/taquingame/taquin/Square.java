@@ -1,4 +1,4 @@
-package fr.uga.julioju.taquingame;
+package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 
 import android.support.constraint.ConstraintLayout;
+import fr.uga.julioju.taquingame.R;
 
 /**
   * A Square is simply a `android.view.View' (commonly named Widget).

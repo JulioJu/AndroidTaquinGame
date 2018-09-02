@@ -1,5 +1,6 @@
-package fr.uga.julioju.taquingame;
+package fr.uga.julioju.taquingame.taquin;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import fr.uga.julioju.taquingame.main.MainActivity;
+import fr.uga.julioju.taquingame.R;
+
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
   * The goal of the game is than for each
@@ -20,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
   * Each <code>Square</code> of the <code>grid</code> doesn't change:
   * only <code((Square) grid.get(index)).orderOfTheContent</code> change
   */
-public class MainActivity extends AppCompatActivity {
+public class TaquinActivity extends AppCompatActivity {
 
     /** Do not use GridLayout */
     private ConstraintLayout layout;
@@ -134,10 +138,14 @@ public class MainActivity extends AppCompatActivity {
         // See :
         // https://developer.android.com/reference/android/view/WindowManager.html#getDefaultDisplay()
         // https://developer.android.com/reference/android/view/Display.html#getSize(android.graphics.Point)
+        // « The returned size may be adjusted to exclude certain system decor
+        // elements that are always visible ». For example, Navigation bar !
         Point point = new Point();
         this.getWindowManager()
             .getDefaultDisplay()
             .getSize(point);
+
+
         int squareWidth = point.x / this.gridLength;
         int squareHeight = point.y / this.gridLength;
         Toast.makeText(this, point.toString(), Toast.LENGTH_SHORT)
@@ -228,6 +236,11 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Get the Intent that started this activity and extract the string
+        Intent intent = super.getIntent();
+        this.gridLength = Integer
+            .parseInt(intent.getStringExtra(MainActivity.EXTRA_MESSAGE));
+
         this.gotoImmersiveMode();
 
         this.layout = new ConstraintLayout(this);
@@ -237,8 +250,6 @@ public class MainActivity extends AppCompatActivity {
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
         this.layout.setBackground(this.getDrawable(R.drawable.back));
         super.setContentView(layout);
-
-        this.gridLength = 10;
 
         this.grid = new Square[gridLength][gridLength];
 
