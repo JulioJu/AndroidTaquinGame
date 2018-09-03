@@ -101,6 +101,7 @@ public class SquareOnClickListener implements View.OnClickListener {
                 "Square that is the Empty Square. The Square clicked" +
                 " is moved on it.";
             Toast.makeText(this.activity, text, Toast.LENGTH_SHORT).show();
+            activity.displayDialogIfGameIsWin();
             // BECAUSE IF THE INSTANCE OF THIS CLASS IS NOT GARBAGED
             // we continue to have `this.neighbourSquareEmpty != null`
             this.neighbourSquareEmpty = null;

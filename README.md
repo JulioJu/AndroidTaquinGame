@@ -12,6 +12,7 @@ http://imss-www.upmf-grenoble.fr/~davidjer/dwm/Projet-Taquin2017.pdf
 * On peut choisir soit une image de la galerie du téléphone, soit prendre
     une photo.
 * On peut configurer la taille de la grille (2x2, 3x3, 4x4).
+    (*Added by JulioJu: except for 2X2, positions should be random)
 * L'image doit être bien orientée (mode paysage ou portrait,
     d'après infos EXIF).
 * L'image doit être adaptée à la taille et résolution de l'écran (pas d'image
@@ -293,6 +294,32 @@ https://developer.android.com/reference/android/content/Intent
     « The returned size may be adjusted to exclude certain system decor
     elements that are always visible ». For example, Navigation bar !
     https://developer.android.com/reference/android/view/Display
+
+## Tasks and back-stack
+* Read https://developer.android.com/guide/components/activities/tasks-and-back-stack#Clearing
+* In AndroidManifest.xml, don't forget to declare `alwaysRetainTaskState`
+    in the root activity.
+* To clear the back-stack, in our case,
+    https://stackoverflow.com/questions/17719634/how-to-exit-an-android-app-using-code/17720065
+    seems to be very good.
+* There is also `ActivityManager.AppTask.finishAndRemoveTask()` that could be
+    good
+    see: https://developer.android.com/reference/android/app/ActivityManager.AppTask
+    * To understand this method, see also :
+    https://developer.android.com/guide/components/activities/recents
+    « The Recents screen (also referred to as the Overview screen, recent task
+    list, or recent apps »
+    * But:
+        « In some special use cases, where an app interacts with its Task stack,
+        the app may use the ActivityManager.AppTask and
+        ActivityManager.RecentTaskInfo inner classes. However, in general, the
+        methods in this class should be used for testing and debugging purposes
+        only. »
+        https://developer.android.com/reference/android/app/ActivityManager
+* Therefore, « back » button call « onDestroy ».
+* Therefore to launch MainActivity.java from TaquinActivity.java
+    call `finish()`, and not trigger `startActivity`, otherwise
+    a new instance of `MainActivity` will be put on the top of the `task`.
 
 ## My implementation
 * See the comment of the class

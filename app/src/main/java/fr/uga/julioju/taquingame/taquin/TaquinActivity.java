@@ -38,8 +38,12 @@ public class TaquinActivity extends AppCompatActivity {
     /**
       * Create an Array, with values that are aun unordered sequence of
       * number between 0 and (gridNumberOfSquares - 1).
+      * if this.gridLength == 2, return always the same sequence.
       */
     private int[] createUnorderedSequence() {
+        if (this.gridLength == 2) {
+            return new int[] {1, 0, 2, 3};
+        }
         int gridNumberOfSquares = this.gridLength * this.gridLength;
         // builderList is a list like {0: 0, 1: 1, 2: 2, etc.}
         ArrayList<Integer> builderList = new ArrayList<>(gridNumberOfSquares);
@@ -184,7 +188,6 @@ public class TaquinActivity extends AppCompatActivity {
         // ============================================
         this.constraintSet();
 
-
     }
 
     /**
@@ -229,6 +232,21 @@ public class TaquinActivity extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
     }
 
+    void displayDialogIfGameIsWin() {
+        int squareNumberIndex = 0;
+        for (int column = 0 ; column < this.gridLength ; column++) {
+            for (int row = 0 ; row < this.gridLength ; row++) {
+                if (this.grid[column][row].getOrderOfTheContent()
+                        != squareNumberIndex  ) {
+                    return ;
+                }
+                squareNumberIndex++;
+            }
+        }
+        new GameWinFireDialog()
+            .show(super.getSupportFragmentManager(), "");
+    }
+
 
     /** Should be seen as the Constructor of this class */
     @Override
@@ -257,6 +275,17 @@ public class TaquinActivity extends AppCompatActivity {
         // Complete example:
         // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
         this.createGrid();
+
+        // If drawn in right order
+        this.displayDialogIfGameIsWin();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        android.util.Log.d("TaquinActivity finished",
+                "TaquinActivity FINISHED");
     }
 
     // Getters
