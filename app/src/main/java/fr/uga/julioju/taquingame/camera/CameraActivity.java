@@ -1,5 +1,6 @@
 package fr.uga.julioju.taquingame.camera;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,19 @@ public class CameraActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onActivityResult (int requestCode, int resultCode,
+            Intent intentIncome) {
+        String isEndOfApp = intentIncome
+            .getStringExtra(TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP);
+
+        Intent intentOutcome = new Intent(this, MainActivity.class);
+        intentOutcome.putExtra(TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP,
+                isEndOfApp);
+        super.setResult(Activity.RESULT_OK, intentOutcome);
+        super.finishAndRemoveTask();
+    }
+
+    @Override
     public void onClick(View view) {
         Intent intentIncome = super.getIntent();
         String gridLength = intentIncome
@@ -48,7 +62,7 @@ public class CameraActivity extends AppCompatActivity
 
         Intent intentOutcome = new Intent(this, TaquinActivity.class);
         intentOutcome.putExtra(EXTRA_MESSAGE, gridLength);
-        super.startActivity(intentOutcome);
+        super.startActivityForResult(intentOutcome, 0);
     }
 
 

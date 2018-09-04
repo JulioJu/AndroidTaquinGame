@@ -1,5 +1,6 @@
 package fr.uga.julioju.taquingame.taquin;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,9 +11,23 @@ import android.support.annotation.NonNull;
 
 import android.support.v4.app.DialogFragment;
 
-import fr.uga.julioju.taquingame.main.MainActivity;
+import fr.uga.julioju.taquingame.camera.CameraActivity;
 
 public class GameWinFireDialog extends DialogFragment {
+
+    private void finishActivityOrApp(boolean isEndOfApp) {
+        Activity activity = super.getActivity();
+        Intent intent = new Intent(activity, CameraActivity.class);
+        intent.putExtra( TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP,
+                String.valueOf(isEndOfApp));
+        activity.setResult(Activity.RESULT_OK, intent);
+        if (isEndOfApp) {
+            activity.finishAndRemoveTask();
+        }
+        else {
+            activity.finish();
+        }
+    }
 
     // https://developer.android.com/reference/android/app/Dialog
     @Override
@@ -24,16 +39,13 @@ public class GameWinFireDialog extends DialogFragment {
                .setPositiveButton("Play again !",
                        new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       GameWinFireDialog.this.getActivity().finish();
+                       GameWinFireDialog.this.finishActivityOrApp(false);
                    }
                })
                .setNegativeButton("Stop the game",
                        new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                       Intent intent = new Intent(Intent.ACTION_MAIN);
-                       intent.addCategory(Intent.CATEGORY_HOME );
-                       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                       GameWinFireDialog.super.startActivity(intent);
+                       GameWinFireDialog.this.finishActivityOrApp(true);
                    }
                });
         // Create the AlertDialog object and return it

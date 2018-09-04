@@ -26,6 +26,9 @@ import fr.uga.julioju.taquingame.R;
   */
 public class TaquinActivity extends AppCompatActivity {
 
+    public static final String EXTRA_MESSAGE_IS_END_OF_APP =
+        "fr.uga.julioju.taquingame.taquin.IS_END_OF_APP";
+
     /** Do not use GridLayout */
     private ConstraintLayout layout;
 
@@ -259,8 +262,6 @@ public class TaquinActivity extends AppCompatActivity {
         this.gridLength = Integer
             .parseInt(intent.getStringExtra(CameraActivity.EXTRA_MESSAGE));
 
-        this.gotoImmersiveMode();
-
         this.layout = new ConstraintLayout(this);
         this.layout.setId(View.generateViewId());
         this.layout.setLayoutParams(new ConstraintLayout.LayoutParams(
@@ -278,6 +279,13 @@ public class TaquinActivity extends AppCompatActivity {
 
         // If drawn in right order
         this.displayDialogIfGameIsWin();
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        this.gotoImmersiveMode();
 
     }
 

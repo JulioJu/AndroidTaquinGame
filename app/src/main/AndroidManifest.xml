@@ -14,11 +14,10 @@
         android:theme="@style/AppTheme">
     <!-- https://developer.android.com/guide/components/activities/tasks&#45;and&#45;back&#45;stack#Clearing -->
     <!-- alwaysRetainTaskState
-    If this attribute is set to "true" in the root activity of a task, the
+    If ths attribute is set to "true" in the root activity of a task, the
     default behavior just described does not happen. The task retains all
     activities in its stack even after a long period. -->
     <activity android:name=".main.MainActivity"
-            android:alwaysRetainTaskState="true"
             >
             <intent-filter>
                 <!--

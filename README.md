@@ -199,6 +199,7 @@ https://developer.android.com/reference/android/content/Intent
         compatibles flags
     * Navigation bar seems not be used. Therefore Immersive Mode seems not te be
     * interesting
+    * Do not forget to place the code on `onResume()`.
 
 * No title, no action bar
     https://stackoverflow.com/questions/26878386/androidwindownotitle-will-not-hide-actionbar-with-appcompat-v7-21-0-0
@@ -263,6 +264,7 @@ https://developer.android.com/reference/android/content/Intent
             « The returned size may be adjusted to exclude certain system decor
             elements that are always visible ». For example, Navigation bar !
             https://developer.android.com/reference/android/view/Display
+    * To see statistics: https://developer.android.com/about/dashboards/
 
 ### Camera and permissions
 * To simply take a photo, read:
@@ -299,27 +301,29 @@ https://developer.android.com/reference/android/content/Intent
     elements that are always visible ». For example, Navigation bar !
     https://developer.android.com/reference/android/view/Display
 
-## Tasks and back-stack
+### Tasks and back-stack
 * Read https://developer.android.com/guide/components/activities/tasks-and-back-stack#Clearing
 * In AndroidManifest.xml, don't forget to declare `alwaysRetainTaskState`
     in the root activity.
-* To clear the back-stack, in our case,
-    https://stackoverflow.com/questions/17719634/how-to-exit-an-android-app-using-code/17720065
-    seems to be very good.
-* There is also `ActivityManager.AppTask.finishAndRemoveTask()` that could be
-    good
-    see: https://developer.android.com/reference/android/app/ActivityManager.AppTask
-    * To understand this method, see also :
+* We could not use an Intent to `Intent.ACTION_MAIN`, with flag
+    `Intent.FLAG_ACTIVITY_CLEAR_TOP` like described in
+    https://stackoverflow.com/a/22960764. This solution doesn't terminate
+    the app, doesn't remove from `Recent Screen`.
+* The solution that I've found: to launch an new Intent,
+    use `Activity.startActivityForResult`. Then, create a new object that say if
+    in the last Activity of the task, we have clicked on « Stop app » or « play
+    again app ». If we have clicked on « Stop app », in `onActivityResult()`
+    call `Activity.finishAndRemoveTask`.  `Activity.finishAndRemoveTask` is cool
+    because it delete task from "`Recents Screen`".
+* Be careful, "`Recents Screen`" doesn't show  Tasks, but shows Screen.
     https://developer.android.com/guide/components/activities/recents
-    « The Recents screen (also referred to as the Overview screen, recent task
-    list, or recent apps »
-    * But:
-        « In some special use cases, where an app interacts with its Task stack,
-        the app may use the ActivityManager.AppTask and
-        ActivityManager.RecentTaskInfo inner classes. However, in general, the
-        methods in this class should be used for testing and debugging purposes
-        only. »
-        https://developer.android.com/reference/android/app/ActivityManager
+* `Activity.finishAndRemoveTask()` doesn't finish parent tasks.
+* `onDestroy()`
+    « The final call you receive before your activity is destroyed. This can happen
+    either because the activity is finishing (someone called finish() on it, or
+    because the system is temporarily destroying this instance of the activity
+    to save space. »
+    https://developer.android.com/reference/android/app/Activity
 * Therefore, « back » button call « onDestroy ».
 * Therefore to launch MainActivity.java from TaquinActivity.java
     call `finish()`, and not trigger `startActivity`, otherwise
@@ -329,13 +333,20 @@ https://developer.android.com/reference/android/content/Intent
 * See the comment of the class
     ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
 
-#### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
 * ***See Logcat*** to understand well how Barriers are build!
 * See also comments in this file!
 * ***See Logcat*** to obtain informations about a Square when we click on it.
 
-## Square board prototype
+### Square board prototype
 * File that draw a square board in a console. For prototypage.
 * Each square have a north, east, south, west square (or null).
 * It's constructs with recursivity.
 * Actually, square.north and square.west is always `null` (problematic).
+
+## Tested
+* Tested with Genymotion, with Android API 26. On a laptop with a full HD.
+    1. « Custom Tablet - 8.0 - API 26 - 1536x2048 »
+    2. « Custom Phone - 8.0 - API 26 - 768x1280 »
+* Landscape mode is actually not optimised.
+* It's sure, could not work with API < 21 (Android 5.0)

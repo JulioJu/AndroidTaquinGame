@@ -3,7 +3,6 @@ package fr.uga.julioju.taquingame.main;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,13 +96,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onActivityResult (int requestCode, int resultCode,
+            Intent intentIncome) {
+        boolean isEndOfApp = Boolean.parseBoolean(intentIncome
+            .getStringExtra(TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP));
+        android.util.Log.d("isEndOfApp", "" + isEndOfApp);
+        if (isEndOfApp) {
+            super.finishAndRemoveTask();
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         RadioButton radioButton = (RadioButton) view;
         String message = String.valueOf(
                 this.radioButtonArray.indexOf(radioButton) + 2);
         Intent intent = new Intent(this, CameraActivity.class);
         intent.putExtra(EXTRA_MESSAGE, message);
-        super.startActivity(intent);
+        super.startActivityForResult(intent, 0);
     }
 
 }
