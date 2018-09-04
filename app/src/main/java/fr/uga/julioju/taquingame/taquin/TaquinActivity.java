@@ -14,7 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import fr.uga.julioju.taquingame.main.MainActivity;
+import fr.uga.julioju.taquingame.camera.CameraActivity;
 import fr.uga.julioju.taquingame.R;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
@@ -257,7 +257,7 @@ public class TaquinActivity extends AppCompatActivity {
         // Get the Intent that started this activity and extract the string
         Intent intent = super.getIntent();
         this.gridLength = Integer
-            .parseInt(intent.getStringExtra(MainActivity.EXTRA_MESSAGE));
+            .parseInt(intent.getStringExtra(CameraActivity.EXTRA_MESSAGE));
 
         this.gotoImmersiveMode();
 

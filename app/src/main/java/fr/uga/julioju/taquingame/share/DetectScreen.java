@@ -12,6 +12,8 @@ public class DetectScreen  {
       * @return width of the Screen with unit `dp'
       * Read README to understand how it works
     */
+    // Should not be static, in case of the screen is
+    // resized (portrait to landscape for instance)
     static public int getSmallestWidth(AppCompatActivity activity) {
         DisplayMetrics metrics = new DisplayMetrics();
         // https://developer.android.com/reference/android/view/Display.html#getMetrics(android.util.DisplayMetrics)

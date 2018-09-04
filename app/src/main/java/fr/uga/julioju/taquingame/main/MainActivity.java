@@ -3,6 +3,7 @@ package fr.uga.julioju.taquingame.main;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import fr.uga.julioju.taquingame.camera.CameraActivity;
+import fr.uga.julioju.taquingame.share.CreateView;
 import fr.uga.julioju.taquingame.share.DetectScreen;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 
+/** Choose number of squares the game should be */
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
 
@@ -31,29 +34,7 @@ public class MainActivity extends AppCompatActivity
 
     private int smallestWidth = 0;
 
-    private int createTextView(Context context,
-            ConstraintLayout layout) {
-        String string = "Choose dimension of the puzzle";
-        TextView textView = new TextView(context);
-        int textViewId = View.generateViewId();
-        textView.setId(textViewId);
-        ConstraintLayout.LayoutParams layoutParamsWrap =
-            new ConstraintLayout.LayoutParams(
-                    ConstraintSet.WRAP_CONTENT,
-                    ConstraintSet.WRAP_CONTENT);
-        textView.setLayoutParams(layoutParamsWrap);
-        textView.setText(string);
-        if (this.smallestWidth >= 600) {
-            layoutParamsWrap.setMargins(0, 0, 0, 22);
-            textView.setTextSize(45);
-        } else {
-            layoutParamsWrap.setMargins(0, 0, 0, 12);
-            textView.setTextSize(25);
-        }
-        layout.addView(textView);
-        return textViewId;
-    }
-
+    /** Create a RadioGroup in center of the PARENT View */
     @SuppressLint("SetTextI18n")
     private void createRadioGroup(Context context,
             ConstraintLayout layout) {
@@ -84,38 +65,22 @@ public class MainActivity extends AppCompatActivity
                         String.valueOf(index + 2), String.valueOf(index + 2)));
             // Toast.makeText(this, String.valueOf(this.smallestWidth),
             //         Toast.LENGTH_SHORT).show();
-            if (this.smallestWidth >= 600) {
-                radioButton.setTextSize(40);
-            }
+            CreateView.setTextSize(radioButton, this.smallestWidth);
             radioButton.setOnClickListener(this);
             radioGroup.addView(radioButton);
             radioButtonArray.add(radioButton);
         }
+
         layout.addView(radioGroup);
 
-
-        // Create TextView
-        int textViewId = this.createTextView(context, layout);
+        // Create title
+        int titleId = CreateView.createTextView(new TextView(this), layout,
+                "Choose dimension of the puzzle", smallestWidth, true);
 
         // ConstraintSet should be set after layout.addView(radioButton);
-        ConstraintSet set = new ConstraintSet();
-        set.clone(layout);
-        set.connect(radioGroupId, ConstraintSet.LEFT, ConstraintSet.PARENT_ID,
-                ConstraintSet.LEFT);
-        set.connect(radioGroupId, ConstraintSet.TOP, ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP);
-        set.connect(radioGroupId, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID,
-                ConstraintSet.RIGHT);
-        set.connect(radioGroupId, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM);
-        set.connect(textViewId, ConstraintSet.BOTTOM, radioGroupId,
-                ConstraintSet.TOP);
-        set.connect(textViewId, ConstraintSet.LEFT, ConstraintSet.PARENT_ID,
-                ConstraintSet.LEFT);
-        set.connect(textViewId, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID,
-                ConstraintSet.RIGHT);
-        set.applyTo(layout);
-
+        CreateView.centerAView(layout, radioGroupId);
+        CreateView.viewCenteredInTopOfOtherView(layout, titleId,
+                radioGroupId);
     }
 
     /** Should be seen as the Constructor of this class */
@@ -125,15 +90,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         this.smallestWidth = DetectScreen.getSmallestWidth(this);
-
-        ConstraintLayout layout;
-
-        layout = new ConstraintLayout(this);
-        layout.setId(View.generateViewId());
-        layout.setLayoutParams(new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT,
-                    ConstraintLayout.LayoutParams.MATCH_PARENT));
-        super.setContentView(layout);
+        ConstraintLayout layout = CreateView.createLayout(this);
 
         this.createRadioGroup(this, layout);
 
@@ -144,7 +101,7 @@ public class MainActivity extends AppCompatActivity
         RadioButton radioButton = (RadioButton) view;
         String message = String.valueOf(
                 this.radioButtonArray.indexOf(radioButton) + 2);
-        Intent intent = new Intent(this, TaquinActivity.class);
+        Intent intent = new Intent(this, CameraActivity.class);
         intent.putExtra(EXTRA_MESSAGE, message);
         super.startActivity(intent);
     }

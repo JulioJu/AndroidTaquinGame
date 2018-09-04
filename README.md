@@ -264,7 +264,11 @@ https://developer.android.com/reference/android/content/Intent
             elements that are always visible ». For example, Navigation bar !
             https://developer.android.com/reference/android/view/Display
 
-## Notes:
+### Camera and permissions
+* To simply take a photo, read:
+    https://developer.android.com/training/camera/photobasics
+
+### Notes:
 * For Square.java:
     * « match_parent is not supported. With 0dp, you can think of your
         constraints as 'scalable' rather than 'filling whats left'. »

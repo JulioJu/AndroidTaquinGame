@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="fr.uga.julioju.taquingame">
-
+      <!-- https://developer.android.com/guide/topics/media/camera -->
+    <uses-feature android:name="android.hardware.camera"
+                  android:required="true" />
     <!-- README read my README.md -->
     <application
         android:allowBackup="true"
@@ -27,6 +29,9 @@
                 <!-- Should be displayed in the top&#45;level launcher. -->
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+                android:name=".camera.CameraActivity" >
         </activity>
         <activity
             android:name=".taquin.TaquinActivity"
