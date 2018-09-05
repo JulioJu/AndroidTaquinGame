@@ -1,6 +1,7 @@
 package fr.uga.julioju.taquingame.main;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,8 +27,10 @@ import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
 
-    public static final String EXTRA_MESSAGE =
+    public static final String EXTRA_MESSAGE_GRID_LENGTH =
         "fr.uga.julioju.taquingame.main.NUMBER_OF_SQUARES";
+
+    private static final int IS_END_OF_APP_REQUEST = 27;
 
     private ArrayList<RadioButton> radioButtonArray;
 
@@ -98,22 +101,30 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult (int requestCode, int resultCode,
             Intent intentIncome) {
-        boolean isEndOfApp = Boolean.parseBoolean(intentIncome
-            .getStringExtra(TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP));
-        android.util.Log.d("isEndOfApp", "" + isEndOfApp);
-        if (isEndOfApp) {
-            super.finishAndRemoveTask();
+        // Check which request we're responding to
+        if (requestCode == MainActivity.IS_END_OF_APP_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+                boolean isEndOfApp = intentIncome.getBooleanExtra(TaquinActivity
+                        .EXTRA_MESSAGE_IS_END_OF_APP, true);
+                android.util.Log.d("isEndOfApp", "" + isEndOfApp);
+                if (isEndOfApp) {
+                    super.finishAndRemoveTask();
+                }
+            }
         }
     }
 
     @Override
     public void onClick(View view) {
         RadioButton radioButton = (RadioButton) view;
-        String message = String.valueOf(
-                this.radioButtonArray.indexOf(radioButton) + 2);
+        int gridLength = this.radioButtonArray.indexOf(radioButton) + 2;
         Intent intent = new Intent(this, CameraActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
-        super.startActivityForResult(intent, 0);
+            intent.putExtra(EXTRA_MESSAGE_GRID_LENGTH, gridLength);
+        super.startActivityForResult(intent,
+                MainActivity.IS_END_OF_APP_REQUEST);
     }
 
 }

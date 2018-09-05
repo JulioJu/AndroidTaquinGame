@@ -329,11 +329,27 @@ https://developer.android.com/reference/android/content/Intent
     call `finish()`, and not trigger `startActivity`, otherwise
     a new instance of `MainActivity` will be put on the top of the `task`.
 
+## Intents
+* Generality about intents:
+    https://developer.android.com/guide/components/intents-filters
+* Getting a Result from an Activity
+    https://developer.android.com/training/basics/intents/result
+* Forward intents:
+    * Third activity called returns its result to the first activity
+        Use `intentOutcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)`.
+        To well understand this flag:
+        https://gist.github.com/mcelotti/cc1fc8b8bc1224c2f145
+    * To forward Intent parameter through chains of Activities:
+        Use: `intentOutcome.putExtras(super.getIntent());`
+        https://stackoverflow.com/a/12905952
+* Read also the example in
+    ./app/src/main/java/fr/uga/julioju/taquingame/main/MainActivity.java
+
 ## My implementation
 * See the comment of the class
-    ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+    ./app/src/main/java/fr/uga/julioju/taquingame/taquin/TaquinActivity.java
 
-### ./app/src/main/java/fr/uga/julioju/taquingame/MainActivity.java
+### ./app/src/main/java/fr/uga/julioju/taquingame/taquin/TaquinActivity.java
 * ***See Logcat*** to understand well how Barriers are build!
 * See also comments in this file!
 * ***See Logcat*** to obtain informations about a Square when we click on it.
