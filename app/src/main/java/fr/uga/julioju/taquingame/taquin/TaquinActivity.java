@@ -1,7 +1,9 @@
 package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fr.uga.julioju.taquingame.R;
 import fr.uga.julioju.taquingame.main.MainActivity;
+import fr.uga.julioju.taquingame.picture.PictureActivity;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -37,6 +40,12 @@ public class TaquinActivity extends AppCompatActivity {
 
     /** Square of the Grid */
     private Square[][] grid;
+
+    /**
+      * Array of size gridLength * 2 that contains images.
+      * backgroundArray.get(0) is never displayed during the game.
+      */
+    private BitmapDrawable backgroundArray[];
 
     /**
       * Create an Array, with values that are aun unordered sequence of
@@ -155,7 +164,7 @@ public class TaquinActivity extends AppCompatActivity {
 
         int squareWidth = point.x / this.gridLength;
         int squareHeight = point.y / this.gridLength;
-        Toast.makeText(this, point.toString(), Toast.LENGTH_SHORT)
+        Toast.makeText(this, point.toString(), Toast.LENGTH_LONG)
             .show();
 
         int[] unorderedSequence = this.createUnorderedSequence();
@@ -177,7 +186,10 @@ public class TaquinActivity extends AppCompatActivity {
                 : 0;
             Square square = new Square (this, this.layout,
                     unorderedSequence[squareNumberIndex], row, column,
-                    squareWidth, squareHeight, marginLeft, marginTop);
+                    squareWidth, squareHeight,
+                    this.backgroundArray
+                        [unorderedSequence[squareNumberIndex]],
+                    marginLeft, marginTop);
 
             this.grid[column][row] = square;
             // https://developer.android.com/guide/topics/ui/ui-events
@@ -261,6 +273,13 @@ public class TaquinActivity extends AppCompatActivity {
         Intent intentIncome = super.getIntent();
         this.gridLength = intentIncome.getIntExtra(MainActivity
                         .EXTRA_MESSAGE_GRID_LENGTH, 10);
+        ArrayList<Bitmap> bitmapArray =
+            intentIncome.getParcelableArrayListExtra(
+                PictureActivity.EXTRA_MESSAGE_BITMAP_ARRAY);
+        this.backgroundArray =
+            bitmapArray.stream().map(bitmap ->
+                new BitmapDrawable(this.getResources(), bitmap))
+                .toArray(BitmapDrawable[]::new);
 
         this.layout = new ConstraintLayout(this);
         this.layout.setId(View.generateViewId());
@@ -306,6 +325,10 @@ public class TaquinActivity extends AppCompatActivity {
 
     Square[][] getGrid() {
         return this.grid;
+    }
+
+    BitmapDrawable[] getBackgroundArray() {
+        return backgroundArray;
     }
 
 }

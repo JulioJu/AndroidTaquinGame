@@ -266,9 +266,16 @@ https://developer.android.com/reference/android/content/Intent
             https://developer.android.com/reference/android/view/Display
     * To see statistics: https://developer.android.com/about/dashboards/
 
-### Camera and permissions
+### Work with images
 * To simply take a photo, read:
-    https://developer.android.com/training/camera/photobasics
+    * https://developer.android.com/training/camera/photobasics
+    * https://developer.android.com/guide/components/intents-common#ImageCapture
+* To pick a photo:
+    https://developer.android.com/guide/topics/providers/document-provider
+* To split images, read:
+    http://www.chansek.com/splittingdividing-image-into-smaller/
+* To Loading large image efficiently see:
+    https://developer.android.com/topic/performance/graphics/load-bitmap
 
 ### Notes:
 * For Square.java:
@@ -344,6 +351,15 @@ https://developer.android.com/reference/android/content/Intent
         https://stackoverflow.com/a/12905952
 * Read also the example in
     ./app/src/main/java/fr/uga/julioju/taquingame/main/MainActivity.java
+* Be careful: content of an Intent should be `< 1 M` otherwise raise:
+    https://developer.android.com/reference/android/os/TransactionTooLargeException.
+    I've experimented that when I've sent through an Intent a Bitmap too large.
+    Confirmed by the article:
+    https://developer.android.com/guide/components/activities/parcelables-and-bundles
+* Be careful Parcelable[] could not be cast to Bitmap[]:
+    `Caused by: java.lang.ClassCastException: android.os.Parcelable[] cannot be cast to android.graphics.Bitmap[]`
+    Solution:
+    use `ArrayList<Bitmap>` and use `intentIncome.getParcelableArrayListExtra()`
 
 ## My implementation
 * See the comment of the class

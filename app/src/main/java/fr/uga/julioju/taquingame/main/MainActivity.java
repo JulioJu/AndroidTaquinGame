@@ -18,7 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-import fr.uga.julioju.taquingame.camera.CameraActivity;
+import fr.uga.julioju.taquingame.picture.PictureActivity;
 import fr.uga.julioju.taquingame.share.CreateView;
 import fr.uga.julioju.taquingame.share.DetectScreen;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         RadioButton radioButton = (RadioButton) view;
         int gridLength = this.radioButtonArray.indexOf(radioButton) + 2;
-        Intent intent = new Intent(this, CameraActivity.class);
+        Intent intent = new Intent(this, PictureActivity.class);
             intent.putExtra(EXTRA_MESSAGE_GRID_LENGTH, gridLength);
         super.startActivityForResult(intent,
                 MainActivity.IS_END_OF_APP_REQUEST);

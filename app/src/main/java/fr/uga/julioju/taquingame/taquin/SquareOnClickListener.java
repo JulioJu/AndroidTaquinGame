@@ -95,7 +95,9 @@ public class SquareOnClickListener implements View.OnClickListener {
                 "\n\t"  + parseSquareNeighbour(squareSouth, "south"));
         if (this.neighbourSquareEmpty != null) {
             this.neighbourSquareEmpty
-                .setOrderOfTheContent(squareClicked.getOrderOfTheContent());
+                .setOrderOfTheContent(squareClicked.getOrderOfTheContent(),
+                        this.activity.getBackgroundArray()[squareClicked
+                            .getOrderOfTheContent()]);
             squareClicked.setOrderOfTheContent(0);
             CharSequence text = "Around the Square clicked, there is a" +
                 "Square that is the Empty Square. The Square clicked" +

@@ -1,12 +1,14 @@
 package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
 import android.support.constraint.ConstraintLayout;
 import fr.uga.julioju.taquingame.R;
+
 
 /**
   * A Square is simply a `android.view.View' (commonly named Widget).
@@ -27,7 +29,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
     /** Create a TextView with an id, text and Constraint*/
     Square (Context activity, ConstraintLayout layout, int orderOfTheContent,
             int row, int column, int squareWidth, int squareHeight,
-            int marginLeft, int marginTop) {
+            BitmapDrawable background, int marginLeft, int marginTop) {
 
         super(activity);
 
@@ -66,7 +68,13 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         super.setGravity(Gravity.CENTER);
 
         // See README.md
-        super.setBackground(activity.getDrawable(R.drawable.back));
+        // super.setBackground(activity.getDrawable(R.drawable.back));
+        if (this.getOrderOfTheContent() != 0) {
+            super.setBackgroundDrawable(background);
+        }
+        else {
+            super.setBackgroundResource(R.drawable.back);
+        }
 
         // Add text to view
         super.setText(String.valueOf(this.orderOfTheContent));
@@ -94,6 +102,10 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         throw new UnsupportedOperationException();
     }
 
+    int getOrderOfTheContent() {
+        return orderOfTheContent;
+    }
+
     int getRow() {
         return row;
     }
@@ -102,13 +114,17 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         return column;
     }
 
-    int getOrderOfTheContent() {
-        return orderOfTheContent;
-    }
-
     void setOrderOfTheContent(int orderOfTheContent) {
         this.orderOfTheContent = orderOfTheContent;
-        this.setText(String.valueOf(this.orderOfTheContent));
+        super.setText(String.valueOf(this.orderOfTheContent));
+        super.setBackgroundResource(R.drawable.back);
+    }
+
+    void setOrderOfTheContent(int orderOfTheContent,
+            BitmapDrawable background) {
+        this.orderOfTheContent = orderOfTheContent;
+        super.setText(String.valueOf(this.orderOfTheContent));
+        super.setBackgroundDrawable(background);
     }
 
 }

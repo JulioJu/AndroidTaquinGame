@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".camera.CameraActivity" >
+                android:name=".picture.PictureActivity" >
         </activity>
         <activity
             android:name=".taquin.TaquinActivity"
