@@ -3,7 +3,6 @@ package fr.uga.julioju.taquingame.taquin;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -13,6 +12,8 @@ import android.support.v4.app.DialogFragment;
 
 import fr.uga.julioju.taquingame.picture.PictureActivity;
 
+// SuppressWarnings because DialogFragment should be `public`
+@SuppressWarnings("WeakerAccess")
 public class GameWinFireDialog extends DialogFragment {
 
     private void finishActivityOrApp(boolean isEndOfApp) {
@@ -35,18 +36,10 @@ public class GameWinFireDialog extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Congratulation !!! Game turns wins !!!")
-               .setPositiveButton("Play again !",
-                       new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       GameWinFireDialog.this.finishActivityOrApp(false);
-                   }
-               })
-               .setNegativeButton("Stop the game",
-                       new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       GameWinFireDialog.this.finishActivityOrApp(true);
-                   }
-               });
+               .setPositiveButton("Play again !", (dialog, id) ->
+                       GameWinFireDialog.this.finishActivityOrApp(false))
+               .setNegativeButton("Stop the game", (dialog, id) ->
+                       GameWinFireDialog.this.finishActivityOrApp(true));
         // Create the AlertDialog object and return it
         Dialog dialog = builder.create();
         // https://stackoverflow.com/questions/42254443/alertdialog-disappears-when-touch-is-outside-android

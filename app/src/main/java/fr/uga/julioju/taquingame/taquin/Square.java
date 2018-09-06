@@ -69,7 +69,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
 
         // See README.md
         // super.setBackground(activity.getDrawable(R.drawable.back));
-        if (this.getOrderOfTheContent() != 0) {
+        if (this.orderOfTheContent != 0) {
             super.setBackgroundDrawable(background);
         }
         else {
@@ -114,8 +114,8 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         return column;
     }
 
-    void setOrderOfTheContent(int orderOfTheContent) {
-        this.orderOfTheContent = orderOfTheContent;
+    void setEmptySquare() {
+        this.orderOfTheContent = 0;
         super.setText(String.valueOf(this.orderOfTheContent));
         super.setBackgroundResource(R.drawable.back);
     }

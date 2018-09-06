@@ -2,11 +2,8 @@ package fr.uga.julioju.taquingame.picture;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,12 +12,7 @@ import android.support.constraint.ConstraintLayout;
 
 import android.support.v7.app.AppCompatActivity;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
-import java.util.ArrayList;
 
-import fr.uga.julioju.taquingame.R;
-import fr.uga.julioju.taquingame.main.MainActivity;
 import fr.uga.julioju.taquingame.share.CreateView;
 import fr.uga.julioju.taquingame.share.DetectScreen;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
@@ -30,15 +22,9 @@ import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 public class PictureActivity extends AppCompatActivity
         implements View.OnClickListener {
 
-    /** Length of the grid. SHOULD NOT BE < 2 */
-    private int gridLength;
-
-    public static final String EXTRA_MESSAGE_BITMAP_ARRAY =
-        "fr.uga.julioju.taquingame.picture.BITMAP_ARRAY";
-
     private static final int REQUEST_PICTURE_PICKER = 17;
 
-    private void sendIntentToGame(ArrayList<Bitmap> bitmapArray) {
+    private void sendIntentToGame() {
         Intent intentOutcome = new Intent(this, TaquinActivity.class);
 
         // Third activity called returns its result to the first activity
@@ -50,66 +36,8 @@ public class PictureActivity extends AppCompatActivity
         // https://stackoverflow.com/a/12905952
         intentOutcome.putExtras(super.getIntent());
 
-        intentOutcome.putParcelableArrayListExtra(EXTRA_MESSAGE_BITMAP_ARRAY,
-                bitmapArray);
-
         super.startActivity(intentOutcome);
         super.finishAndRemoveTask();
-    }
-
-
-    // Source http://www.chansek.com/splittingdividing-image-into-smaller/
-    private ArrayList<Bitmap> splitImage(Bitmap bitmap) {
-
-        // For height and width of the small image chunks
-        int chunkHeight,chunkWidth;
-
-        // To store all the small image chunks in bitmap format in this list
-        ArrayList<Bitmap> chunkedImages =
-            new ArrayList<>(this.gridLength * this.gridLength);
-
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
-                bitmap.getWidth(), bitmap.getHeight(), true);
-        chunkHeight = bitmap.getHeight() / this.gridLength;
-        chunkWidth = bitmap.getWidth() / this.gridLength;
-
-        android.util.Log.d("size origin",
-                        String.valueOf(bitmap.getRowBytes()));
-        // xCoord and yCoord are the pixel positions of the image chunks
-        int yCoord = 0;
-        for(int row = 0 ; row < this.gridLength ; row++) {
-            int xCoord = 0;
-            for(int column = 0; column < this.gridLength ; column++) {
-                if (row == 0 && column == 0) {
-                    chunkedImages.add(null);
-                }
-                else {
-                    Bitmap bitmapLoc = Bitmap.createBitmap(scaledBitmap,
-                        xCoord, yCoord, chunkWidth, chunkHeight);
-                    chunkedImages.add(bitmapLoc);
-                    android.util.Log.d("size" + row + " " + column,
-                            String.valueOf(bitmapLoc.getRowBytes()));
-                }
-                xCoord += chunkWidth;
-            }
-            yCoord += chunkHeight;
-        }
-
-        return chunkedImages;
-    }
-
-    // https://developer.android.com/guide/topics/providers/document-provider#open-client
-    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-            super.getContentResolver().openFileDescriptor(uri, "r");
-        if (parcelFileDescriptor != null) {
-            FileDescriptor fileDescriptor =
-                     parcelFileDescriptor.getFileDescriptor();
-            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-            parcelFileDescriptor.close();
-            return image;
-        }
-        return null;
     }
 
     private void sendErrorMessage() {
@@ -134,15 +62,9 @@ public class PictureActivity extends AppCompatActivity
             // intent provided to this method as a parameter.
             // Pull that URI using resultData.getData().
             Uri uri;
-            Bitmap image;
             if (resultData != null) {
                 uri = resultData.getData();
-                try {
-                    image = this.getBitmapFromUri(uri);
-                    this.sendIntentToGame(this.splitImage(image));
-                } catch (IOException e) {
-                    this.sendErrorMessage();
-                }
+                // this.sendIntentToGame(Uri uri);
             }
             else {
                 this.sendErrorMessage();
@@ -179,9 +101,7 @@ public class PictureActivity extends AppCompatActivity
     @Override
     public void onClick(View view) {
         // this.performFileSearch();
-        Bitmap bitmap = BitmapFactory.decodeResource(super.getResources(),
-                R.drawable.archlinux);
-        this.sendIntentToGame(this.splitImage(bitmap));
+        this.sendIntentToGame();
     }
 
     /** Should be seen as the Constructor of this class */
@@ -189,10 +109,6 @@ public class PictureActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        Intent intentIncome = super.getIntent();
-        this.gridLength = intentIncome.getIntExtra(MainActivity
-                        .EXTRA_MESSAGE_GRID_LENGTH, 10);
 
         int smallestWidth = DetectScreen.getSmallestWidth(this);
         ConstraintLayout layout = CreateView.createLayout(this);

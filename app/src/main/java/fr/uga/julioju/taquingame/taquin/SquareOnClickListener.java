@@ -7,7 +7,7 @@ import android.widget.Toast;
 /**
   * Manage actions when we click on a Square
   */
-public class SquareOnClickListener implements View.OnClickListener {
+class SquareOnClickListener implements View.OnClickListener {
 
     private final TaquinActivity activity;
 
@@ -98,7 +98,7 @@ public class SquareOnClickListener implements View.OnClickListener {
                 .setOrderOfTheContent(squareClicked.getOrderOfTheContent(),
                         this.activity.getBackgroundArray()[squareClicked
                             .getOrderOfTheContent()]);
-            squareClicked.setOrderOfTheContent(0);
+            squareClicked.setEmptySquare();
             CharSequence text = "Around the Square clicked, there is a" +
                 "Square that is the Empty Square. The Square clicked" +
                 " is moved on it.";

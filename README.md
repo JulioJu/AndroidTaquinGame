@@ -119,14 +119,18 @@ https://developer.android.com/reference/android/content/Intent
     Virtual Images.
 * **For Intellij Ultimate Edition, you must configure the debugger. See:
     https://stackoverflow.com/a/51476111**
-    Read also the comments of this comment !
+    Read also the comment of this comment !
 * When import, we must build to see some errors disappear.
 * I've experienced errors with `Google AVD` (Android Emulator)
-    https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
+    * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
     Not read all the comments. I've only experienced to disable `Instant run`
     (no try others complex solutions).
     But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
     kicked off `Google Emulator`.
+    * On my Computer, when `AVD` loose the focus, his screen becomes black
+        even when he has the focus again. The only workaround
+        is to change orientation (`e.g.` Portrait -> Landscape)
+
 
 ### Examples downloaded at Google Samples
 * An easy solution to test examples at https://github.com/googlesamples/
@@ -356,10 +360,27 @@ https://developer.android.com/reference/android/content/Intent
     I've experimented that when I've sent through an Intent a Bitmap too large.
     Confirmed by the article:
     https://developer.android.com/guide/components/activities/parcelables-and-bundles
+    * It seems not have very good solution for this problem.
+        Only solutions to send data from one activity to another
+        seems to use persistence (database, files) or Intent. I've searched
+        a lot.
+        Maybe on Android API `< 23` there is not this problem.
+        * https://stackoverflow.com/questions/11451393/what-to-do-on-transactiontoolargeexception
+        * https://github.com/livefront/bridge/issues/19
+        * https://medium.com/@mdmasudparvez/android-os-transactiontoolargeexception-on-nougat-solved-3b6e30597345
+    * ***Therefore*** do not use Intent to transfer bit datas
+
 * Be careful Parcelable[] could not be cast to Bitmap[]:
     `Caused by: java.lang.ClassCastException: android.os.Parcelable[] cannot be cast to android.graphics.Bitmap[]`
     Solution:
     use `ArrayList<Bitmap>` and use `intentIncome.getParcelableArrayListExtra()`
+
+## Instance of class with one method
+« Although this is often more concise than a named class, for classes with only
+ one method, even an anonymous class seems a bit excessive and cumbersome.
+ Lambda expressions let you express instances of single-method classes more
+ compactly. »
+https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
 
 ## My implementation
 * See the comment of the class
