@@ -82,7 +82,6 @@ public class CreateView  {
     /** Create a ConstraintLayout object and return this object */
     static public ConstraintLayout createLayout(Activity activity) {
         ConstraintLayout layout = new ConstraintLayout(activity);
-        layout.setId(View.generateViewId());
         layout.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
