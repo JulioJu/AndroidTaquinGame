@@ -1,17 +1,24 @@
 package fr.uga.julioju.taquingame.taquin;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.widget.Toast;
 
-import fr.uga.julioju.taquingame.R;
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 class SplitImageUtil  {
 
     // Source http://www.chansek.com/splittingdividing-image-into-smaller/
-    static private BitmapDrawable[] splitImage(Resources resources,
+    static private BitmapDrawable[] splitImage(Context context,
             Bitmap bitmapOriginal, int gridLength) {
+
+        Resources resources = context.getResources();
 
         // For height and width of the small image chunks
         int chunkHeight,chunkWidth;
@@ -54,11 +61,33 @@ class SplitImageUtil  {
         return chunkedImages;
     }
 
-    static BitmapDrawable[] generateBitmapDrawableArray(Resources resources,
-            int gridLength) {
-        Bitmap bitmapOriginal = BitmapFactory.decodeResource(resources,
-                R.drawable.archlinux);
-        return SplitImageUtil.splitImage(resources, bitmapOriginal, gridLength);
+    // https://developer.android.com/guide/topics/providers/document-provider#open-client
+    static private Bitmap getBitmapFromUri(Context context,
+            Uri uriImage) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+            context.getContentResolver().openFileDescriptor(uriImage, "r");
+        if (parcelFileDescriptor != null) {
+            FileDescriptor fileDescriptor =
+                     parcelFileDescriptor.getFileDescriptor();
+            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+            parcelFileDescriptor.close();
+            return image;
+        }
+        return null;
+    }
+
+    static BitmapDrawable[] generateBitmapDrawableArray(Context context,
+            int gridLength, Uri uriImage) {
+        Bitmap bitmapOriginal = null;
+        try {
+            bitmapOriginal = SplitImageUtil.getBitmapFromUri(context, uriImage);
+        } catch (IOException e) {
+            Toast.makeText(context, "Error when try to retrieve picture with " +
+                    " uri. " + uriImage.toString() +
+                    " No picture is displayed in Squares."
+                    , Toast.LENGTH_LONG).show();
+        }
+        return SplitImageUtil.splitImage(context, bitmapOriginal, gridLength);
     }
 
 }

@@ -22,9 +22,12 @@ import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 public class PictureActivity extends AppCompatActivity
         implements View.OnClickListener {
 
+    public static final String EXTRA_MESSAGE_IMAGE_URI =
+        "fr.uga.julioju.taquingame.picture.IMAGE_URI";
+
     private static final int REQUEST_PICTURE_PICKER = 17;
 
-    private void sendIntentToGame() {
+    private void sendIntentToGame(Uri uriImage) {
         Intent intentOutcome = new Intent(this, TaquinActivity.class);
 
         // Third activity called returns its result to the first activity
@@ -35,6 +38,8 @@ public class PictureActivity extends AppCompatActivity
         // To forward Intent parameter through chains of Activities:
         // https://stackoverflow.com/a/12905952
         intentOutcome.putExtras(super.getIntent());
+
+        intentOutcome.putExtra(EXTRA_MESSAGE_IMAGE_URI, uriImage);
 
         super.startActivity(intentOutcome);
         super.finishAndRemoveTask();
@@ -61,10 +66,9 @@ public class PictureActivity extends AppCompatActivity
             // Instead, a URI to that document will be contained in the return
             // intent provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            Uri uri;
             if (resultData != null) {
-                uri = resultData.getData();
-                // this.sendIntentToGame(Uri uri);
+                Uri uriImage = resultData.getData();
+                this.sendIntentToGame(uriImage);
             }
             else {
                 this.sendErrorMessage();
@@ -100,8 +104,7 @@ public class PictureActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
-        // this.performFileSearch();
-        this.sendIntentToGame();
+        this.performFileSearch();
     }
 
     /** Should be seen as the Constructor of this class */

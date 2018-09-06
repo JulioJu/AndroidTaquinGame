@@ -3,6 +3,7 @@ package fr.uga.julioju.taquingame.taquin;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import fr.uga.julioju.taquingame.R;
 import fr.uga.julioju.taquingame.main.MainActivity;
+import fr.uga.julioju.taquingame.picture.PictureActivity;
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -271,9 +273,12 @@ public class TaquinActivity extends AppCompatActivity {
         Intent intentIncome = super.getIntent();
         this.gridLength = intentIncome.getIntExtra(MainActivity
                         .EXTRA_MESSAGE_GRID_LENGTH, 10);
+        Uri uriImage = intentIncome.getParcelableExtra(PictureActivity
+                .EXTRA_MESSAGE_IMAGE_URI);
 
         this.backgroundArray = SplitImageUtil
-            .generateBitmapDrawableArray(super.getResources(), this.gridLength);
+            .generateBitmapDrawableArray(this, this.gridLength,
+                    uriImage);
 
         this.layout = new ConstraintLayout(this);
         this.layout.setId(View.generateViewId());
