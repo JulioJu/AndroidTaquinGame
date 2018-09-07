@@ -2,10 +2,13 @@ package fr.uga.julioju.taquingame.picture;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +25,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.Date;
 
@@ -29,8 +33,6 @@ import fr.uga.julioju.taquingame.share.CreateView;
 import fr.uga.julioju.taquingame.share.DetectScreen;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 
-// Sources http://www.chansek.com/splittingdividing-picture-into-smaller/
-// https://developer.android.com/guide/topics/providers/document-provider#open-client
 public class PictureActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE_IMAGE_URI =
@@ -66,6 +68,19 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
+    // https://developer.android.com/guide/topics/providers/document-provider#open-client
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+            super.getContentResolver().openFileDescriptor(uri, "r");
+        if (parcelFileDescriptor == null) {
+            return null;
+        }
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent resultData) {
@@ -83,7 +98,24 @@ public class PictureActivity extends AppCompatActivity {
                 // intent provided to this method as a parameter.
                 // Pull that URI using resultData.getData().
                     this.photoURI = resultData.getData();
-                    this.sendIntentToGame();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = this.getBitmapFromUri(this.photoURI);
+                } catch (IOException e) {
+                    android.util.Log.e("IOexception",  e.toString());
+                    Toast.makeText(this, "ERROR: can't read " +
+                            "the file selected.",
+                            Toast.LENGTH_LONG).show();
+                }
+                if (bitmap == null || bitmap.getRowBytes() < 1) {
+                        Toast.makeText(this, "ERROR: the photo you have " +
+                                "selected has size zero." +
+                                " Select an other file.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        this.sendIntentToGame();
+                    }
             }
             else {
                 Toast.makeText(this, "ERROR: when the app pick a picture. " +
@@ -102,19 +134,56 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
+    private File createImageFile() {
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
             .format(new Date());
         String imageFileName = "taquinGame" + timeStamp + "_";
+
+        // Folder:
+        // [...]/Android/data/fr.uga.julioju.taquingame/files/Pictures
+        // « Create a path where we will place our picture in the user's
+        // public pictures directory and check if the file exists.  If
+        // external storage is not currently mounted this will think the
+        // picture doesn't exist. »
+        // https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
         File storageDir = super.getExternalFilesDir(
                 Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-                );
-        this.photoURI = Uri.fromFile(image);
+        if (storageDir == null || ! storageDir.exists()) {
+            Toast.makeText(this, "ERROR: can't access private app folder " +
+                    "Is the external storage was unmounted ?"
+                    , Toast.LENGTH_LONG).show();
+            return null;
+        }
+        if (! Environment.getExternalStorageState(storageDir).equals(
+                Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, "ERROR: can't have read / write access to " +
+                    storageDir.toString() , Toast.LENGTH_LONG).show();
+            return null;
+        }
+
+        // Could not work
+        // https://stackoverflow.com/questions/3660572/android-createtempfile-throws-permission-denied
+        // And probably can't work ! Because we want a scheme `content:///'
+        // File image = new File(storageDir + "/" + imageFileName + "/" + ".jpg");
+        // this.photoURI = Uri.fromFile(image);
+
+        // WORKS
+        File image = null;
+        try {
+            image = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+                    );
+            this.photoURI = Uri.fromFile(image);
+        } catch (IOException ex) {
+            android.util.Log.e("IOException", ex.toString());
+            Toast.makeText(this, "ERROR: can't create a file. Is the external "+
+                    "storage was unmounted? ",
+                    Toast.LENGTH_LONG).show();
+        }
+
         return image;
     }
 
@@ -124,13 +193,7 @@ public class PictureActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = this.createImageFile();
-            } catch (IOException ex) {
-                Toast.makeText(this, "ERROR: can't create a file",
-                        Toast.LENGTH_LONG).show();
-            }
+            File photoFile = this.createImageFile();
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 // Uri with scheme `content://' and not `file://' contrary to
@@ -139,6 +202,8 @@ public class PictureActivity extends AppCompatActivity {
                 Uri photoUriContentScheme = FileProvider.getUriForFile(this,
                         "fr.uga.julioju.taquingame.fileprovider",
                         photoFile);
+                android.util.Log.d("photoUriContentScheme",
+                        photoUriContentScheme.toString());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         photoUriContentScheme);
                 super.startActivityForResult(takePictureIntent,
@@ -155,6 +220,19 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
+    private void pickPictureFromGallery() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // Even if there is no chooser displayed, better to use
+        // createChooser in case of there isn't provider app installed.
+        super.startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
+
+    }
+
+
     // Source:
     // https://developer.android.com/guide/topics/providers/document-provider#search
     /**
@@ -170,20 +248,42 @@ public class PictureActivity extends AppCompatActivity {
         // file (as opposed to a list of contacts or timezones)
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        // Filter to show only pictures, using the picture MIME data type.
-        // To search for all documents available via installed storage
-        // providers, it would be "*/*".
+        // // Filter to show only pictures, using the picture MIME data type.
+        // // To search for all documents available via installed storage
+        // // providers, it would be "*/*".
         intent.setType("image/*");
 
-        super.startActivityForResult(intent,
-                PictureActivity.REQUEST_PICTURE_PICK);
+        // Can't work, because we could send to another app only URI of
+        //  form `content:///` for private folder app
+        // // https://developer.android.com/reference/android/provider/DocumentsContract#EXTRA_INITIAL_URI
+        // // « The initial location is system specific if this extra is missing or
+        // //     document navigator failed to locate the desired initial location.
+        // // »
+        // intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, storageDirUri);
+        // intent.setDataAndType(storageDirUri, "image#<{(|");
+
+        // https://stackoverflow.com/a/48045737
+        // In the particular case of ACTION_GET_CONTENT, that will tend to route
+        // directly to a system-supplied UI for obtaining content, bypassing any
+        // chooser, on Android 4.4+.
+        super.startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
+
+    }
+
+    private void createOneButton(ViewGroup buttonGroup, String text,
+            View.OnClickListener onClickListener, int smallestWidth) {
+        Button buttonPicturePick = new Button(this);
+        buttonPicturePick.setOnClickListener(onClickListener);
+        CreateView.createTextView(buttonPicturePick, buttonGroup,
+                text, smallestWidth, false);
     }
 
     /**
       * Create two buttons
       * @return id of the group
       */
-    private int createButtons(ViewGroup layout, int smallestWidth) {
+    private int createButtonGroup(ViewGroup layout, int smallestWidth) {
         LinearLayout buttonGroup = new LinearLayout(this);
         int buttonGroupId = View.generateViewId();
         buttonGroup.setId(buttonGroupId);
@@ -193,17 +293,17 @@ public class PictureActivity extends AppCompatActivity {
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT));
 
-        Button buttonPicturePick = new Button(this);
-        buttonPicturePick.setOnClickListener(view ->
-                PictureActivity.this.performFileSearch());
-        CreateView.createTextView(buttonPicturePick, buttonGroup,
-                "Pick a picture", smallestWidth, false);
+        this.createOneButton(buttonGroup, "Pick a picture\nin filesystem", view ->
+                PictureActivity.this.performFileSearch(), smallestWidth);
 
-        Button buttonPictureCapture = new Button(this);
-        buttonPictureCapture.setOnClickListener(view ->
-                PictureActivity.this.dispatchTakePictureIntent());
-        CreateView.createTextView(buttonPictureCapture, buttonGroup,
-                "Take new photo", smallestWidth, false);
+        this.createOneButton(buttonGroup, "Take new photo\n" +
+                "(saved in app's folder\nnot displayed in gallery)", view ->
+                PictureActivity.this.dispatchTakePictureIntent(),
+                smallestWidth);
+
+        this.createOneButton(buttonGroup, "Pick a picture\nin gallery", view ->
+                PictureActivity.this.pickPictureFromGallery(),
+                smallestWidth);
 
         layout.addView(buttonGroup);
 
@@ -219,7 +319,7 @@ public class PictureActivity extends AppCompatActivity {
         int smallestWidth = DetectScreen.getSmallestWidth(this);
         ConstraintLayout layout = CreateView.createLayout(this);
 
-        int buttonGroupId = this.createButtons(layout, smallestWidth);
+        int buttonGroupId = this.createButtonGroup(layout, smallestWidth);
 
         CreateView.centerAView(layout, buttonGroupId);
 

@@ -6,6 +6,12 @@
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
 
+    <!-- https://developer.android.com/training/camera/photobasics#TaskGallery -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- Following is implied by above permission -->
+    <!-- <uses&#45;permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+
     <!-- README read my README.md -->
     <application
         android:allowBackup="true"

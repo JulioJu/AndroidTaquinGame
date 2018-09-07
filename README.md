@@ -20,7 +20,7 @@ http://imss-www.upmf-grenoble.fr/~davidjer/dwm/Projet-Taquin2017.pdf
 * Lorsque le jeux est gagné, un message doit être affiché puis une option pour
 recommencer ou quitter l'appli doit être proposée.
 
-### Les plus :
+### Les plus :
 * une animation lors du déplacement d'un bout d'image
     http://developer.android.com/reference/android/view/animation/TranslateAnimation.html
 * faire tourner l'application quand on tourne le téléphone.
@@ -38,26 +38,24 @@ recommencer ou quitter l'appli doit être proposée.
 ## Notes from JulioJu
 * The first commit could not compile. We must have at least one activity !
 
-### AndroidManifest.xml
-
-To understand ./app/src/main/AndroidManifest.xml, following resources are
-interesting:
-
-https://developer.android.com/guide/topics/manifest/manifest-intro
-https://developer.android.com/guide/components/activities/intro-activities
-
-#### `<intent-filter>`
-https://developer.android.com/guide/topics/manifest/intent-filter-element
-
-https://developer.android.com/guide/topics/manifest/action-element
-    « *The name of the action. Some standard actions are defined in the Intent
-  class as ACTION_string constants.* »
-
-https://developer.android.com/guide/topics/manifest/category-element
-    « *The name of the action. Some standard actions are defined in the Intent
-  class as ACTION_string constants.* »
-
-https://developer.android.com/reference/android/content/Intent
+### Genymotion and IntelliJ
+* On my computer, Genymotion is very very faster and lighter (for the CPU) than
+    the Android Emulator. I've also very heard than it's very more reliable.
+* It's free. And with a registration, you could have lot of different
+    Virtual Images.
+* **For Intellij Ultimate Edition, you must configure the debugger. See:
+    https://stackoverflow.com/a/51476111**
+    Read also the comment of this comment !
+* When import, we must build to see some errors disappear.
+* I've experienced errors with `Google AVD` (Android Emulator)
+    * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
+    Not read all the comments. I've only experienced to disable `Instant run`
+    (no try others complex solutions).
+    But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
+    kicked off `Google Emulator`.
+    * On my Computer, when `AVD` loose the focus, his screen becomes black
+        even when he has the focus again. The only workaround
+        is to change orientation (`e.g.` Portrait -> Landscape)
 
 #### IntelliJ vs Android Studio
 * On my Arch Linux, with `IntelliJ` I've tried to use `Settings -> Android SDK`
@@ -112,26 +110,6 @@ https://developer.android.com/reference/android/content/Intent
 
 * Input and Events: https://developer.android.com/guide/topics/ui/ui-events
 
-### Genymotion and IntelliJ
-* On my computer, Genymotion is very faster and lighter (for the CPU) than
-    the Android Emulator. I've also heard than it's very more reliable.
-* It's free. And with a registration, you could have lot of different
-    Virtual Images.
-* **For Intellij Ultimate Edition, you must configure the debugger. See:
-    https://stackoverflow.com/a/51476111**
-    Read also the comment of this comment !
-* When import, we must build to see some errors disappear.
-* I've experienced errors with `Google AVD` (Android Emulator)
-    * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
-    Not read all the comments. I've only experienced to disable `Instant run`
-    (no try others complex solutions).
-    But Instant Run (`Tools --> Apply changes`) is very useful ! Therefore
-    kicked off `Google Emulator`.
-    * On my Computer, when `AVD` loose the focus, his screen becomes black
-        even when he has the focus again. The only workaround
-        is to change orientation (`e.g.` Portrait -> Landscape)
-
-
 ### Examples downloaded at Google Samples
 * An easy solution to test examples at https://github.com/googlesamples/
     without compatibilities errors (build-tools, platforms, gradle, etc.)
@@ -139,6 +117,27 @@ https://developer.android.com/reference/android/content/Intent
     1. create an empty project in the IDE.
     2. `rm -R project_name/app/src/main/*`
     3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
+
+### AndroidManifest.xml
+
+To understand ./app/src/main/AndroidManifest.xml, following resources are
+interesting:
+
+https://developer.android.com/guide/topics/manifest/manifest-intro
+https://developer.android.com/guide/components/activities/intro-activities
+
+#### `<intent-filter>`
+https://developer.android.com/guide/topics/manifest/intent-filter-element
+
+https://developer.android.com/guide/topics/manifest/action-element
+    « *The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants.* »
+
+https://developer.android.com/guide/topics/manifest/category-element
+    « *The name of the action. Some standard actions are defined in the Intent
+  class as ACTION_string constants.* »
+
+https://developer.android.com/reference/android/content/Intent
 
 ### Constraint Layout and Layout docs
 * **./app/src/main/java/fr/uga/julioju/taquingame/taquin/Square.java**
@@ -270,18 +269,6 @@ https://developer.android.com/reference/android/content/Intent
             https://developer.android.com/reference/android/view/Display
     * To see statistics: https://developer.android.com/about/dashboards/
 
-### Work with images
-* To simply take a photo, read:
-    * https://developer.android.com/training/camera/photobasics
-    * https://developer.android.com/guide/components/intents-common#ImageCapture
-* To pick a photo:
-    https://developer.android.com/guide/topics/providers/document-provider
-* To split images, read:
-    http://www.chansek.com/splittingdividing-image-into-smaller/
-* To Loading large image efficiently see:
-    https://developer.android.com/topic/performance/graphics/load-bitmap
-
-### Notes:
 * For Square.java:
     * « match_parent is not supported. With 0dp, you can think of your
         constraints as 'scalable' rather than 'filling whats left'. »
@@ -291,17 +278,6 @@ https://developer.android.com/reference/android/content/Intent
         To correct this, I've added a `margin_left` to Square on the
         first column, and a `margin_top` to Square on the first row. I've
         also added a background for the activity, to not have white background.
-
-* OnClickListener
-    Be careful, keep in mind that an instance of `OnClickListener` could be
-    have a delay before to be garbaged.
-
-* Android.util.Log.d
-    * System.out.println could not be used. To se view in "Logcat",
-        use Android.util.Log
-    * Warning 1: Android.util.Log.d print nothing if second param is `null`.
-    * Warning 2: Android.util.Log.d could mix two logs if they have the same
-        first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
 * ConstraintSet should be set after layout.addView(view);
 
@@ -340,7 +316,9 @@ https://developer.android.com/reference/android/content/Intent
     call `finish()`, and not trigger `startActivity`, otherwise
     a new instance of `MainActivity` will be put on the top of the `task`.
 
-## Intents
+### Intents
+* Introduction to intents:
+    https://developer.android.com/training/sharing/
 * Generality about intents:
     https://developer.android.com/guide/components/intents-filters
 * Getting a Result from an Activity
@@ -375,12 +353,117 @@ https://developer.android.com/reference/android/content/Intent
     Solution:
     use `ArrayList<Bitmap>` and use `intentIncome.getParcelableArrayListExtra()`
 
-## Instance of class with one method
-« Although this is often more concise than a named class, for classes with only
- one method, even an anonymous class seems a bit excessive and cumbersome.
- Lambda expressions let you express instances of single-method classes more
- compactly. »
-https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
+* Use a `Intent.createChooser` is a good practice because
+    « If no applications match, Android displays a system message. »
+* In the particular case of ACTION_GET_CONTENT, that will tend to route
+    directly to a system-supplied UI for obtaining content, bypassing any
+    chooser, on Android 4.4+.
+    https://stackoverflow.com/a/48045737
+    * Therefore they not  « `always display the chooser` »
+        contrary to they say at
+        https://developer.android.com/training/sharing/send
+
+#### Work with images and files
+* To simply take a photo, read:
+    * https://developer.android.com/training/camera/photobasics
+    * https://developer.android.com/guide/components/intents-common#ImageCapture
+* To pick a photo:
+    https://developer.android.com/guide/topics/providers/document-provider
+* To split images, read:
+    http://www.chansek.com/splittingdividing-image-into-smaller/
+* To Loading large image efficiently see:
+    https://developer.android.com/topic/performance/graphics/load-bitmap
+* **See very useful and complet examples at**
+    https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
+        * Maybe it's better to use `Context.getExternalFilesDir();` than
+            `Context.getFilesDir()` because we could retrieve it
+            thanks a `DocumentProvider` (but not by a gallery).
+        * On emulator, the App seems not have simply read or write access to
+            getFilesDir();
+        * But be careful !
+            « Shared storage may not always be available, since removable media
+            can be ejected by the user. »
+            * If I understand well if
+                `Context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ==
+                    null`
+                the external storage isn't mounted.
+                TODO test in real device
+            * Test write access thanks
+                `Environment.getExternalStorageState(storageDir) ==
+                    Environment.MEDIA_MOUNTED`.
+            * In Genymotion, we can't start without `android_system_disk.vmdk`
+                and the App is saved in this Virtual Disk.
+            * In `Android Emulator AVD`, when we eject sd card, it works. In
+                `Genymotion` we can't eject sd card.
+            * TODO test it with a real Device.
+* For dealing between private files of our app, and others app, we must use
+    Uri with scheme `content://` and not Uri with scheme `file://`
+    https://developer.android.com/guide/topics/providers/content-provider-basics#ContentURIs
+    Otherwise we have:
+    https://developer.android.com/reference/android/os/FileUriExposedException
+    * We must first create an empty file, then send it
+        to the camera App. If the Camera App doesn't take photo,
+        this file stay empty.
+    * « The ContentProvider basic protocol does not support browsing of
+        directory structures this way »
+        https://stackoverflow.com/questions/28009747/android-how-to-list-files-inside-a-folder-with-a-content-provider
+        * Therefore following codes can't work:
+            1.
+                ```
+                File storageDir = super.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES);
+                intent.setDataAndType(storageDirUri, "image/*");
+                ```
+            2.
+                ```
+                    File storageDir = super.getExternalFilesDir(
+                            Environment.DIRECTORY_PICTURES);
+                    // https://developer.android.com/reference/android/provider/DocumentsContract#EXTRA_INITIAL_URI
+                    // « The initial location is system specific if this extra is missing or
+                    //     document navigator failed to locate the desired initial location.
+                    // »
+                    intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, storageDirUri);
+                ```
+            3. The following code can't work too even if the Uri has
+                    scheme `content:///`
+                ``
+                    Intent mediaScanIntent = new Intent(Intent
+                            .ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    Uri photoUriContentScheme = FileProvider.getUriForFile(this,
+                            "fr.uga.julioju.taquingame.fileprovider",
+                            photoFile);
+                    mediaScanIntent.setData(photoUriContentScheme);
+                    this.sendBroadcast(mediaScanIntent);
+                ``
+                See https://developer.android.com/guide/topics/providers/document-provider#open-client
+        * ***Workaround for the demo***:
+            As the `File` show the last folder used, before the demo:
+                1. In the App that implements `DocumentsProvider`
+                    in its settings click in `show internal storage`
+                    Then on the new location that appears on the left:
+                2. Navigate to `/Android/data/fr.uga.taquingame/files/Pictures`
+* `DocumentsProvider` can't navigate from `/`, but only in `/storage`.
+    `Amaze` is an App that doesn't implement a `DocumentsProvider`,
+    but with it we could `root` folder.
+
+### Notes misc
+* « Although this is often more concise than a named class, for classes with
+    only one method, even an anonymous class seems a bit excessive and
+    cumbersome.  Lambda expressions let you express instances of single-method
+    classes more compactly. »
+    https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
+
+* OnClickListener
+    Be careful, keep in mind that an instance of `OnClickListener` could be
+    have a delay before to be garbaged.
+
+* Android.util.Log.d
+    * System.out.println could not be used. To se view in "Logcat",
+        use Android.util.Log
+    * Warning 1: Android.util.Log.d print nothing if second param is `null`.
+    * Warning 2: Android.util.Log.d could mix two logs if they have the same
+        first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
+
 
 ## My implementation
 * See the comment of the class
