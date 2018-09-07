@@ -68,6 +68,9 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== onActivityResult =======================
+    // =============================================================
+
     // https://developer.android.com/guide/topics/providers/document-provider#open-client
     private Bitmap getBitmapFromUri(Uri uri) throws IOException {
         ParcelFileDescriptor parcelFileDescriptor =
@@ -134,6 +137,31 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
+    // ========= Take new Photo (saved in public folder)  ==========
+    // =============================================================
+
+    private void dispatchTakePictureIntentPublicFolder() {
+
+    }
+
+    // ==================== Pick picture from gallery ==============
+    // =============================================================
+
+    private void pickPictureFromGallery() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // Even if there is no chooser displayed, better to use
+        // createChooser in case of there isn't provider app installed.
+        super.startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
+
+    }
+
+    // ==== Take new Photo (saved in app's folder not display in gallery)  ====
+    // =============================================================
+
     private File createImageFile() {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
@@ -188,7 +216,7 @@ public class PictureActivity extends AppCompatActivity {
     }
 
     // https://developer.android.com/training/camera/photobasics#TaskPath
-    private void dispatchTakePictureIntent() {
+    private void dispatchTakePictureIntentPrivateFolder() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -220,18 +248,8 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    private void pickPictureFromGallery() {
-
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        // Even if there is no chooser displayed, better to use
-        // createChooser in case of there isn't provider app installed.
-        super.startActivityForResult(Intent.createChooser(intent,
-                    "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
-
-    }
-
+    // ==== Pick a picture in Filesystem (classic file explorer ====
+    // =============================================================
 
     // Source:
     // https://developer.android.com/guide/topics/providers/document-provider#search
@@ -271,6 +289,9 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
+    // ====================== Create Layout =====i==================
+    // =============================================================
+
     private void createOneButton(ViewGroup buttonGroup, String text,
             View.OnClickListener onClickListener, int smallestWidth) {
         Button buttonPicturePick = new Button(this);
@@ -293,17 +314,31 @@ public class PictureActivity extends AppCompatActivity {
                     ConstraintLayout.LayoutParams.WRAP_CONTENT,
                     ConstraintLayout.LayoutParams.WRAP_CONTENT));
 
-        this.createOneButton(buttonGroup, "Pick a picture\nin filesystem", view ->
-                PictureActivity.this.performFileSearch(), smallestWidth);
-
         this.createOneButton(buttonGroup, "Take new photo\n" +
-                "(saved in app's folder\nnot displayed in gallery)", view ->
-                PictureActivity.this.dispatchTakePictureIntent(),
+                "(saved in public folder)", view ->
+                PictureActivity.this.dispatchTakePictureIntentPublicFolder(),
                 smallestWidth);
 
         this.createOneButton(buttonGroup, "Pick a picture\nin gallery", view ->
                 PictureActivity.this.pickPictureFromGallery(),
                 smallestWidth);
+
+        View lineView = new View(this);
+        ViewGroup.MarginLayoutParams layoutParamsWrap =
+            new ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 2);
+        layoutParamsWrap.setMargins(0, 10, 0, 10);
+        lineView.setLayoutParams(layoutParamsWrap);
+        lineView.setBackgroundColor(0xFFFFFFFF);
+        buttonGroup.addView(lineView);
+
+        this.createOneButton(buttonGroup, "Take new photo\n" +
+                "(saved in app's folder\nnot displayed in gallery)", view ->
+                PictureActivity.this.dispatchTakePictureIntentPrivateFolder(),
+                smallestWidth);
+
+        this.createOneButton(buttonGroup, "Pick a picture\nin filesystem", view ->
+                PictureActivity.this.performFileSearch(), smallestWidth);
 
         layout.addView(buttonGroup);
 

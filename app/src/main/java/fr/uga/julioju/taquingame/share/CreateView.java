@@ -31,9 +31,6 @@ public class CreateView  {
             new ConstraintLayout.LayoutParams(
                     ConstraintSet.WRAP_CONTENT,
                     ConstraintSet.WRAP_CONTENT);
-        textView.setLayoutParams(layoutParamsWrap);
-        textView.setText(string);
-        CreateView.setTextSize(textView, smallestWidth);
         if (isTitle) {
             if (smallestWidth >= 600) {
                 layoutParamsWrap.setMargins(0, 0, 0, 22);
@@ -43,6 +40,9 @@ public class CreateView  {
                 textView.setTextSize(25);
             }
         }
+        textView.setLayoutParams(layoutParamsWrap);
+        textView.setText(string);
+        CreateView.setTextSize(textView, smallestWidth);
         layout.addView(textView);
         return textViewId;
     }
