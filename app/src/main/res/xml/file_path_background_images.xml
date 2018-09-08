@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- https://developer.android.com/training/camera/photobasics#TaskPath -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- https://developer.android.com/training/camera/photobasics#TaskPath -->
     <external-path name="images" path="Android/data/fr.uga.julioju.taquingame/files/Pictures" />
+
+    <!-- https://stackoverflow.com/q/43247674 -->
+    <external-path name="Pictures" path="Pictures" />
+    <external-path name="Movies" path="Movies" />
+    <external-path name="my_images" path="Pictures/taquingame" />
+
+
 </paths>

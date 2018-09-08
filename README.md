@@ -446,6 +446,48 @@ https://developer.android.com/reference/android/content/Intent
     `Amaze` is an App that doesn't implement a `DocumentsProvider`,
     but with it we could `root` folder.
 
+* The file should be created before the camera app is launch, otherwise
+    we have:
+    ```
+    09-08 13:11:40.644 1807-1807/com.android.camera2 E/CAM_StateSavePic: exception while saving result to URI: Optional.of(content://fr.uga.julioju.taquingame.fileprovider/images/taquinGame20180908_131135_/.jpg)
+    java.io.FileNotFoundException: open failed: ENOENT (No such file or directory)
+    ```
+
+* Most File Managers don't support Open Folder Intent
+    * Therefore the default Android File Manager doesn't interpret
+        ```
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        Uri storageDirUri = Uri.parse(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES)
+                .getPath());
+        android.util.Log.d("uri Environment", storageDirUri.toString());
+        intent.setDataAndType(storageDirUri, "image/*");
+        ```
+    * https://github.com/syncthing/syncthing-android/issues/838
+    * https://stackoverflow.com/questions/48499726/open-specific-folder-in-file-manager-for-viewing
+    * https://github.com/1hakr/AnExplorer/issues/96
+
+
+
+### MediaScannerConnection / Intent.ACTION_MEDIA_SCANNER_SCAN_FILE
+* ***See my issue at https://issuetracker.google.com/issues/114402174*** named
+    « Some part of second example of Context.getExternalFilesDir are wrong. »
+    ==> we can't use MediaScanner ! I've tested !
+
+* Tested also with this function that could retrieve an `Uri` with scheme
+    `content:///`. https://stackoverflow.com/a/14456406.
+    But this function fail at line with `Cursor cursor` with error:
+    ```
+    java.lang.SecurityException: Permission Denial: reading com.android.providers.media.MediaProvider uri content://media/external/images/media from
+    ```
+
+* We can't use `Uri.fromFile(new File("/sdcard/cats.jpg"))` or
+    `Uri.parse(new File("/sdcard/cats.jpg").toString()`
+    because it can't work on Android API 26+.
+    https://stackoverflow.com/questions/3004713/get-content-uri-from-file-path-in-android#comment88013079_3005936
+
 ### Notes misc
 * « Although this is often more concise than a named class, for classes with
     only one method, even an anonymous class seems a bit excessive and
