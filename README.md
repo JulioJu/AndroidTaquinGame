@@ -1,6 +1,6 @@
 # TP Développement Web Mobile : Création d'un jeu de taquin
 
-## Teacher's instruction
+## Teacher's instruction and JulioJu functionalities
 Développement Web mobile
 2017-2018
 Android – Projet Taquin
@@ -11,8 +11,18 @@ http://imss-www.upmf-grenoble.fr/~davidjer/dwm/Projet-Taquin2017.pdf
 ## Fonctionnalités
 * On peut choisir soit une image de la galerie du téléphone, soit prendre
     une photo.
+    * Notes from JulioJu:
+        * on my implementation try to take a photo saved
+            in Pubic Directory ask a permission even if the permission was
+            forbidden in `settings -> App Info -> applicationName -> permission`
+            and if a user has denied a permission and selected the `Don't ask
+            again` option in the permission request dialog,
+        * As needed in API 26, permission is asked the first time
+            we try to take a photo and save it in a Public Repository (
+            no one Runtime Permission seems to be needed when the photo is
+            saved in the Private Repository.
 * On peut configurer la taille de la grille (2x2, 3x3, 4x4).
-    (*Added by JulioJu: except for 2X2, positions should be random)
+    * Added by JulioJu: except for 2X2, positions should be random
 * L'image doit être bien orientée (mode paysage ou portrait,
     d'après infos EXIF).
 * L'image doit être adaptée à la taille et résolution de l'écran (pas d'image
@@ -46,6 +56,11 @@ recommencer ou quitter l'appli doit être proposée.
 * **For Intellij Ultimate Edition, you must configure the debugger. See:
     https://stackoverflow.com/a/51476111**
     Read also the comment of this comment !
+* Do not use the file explorer `Amaze`. Little bit buggy (don't recognize
+    some root folders). Use `ES File Explorer`.
+    Install it simply by download it, then drag and drop to the VM screen.
+* On my Arch Linux, when Genymotion is launched, can't hear noise
+    when I start a new `vlc`. Simply start `vlc` before VM and all works!
 * When import, we must build to see some errors disappear.
 * I've experienced errors with `Google AVD` (Android Emulator)
     * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
@@ -362,6 +377,25 @@ https://developer.android.com/reference/android/content/Intent
     * Therefore they not  « `always display the chooser` »
         contrary to they say at
         https://developer.android.com/training/sharing/send
+
+#### Android Permissions
+
+* First of all, read all my comments in
+    ./app/src/main/java/fr/uga/julioju/taquingame/picture/PictureActivity.java
+    It was an hard work !
+
+* I've reported two issues on Google Issue tracker
+    1. https://issuetracker.google.com/issues/114402174 named
+        ` Some part of second example of Context.getExternalFilesDir are wrong`
+    2. https://issuetracker.google.com/issues/114554343 relative to
+        `Activity[Compat].shouldShowRequestPermissionRationale`
+
+* Interesting links:
+    * https://github.com/googlesamples/android-RuntimePermissions/
+    * https://developer.android.com/training/permissions/requesting#explain
+        (very interesting)
+    * https://github.com/googlesamples/android-RuntimePermissions/
+        (official example)
 
 #### Work with images and files
 * To simply take a photo, read:
