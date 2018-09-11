@@ -12,15 +12,8 @@
         <item>10</item>
     </string-array>
     <string name="ok">OK</string>
-    <string name="camera_unavailable">
-        <b>Camera could not be opened.</b>
-        \nThis occurs when the camera is not available
-        (for example it is already in use)
-        or if the system has denied access
-        (for example when camera access has been disabled).
-    </string>
-    <string name="permission_write_external_storage_and_camera_rationale">
-        Storage and camera permission is needed to show the camera
-        preview.
+    <string name="permission_write_external_storage_rationale">
+        Storage permission is needed to save photo that could be accessible
+        by the Gallery.
     </string>
 </resources>

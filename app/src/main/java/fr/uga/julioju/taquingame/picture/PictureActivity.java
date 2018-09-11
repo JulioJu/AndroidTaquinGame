@@ -48,7 +48,7 @@ public class PictureActivity extends AppCompatActivity {
     private static final int REQUEST_PICTURE_PICK = 17;
 
     private static final int
-        REQUEST_PERMISSIONS_TAKE_PHOTO_AND_SAVE_PUBLIC_FOLDER = 50;
+        REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 50;
 
     private static final int REQUEST_ANDROID_SETTINGS = 1000;
 
@@ -181,6 +181,19 @@ public class PictureActivity extends AppCompatActivity {
     // ========= Common methods to take photos  ========== {{{1
     // =============================================================
 
+    private boolean isNotPermissionsWriteExternal() {
+        boolean returnStatement = false;
+        if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            android.util.Log.e("runtime permission", "'"        +
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE  +
+                    "' not granted. Should be granted.");
+            returnStatement = true;
+        }
+        return returnStatement;
+    }
+
     @NonNull
     private File createStorageDir(boolean
             isPublicDirectory) throws PictureActivityException {
@@ -200,10 +213,9 @@ public class PictureActivity extends AppCompatActivity {
 
             // Here, thisActivity is the current activity
             // https://stackoverflow.com/questions/38885982/android-file-mkdirs-always-return-false?rq=1
-            if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                String messageError = "You have not right to take a photo." +
+            if (this.isNotPermissionsWriteExternal()) {
+                String messageError = "You have not right to take a photo " +
+                    " and save it in a public repository." +
                     " Check in 'App Info' that you have forbidden the app.";
                 throw new PictureActivityException(messageError);
             }
@@ -212,14 +224,18 @@ public class PictureActivity extends AppCompatActivity {
                     .getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES), "taquingame");
 
-            if (storageDir.mkdirs()) {
-                android.util.Log.d("mkdir", storageDir.toString() +
-                        "successfully created.");
-            }
-            else {
-                String messageError = "'" + storageDir.toString() + "'" +
-                        " not created.";
-                throw new PictureActivityException(messageError);
+            if (! storageDir.exists()) {
+                    android.util.Log.d("mkdir", "'" + storageDir.toString() +
+                            "' exists.");
+                if (storageDir.mkdirs()) {
+                    android.util.Log.d("mkdir", "'" + storageDir.toString() +
+                            "' successfully created.");
+                }
+                else {
+                    String messageError = "'" + storageDir.toString() + "'" +
+                            " not created.";
+                    throw new PictureActivityException(messageError);
+                }
             }
         }
         else {
@@ -270,8 +286,9 @@ public class PictureActivity extends AppCompatActivity {
         //      E/CAM_StateSavePic: exception while saving result to URI:
         //      Optional.of(content://fr.uga.julioju.taquingame.fileprovider/images/taquinGame20180908_131135_/.jpg)
         // »
-        // And probably can't work ! Because we want a scheme `content:///'
-        // File image = new File(storageDir + "/" + imageFileName + "/" + ".jpg");
+        // And can't work ! Because we want a scheme `content:///'
+        // File image = new File(storageDir + "/" + imageFileName + "/"
+        //    + ".jpg");
 
         // WORKS
         File image;
@@ -339,13 +356,13 @@ public class PictureActivity extends AppCompatActivity {
         // « Verify that each required permission has been granted, otherwise
         // return false. »
         if (requestCode == PictureActivity
-                    .REQUEST_PERMISSIONS_TAKE_PHOTO_AND_SAVE_PUBLIC_FOLDER) {
+                    .REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE) {
             android.util.Log.i("permission",
                     "Received response for permissions request.");
 
             // « We have requested multiple permissions all of them need to be
             // checked. »
-            if (PermissionUtil.verifyPermissions(grantResults)) {
+            if (PermissionUtil.verifyPermissions(permissions, grantResults)) {
                 // « All required permissions have been granted, »
                 // launch the game
                 try {
@@ -359,8 +376,8 @@ public class PictureActivity extends AppCompatActivity {
                 // https://www.vladmarton.com/granted-denied-and-permanently-denied-permissions-in-android/
                 // WARNING : explanations in this website are wrong !
                 Snackbar
-                    .make(this.layout, "We require a write permission." +
-                            " Please allow it in Settings.",
+                    .make(this.layout, R.string
+                            .permission_write_external_storage_rationale,
                             Snackbar.LENGTH_INDEFINITE)
                     .setAction("SETTINGS",
                             view -> {
@@ -382,10 +399,9 @@ public class PictureActivity extends AppCompatActivity {
         // « request the permission
         // The callback method gets the result of the request. »
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA},
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PictureActivity
-                    .REQUEST_PERMISSIONS_TAKE_PHOTO_AND_SAVE_PUBLIC_FOLDER);
+                    .REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
     }
 
     private void dispatchTakePictureIntentPublicFolder() {
@@ -393,16 +409,12 @@ public class PictureActivity extends AppCompatActivity {
         // https://developer.android.com/guide/topics/permissions/overview
         // Inspired from:
         // https://developer.android.com/training/permissions/requesting
-        if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (this.isNotPermissionsWriteExternal()) {
 
             // « Permission is not granted
             // Should we show an explanation? »
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.CAMERA)) {
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
                 // https://developer.android.com/training/permissions/requesting#make-the-request
                 // « Show an explanation to the user *asynchronously* -- don't
@@ -430,11 +442,11 @@ public class PictureActivity extends AppCompatActivity {
                 // context for the use of the permission.  For example if the
                 // user has previously denied the permission. »
                 android.util.Log.i("permission",
-                        "Displaying camera and write_external_storage permission" +
-                        " rationale to provide this functionality.");
+                        "You must storage permission to write in public " +
+                        "directory.");
                 Snackbar
                     .make(layout, R.string
-                            .permission_write_external_storage_and_camera_rationale,
+                            .permission_write_external_storage_rationale,
                             Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, view ->
                         this.activityCompatRequestPermissions()

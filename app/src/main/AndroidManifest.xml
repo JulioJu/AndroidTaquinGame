@@ -2,15 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="fr.uga.julioju.taquingame">
 
-    <!-- https://developer.android.com/guide/topics/media/camera -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- https://developer.android.com/training/camera/photobasics#TaskGallery -->
+    <!-- https://developer.android.com/guide/topics/media/camera#manifest -->
+    <!-- « Using external Camera app doesn't need permissions » -->
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
 
-    <!-- https://developer.android.com/training/camera/photobasics#TaskGallery -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- Following is implied by above permission -->
-    <!-- <uses&#45;permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
 
     <!-- README read my README.md -->
     <application
