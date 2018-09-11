@@ -19,8 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import fr.uga.julioju.taquingame.picture.PictureActivity;
-import fr.uga.julioju.taquingame.share.CreateView;
-import fr.uga.julioju.taquingame.share.DetectScreen;
+import fr.uga.julioju.taquingame.util.CreateView;
+import fr.uga.julioju.taquingame.util.DetectScreen;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 
 /** Choose number of squares the game should be */

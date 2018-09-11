@@ -1,4 +1,4 @@
-package fr.uga.julioju.taquingame.taquin;
+package fr.uga.julioju.taquingame.util;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,7 +14,7 @@ import android.support.annotation.Nullable;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
-class SplitImageUtil  {
+public class ImageUtil  {
 
     // Source http://www.chansek.com/splittingdividing-image-into-smaller/
     @NonNull
@@ -125,7 +125,7 @@ class SplitImageUtil  {
         // https://stackoverflow.com/a/6228188
         // bitmapOption.inDither=true; //optional (deprecated)
         // bitmapOption.inPreferredConfig=Bitmap.Config.ARGB_8888;//optional
-        SplitImageUtil.getBitmapFromUri(context, uri,
+        ImageUtil.getBitmapFromUri(context, uri,
                 bitmapOption, messageError);
 
         // https://stackoverflow.com/a/6228188
@@ -136,13 +136,13 @@ class SplitImageUtil  {
 
         // Calculate inSampleSize
         bitmapOption.inSampleSize =
-            SplitImageUtil.calculateInSampleSize(bitmapOption, reqWidth,
+            ImageUtil.calculateInSampleSize(bitmapOption, reqWidth,
                 reqHeight);
 
         // Decode bitmap with inSampleSize set
         bitmapOption.inJustDecodeBounds = false;
 
-        Bitmap image = SplitImageUtil.getBitmapFromUri(context, uri,
+        Bitmap image = ImageUtil.getBitmapFromUri(context, uri,
                 bitmapOption, messageError);
         if (image == null) {
             throw new IOException(messageError);
@@ -151,15 +151,27 @@ class SplitImageUtil  {
     }
 
     @NonNull
-    static BitmapDrawable[] generateBitmapDrawableArray(Context context,
+    public static BitmapDrawable[] generateBitmapDrawableArray(Context context,
             int gridLength, int screenWidth, int screenHeight,
             @NonNull Uri uriImage)
             throws IOException {
-        // Bitmap bitmapOriginal = SplitImageUtil.getBitmapFromUri(context,
+        // Bitmap bitmapOriginal = ImageUtil.getBitmapFromUri(context,
         //         uriImage, null, "test");
-        Bitmap bitmapOriginal = SplitImageUtil.decodeSampledBitmapFromStream(
+        Bitmap bitmapOriginal = ImageUtil.decodeSampledBitmapFromStream(
                 context, uriImage, screenWidth, screenHeight);
-        return SplitImageUtil.splitImage(context, bitmapOriginal, gridLength);
+        return ImageUtil.splitImage(context, bitmapOriginal, gridLength);
+    }
+
+    public static boolean isBitmapIsEmpty(Context context, Uri photoUri)
+            throws  IOException {
+
+        final BitmapFactory.Options bitmapOption =
+            new BitmapFactory.Options();
+        bitmapOption.inJustDecodeBounds = true;
+        ImageUtil.getBitmapFromUri(context, photoUri,
+                bitmapOption, "IOException");
+        return (bitmapOption.outWidth == -1)
+            || (bitmapOption.outHeight == -1);
     }
 
 }

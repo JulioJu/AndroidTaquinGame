@@ -13,17 +13,18 @@ import android.support.constraint.ConstraintSet;
 
 import android.support.v7.app.AppCompatActivity;
 
-import android.support.design.widget.Snackbar;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import android.support.design.widget.Snackbar;
 import fr.uga.julioju.taquingame.R;
 import fr.uga.julioju.taquingame.main.MainActivity;
 import fr.uga.julioju.taquingame.picture.PictureActivity;
+import fr.uga.julioju.taquingame.util.ImageUtil;
+
 
 /** Build the Main Activity, it contains a Grid constructed thanks a
   * ConstraintLayout (better than Grid View).
@@ -294,7 +295,7 @@ public class TaquinActivity extends AppCompatActivity {
             .show();
 
         try {
-            this.backgroundArray = SplitImageUtil
+            this.backgroundArray = ImageUtil
                 .generateBitmapDrawableArray(this, this.gridLength,
                         screenSize.x, screenSize.y, uriImage);
         } catch (IOException e) {

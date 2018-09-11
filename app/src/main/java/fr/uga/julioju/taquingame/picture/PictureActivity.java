@@ -4,13 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -35,8 +32,9 @@ import java.util.Date;
 
 import android.support.design.widget.Snackbar;
 import fr.uga.julioju.taquingame.R;
-import fr.uga.julioju.taquingame.share.CreateView;
-import fr.uga.julioju.taquingame.share.DetectScreen;
+import fr.uga.julioju.taquingame.util.CreateView;
+import fr.uga.julioju.taquingame.util.DetectScreen;
+import fr.uga.julioju.taquingame.util.ImageUtil;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import java.io.*;
 
@@ -107,31 +105,6 @@ public class PictureActivity extends AppCompatActivity {
         this.sendBroadcast(mediaScanIntent);
     }
 
-    // https://developer.android.com/guide/topics/providers/document-provider#open-client
-    @NonNull
-    private Bitmap getBitmapFromUri(Uri uri) throws PictureActivityException {
-        ParcelFileDescriptor parcelFileDescriptor;
-        try {
-            parcelFileDescriptor = super.getContentResolver()
-                .openFileDescriptor(uri, "r");
-        } catch (FileNotFoundException e) {
-            throw new PictureActivityException("File not found", e);
-        }
-        if (parcelFileDescriptor == null) {
-            String messageError = "`ParcelFileDescriptor' can't be opened.";
-            throw new PictureActivityException(messageError);
-        }
-        FileDescriptor fileDescriptor = parcelFileDescriptor
-            .getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        try {
-            parcelFileDescriptor.close();
-        } catch (IOException e) {
-            throw new PictureActivityException("IOexception", e);
-        }
-        return image;
-    }
-
     private void onActivityResultPicturePick (int resultCode,
             Intent resultData) throws PictureActivityException {
         // Source:
@@ -148,9 +121,17 @@ public class PictureActivity extends AppCompatActivity {
             // Pull that URI using resultData.getData().
             this.photoURI = resultData.getData();
 
-            Bitmap bitmap;
-            bitmap = this.getBitmapFromUri(this.photoURI);
-            if (bitmap.getRowBytes() < 1) {
+            boolean isBitmapIsEmpty;
+            try {
+                isBitmapIsEmpty = ImageUtil.isBitmapIsEmpty(this,
+                        this.photoURI);
+            } catch (IOException e) {
+                String messageError = "The photo you have selected" +
+                    " can't be read. Try with an other file.";
+                throw new PictureActivityException(messageError);
+            }
+
+            if (isBitmapIsEmpty) {
                 String messageError = "The photo you have selected" +
                     " has size zero." + " Select an other file.";
                 throw new PictureActivityException(messageError);

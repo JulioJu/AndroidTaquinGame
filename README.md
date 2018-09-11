@@ -576,4 +576,12 @@ https://developer.android.com/reference/android/content/Intent
     1. « Custom Tablet - 8.0 - API 26 - 1536x2048 »
     2. « Custom Phone - 8.0 - API 26 - 768x1280 »
 * Landscape mode is actually not optimised.
-* It's sure, could not work with API < 21 (Android 5.0)
+* It's sure, could not work with `API < 21` (Android 5.0)
+* `storageDir.mkdir` in
+    ./app/src/main/java/fr/uga/julioju/taquingame/picture/PictureActivityException.java
+    sometime doesn't work even if there is permissions in Android VM settings.
+    Simply reinstall the app or create manually the folder fix the problem.
+    * Note: Android Studio doesn't uninstall and install a completely fresh
+        app at each build. Android Studio never uninstall the app (
+        private folder app is keep, permissions are keep). I suppose
+        that maybe this behaviour could cause problems?

@@ -1,4 +1,4 @@
-package fr.uga.julioju.taquingame.share;
+package fr.uga.julioju.taquingame.util;
 
 import android.support.v7.app.AppCompatActivity;
 
