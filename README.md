@@ -21,12 +21,16 @@ http://imss-www.upmf-grenoble.fr/~davidjer/dwm/Projet-Taquin2017.pdf
             we try to take a photo and save it in a Public Repository (
             no one Runtime Permission seems to be needed when the photo is
             saved in the Private Repository.
+        * When a not displayable picture is selected, the game should work
+            anyway.
 * On peut configurer la taille de la grille (2x2, 3x3, 4x4).
-    * Added by JulioJu: except for 2X2, positions should be random
+    * Note from JulioJu: except for 2X2, positions should be random
 * L'image doit être bien orientée (mode paysage ou portrait,
     d'après infos EXIF).
 * L'image doit être adaptée à la taille et résolution de l'écran (pas d'image
     trop pixelisée ou trop grande)
+    * Note from JulioJu: Bitmap should be loaded efficiently
+        https://developer.android.com/topic/performance/graphics/load-bitmap
 * Lorsque le jeux est gagné, un message doit être affiché puis une option pour
 recommencer ou quitter l'appli doit être proposée.
 
@@ -60,7 +64,10 @@ recommencer ou quitter l'appli doit être proposée.
     some root folders). Use `ES File Explorer`.
     Install it simply by download it, then drag and drop to the VM screen.
 * On my Arch Linux, when Genymotion is launched, can't hear noise
-    when I start a new `vlc`. Simply start `vlc` before VM and all works!
+    when I start a new `vlc` or `Youtube.com`. Simply stop the VM then `vlc` or
+    Youtube video works, then start again the VM and all continue to work
+    fine! Then, you could also restart `vlc` or `youtube` and all
+    continue to work!
 * When import, we must build to see some errors disappear.
 * I've experienced errors with `Google AVD` (Android Emulator)
     * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
@@ -125,6 +132,10 @@ recommencer ou quitter l'appli doit être proposée.
 
 * Input and Events: https://developer.android.com/guide/topics/ui/ui-events
 
+* ***When you open source in Intellij or Android Studio***, activate `File ->
+    Power Save Mode` otherwise Intellij analyze the file opened (could take a
+    long time even if on an I5 7th gen).
+
 ### Examples downloaded at Google Samples
 * An easy solution to test examples at https://github.com/googlesamples/
     without compatibilities errors (build-tools, platforms, gradle, etc.)
@@ -132,6 +143,10 @@ recommencer ou quitter l'appli doit être proposée.
     1. create an empty project in the IDE.
     2. `rm -R project_name/app/src/main/*`
     3. `cp -R google_sample/Application/src/main/* projectname/app/src/main`
+
+* Tool https://developer.android.com/samples/ is very cool to search samples.
+
+* Actually (09/2018), in documentation, links to samples are broken.
 
 ### AndroidManifest.xml
 

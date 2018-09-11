@@ -2,7 +2,7 @@ package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Intent;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +13,11 @@ import android.support.constraint.ConstraintSet;
 
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.design.widget.Snackbar;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -46,7 +51,7 @@ public class TaquinActivity extends AppCompatActivity {
       * backgroundArray[0] is never displayed during the game.
       * Therefore it is null.
       */
-    private BitmapDrawable backgroundArray[];
+    private Drawable backgroundArray[];
 
     /**
       * Create an Array, with values that are aun unordered sequence of
@@ -144,7 +149,7 @@ public class TaquinActivity extends AppCompatActivity {
       * Create a grid like below.
       * If this.gridLength < 3, draw with letters and "."
       */
-    private void createGrid() {
+    private void createGrid(Point screenSize) {
 
         // Create Square of the grid
         // ============================
@@ -152,25 +157,12 @@ public class TaquinActivity extends AppCompatActivity {
 
         int squareNumberIndex = 0;
 
-        // See :
-        // https://developer.android.com/reference/android/view/WindowManager.html#getDefaultDisplay()
-        // https://developer.android.com/reference/android/view/Display.html#getSize(android.graphics.Point)
-        // « The returned size may be adjusted to exclude certain system decor
-        // elements that are always visible ». For example, Navigation bar !
-        Point point = new Point();
-        this.getWindowManager()
-            .getDefaultDisplay()
-            .getSize(point);
-
-
-        int squareWidth = point.x / this.gridLength;
-        int squareHeight = point.y / this.gridLength;
-        Toast.makeText(this, point.toString(), Toast.LENGTH_LONG)
-            .show();
+        int squareWidth = screenSize.x / this.gridLength;
+        int squareHeight = screenSize.y / this.gridLength;
 
         int[] unorderedSequence = this.createUnorderedSequence();
-        int marginLeftFirstColumn = point.x % this.gridLength / 2;
-        int marginTopFirstRow = point.y % this.gridLength / 2;
+        int marginLeftFirstColumn = screenSize.x % this.gridLength / 2;
+        int marginTopFirstRow = screenSize.y % this.gridLength / 2;
         // Loop that populate array above
         for (int column = 0 ; column  < this.gridLength ; column++) {
             for (int row = 0 ; row < this.gridLength ; row++) {
@@ -185,6 +177,7 @@ public class TaquinActivity extends AppCompatActivity {
             int marginTop = column == 0
                 ? marginTopFirstRow
                 : 0;
+
             Square square = new Square (this, this.layout,
                     unorderedSequence[squareNumberIndex], row, column,
                     squareWidth, squareHeight,
@@ -276,27 +269,57 @@ public class TaquinActivity extends AppCompatActivity {
         Uri uriImage = intentIncome.getParcelableExtra(PictureActivity
                 .EXTRA_MESSAGE_IMAGE_URI);
 
-        this.backgroundArray = SplitImageUtil
-            .generateBitmapDrawableArray(this, this.gridLength,
-                    uriImage);
+        this.grid = new Square[gridLength][gridLength];
 
+        // Complete example:
+        // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
         this.layout = new ConstraintLayout(this);
         this.layout.setId(View.generateViewId());
         this.layout.setLayoutParams(new ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT,
                     ConstraintLayout.LayoutParams.MATCH_PARENT));
-        this.layout.setBackground(this.getDrawable(R.drawable.back));
+        this.layout.setBackground(super.getDrawable(R.drawable.back));
         super.setContentView(layout);
 
-        this.grid = new Square[gridLength][gridLength];
+        // See :
+        // https://developer.android.com/reference/android/view/WindowManager.html#getDefaultDisplay()
+        // https://developer.android.com/reference/android/view/Display.html#getSize(android.graphics.Point)
+        // « The returned size may be adjusted to exclude certain system decor
+        // elements that are always visible ». For example, Navigation bar !
+        Point screenSize = new Point();
+        this.getWindowManager()
+            .getDefaultDisplay()
+            .getSize(screenSize);
+        Toast.makeText(this, screenSize.toString(), Toast.LENGTH_LONG)
+            .show();
 
-
-        // Complete example:
-        // https://www.techotopia.com/index.php/Managing_Constraints_using_ConstraintSet
-        this.createGrid();
-
-        // If drawn in right order
-        this.displayDialogIfGameIsWin();
+        try {
+            this.backgroundArray = SplitImageUtil
+                .generateBitmapDrawableArray(this, this.gridLength,
+                        screenSize.x, screenSize.y, uriImage);
+        } catch (IOException e) {
+            String messageError = "Error when try to retrieve selected" +
+                " picture." +
+                " No picture is displayed in Squares.";
+            android.util.Log.e("Decode image error", messageError);
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            android.util.Log.e("Exception",  sw.toString());
+            Snackbar.make(this.layout, messageError,
+                    Snackbar.LENGTH_INDEFINITE).show();
+            this.backgroundArray =
+                new Drawable[this.gridLength * this.gridLength];
+            for (int backgroundArrayIndex = 0 ;
+                    backgroundArrayIndex < backgroundArray.length ;
+                    backgroundArrayIndex++) {
+                this.backgroundArray[backgroundArrayIndex] = super
+                    .getDrawable(R.drawable.back);
+            }
+        } finally {
+            this.createGrid(screenSize);
+            // If drawn in right order
+            this.displayDialogIfGameIsWin();
+        }
 
     }
 
@@ -326,7 +349,7 @@ public class TaquinActivity extends AppCompatActivity {
         return this.grid;
     }
 
-    BitmapDrawable[] getBackgroundArray() {
+    Drawable[] getBackgroundArray() {
         return backgroundArray;
     }
 

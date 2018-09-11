@@ -92,7 +92,7 @@ public class PictureActivity extends AppCompatActivity {
         super.finishAndRemoveTask();
     }
 
-    // ==================== onActivityResult =======================
+    // ==================== onActivityResult ======================={{{1
     // =============================================================
 
     private void galleryAddPic() {
@@ -197,7 +197,7 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    // ========= Common methods to take photos  ==========
+    // ========= Common methods to take photos  ========== {{{1
     // =============================================================
 
     @NonNull
@@ -315,7 +315,7 @@ public class PictureActivity extends AppCompatActivity {
     }
 
 
-    // ========= Take new Photo (saved in public folder)  ==========
+    // ========= Take new Photo (saved in public folder)  ========== {{{1
     // =============================================================
 
     private void dispatchTakePictureIntentPublicFolderWithPermission()
@@ -476,7 +476,7 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
-    // ==================== Pick picture from gallery ==============
+    // ==================== Pick picture from gallery ============== {{{1
     // =============================================================
 
     private void pickPictureFromGallery() {
@@ -491,7 +491,7 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
-    // ==== Take new Photo (saved in app's folder not display in gallery)  ====
+    // ==== Take new Photo (saved in app's folder not display in gallery)  {{{1
     // =============================================================
 
     // https://developer.android.com/training/camera/photobasics#TaskPath
@@ -534,7 +534,7 @@ public class PictureActivity extends AppCompatActivity {
         }
     }
 
-    // ==== Pick a picture in Filesystem (classic file explorer ====
+    // ==== Pick a picture in Filesystem (classic file explorer ==== {{{1
     // =============================================================
 
     // Source:
@@ -574,7 +574,7 @@ public class PictureActivity extends AppCompatActivity {
 
     }
 
-    // ====================== Create Layout =====i==================
+    // ====================== Create Layout =====i================== {{{1
     // =============================================================
 
     private void createOneButton(ViewGroup buttonGroup, String text,
@@ -653,3 +653,5 @@ public class PictureActivity extends AppCompatActivity {
     }
 
 }
+
+// vim: foldmethod=marker sw=4 ts=4 et textwidth=80 foldlevel=0

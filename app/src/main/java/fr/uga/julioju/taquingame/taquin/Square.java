@@ -1,12 +1,13 @@
 package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 
 import android.support.constraint.ConstraintLayout;
+
 import fr.uga.julioju.taquingame.R;
 
 
@@ -29,7 +30,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
     /** Create a TextView with an id, text and Constraint*/
     Square (Context activity, ConstraintLayout layout, int orderOfTheContent,
             int row, int column, int squareWidth, int squareHeight,
-            BitmapDrawable background, int marginLeft, int marginTop) {
+            Drawable background, int marginLeft, int marginTop) {
 
         super(activity);
 
@@ -121,7 +122,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
     }
 
     void setOrderOfTheContent(int orderOfTheContent,
-            BitmapDrawable background) {
+            Drawable background) {
         this.orderOfTheContent = orderOfTheContent;
         super.setText(String.valueOf(this.orderOfTheContent));
         super.setBackgroundDrawable(background);

@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.widget.Toast;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -15,7 +17,8 @@ import java.io.IOException;
 class SplitImageUtil  {
 
     // Source http://www.chansek.com/splittingdividing-image-into-smaller/
-    static private BitmapDrawable[] splitImage(Context context,
+    @NonNull
+    private static BitmapDrawable[] splitImage(Context context,
             Bitmap bitmapOriginal, int gridLength) {
 
         Resources resources = context.getResources();
@@ -61,32 +64,101 @@ class SplitImageUtil  {
         return chunkedImages;
     }
 
-    // https://developer.android.com/guide/topics/providers/document-provider#open-client
-    static private Bitmap getBitmapFromUri(Context context,
-            Uri uriImage) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-            context.getContentResolver().openFileDescriptor(uriImage, "r");
-        if (parcelFileDescriptor != null) {
-            FileDescriptor fileDescriptor =
-                     parcelFileDescriptor.getFileDescriptor();
-            Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-            parcelFileDescriptor.close();
-            return image;
+    // https://developer.android.com/topic/performance/graphics/load-bitmap
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and
+            // keeps both height and width larger than the requested height and
+            // width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
         }
-        return null;
+
+        return inSampleSize;
     }
 
-    static BitmapDrawable[] generateBitmapDrawableArray(Context context,
-            int gridLength, Uri uriImage) {
-        Bitmap bitmapOriginal = null;
-        try {
-            bitmapOriginal = SplitImageUtil.getBitmapFromUri(context, uriImage);
-        } catch (IOException e) {
-            Toast.makeText(context, "Error when try to retrieve picture with " +
-                    " uri. " + uriImage.toString() +
-                    " No picture is displayed in Squares."
-                    , Toast.LENGTH_LONG).show();
+    // https://developer.android.com/guide/topics/providers/document-provider#open-client
+    /** Return null when option.inJustDecodeBounds = true */
+    @Nullable
+    private static Bitmap getBitmapFromUri(Context context,
+            Uri uriImage, BitmapFactory.Options options,
+            String messageError) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+            context.getContentResolver().openFileDescriptor(uriImage, "r");
+        if (parcelFileDescriptor == null) {
+            throw new IOException(messageError);
         }
+        FileDescriptor fileDescriptor =
+                    parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor,
+                null,
+                options);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
+    // https://developer.android.com/topic/performance/graphics/load-bitmap
+    @NonNull
+    private static Bitmap decodeSampledBitmapFromStream(Context context,
+            Uri uri, int reqWidth, int reqHeight)
+        throws IOException {
+
+        String messageError = "Fail to decode bitmap from Uri" +
+            uri.toString();
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options bitmapOption =
+            new BitmapFactory.Options();
+        bitmapOption.inJustDecodeBounds = true;
+        // https://stackoverflow.com/a/6228188
+        // bitmapOption.inDither=true; //optional (deprecated)
+        // bitmapOption.inPreferredConfig=Bitmap.Config.ARGB_8888;//optional
+        SplitImageUtil.getBitmapFromUri(context, uri,
+                bitmapOption, messageError);
+
+        // https://stackoverflow.com/a/6228188
+        if ((bitmapOption.outWidth == -1)
+                || (bitmapOption.outHeight == -1)) {
+            throw new IOException(messageError);
+        }
+
+        // Calculate inSampleSize
+        bitmapOption.inSampleSize =
+            SplitImageUtil.calculateInSampleSize(bitmapOption, reqWidth,
+                reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        bitmapOption.inJustDecodeBounds = false;
+
+        Bitmap image = SplitImageUtil.getBitmapFromUri(context, uri,
+                bitmapOption, messageError);
+        if (image == null) {
+            throw new IOException(messageError);
+        }
+        return image;
+    }
+
+    @NonNull
+    static BitmapDrawable[] generateBitmapDrawableArray(Context context,
+            int gridLength, int screenWidth, int screenHeight,
+            @NonNull Uri uriImage)
+            throws IOException {
+        // Bitmap bitmapOriginal = SplitImageUtil.getBitmapFromUri(context,
+        //         uriImage, null, "test");
+        Bitmap bitmapOriginal = SplitImageUtil.decodeSampledBitmapFromStream(
+                context, uriImage, screenWidth, screenHeight);
         return SplitImageUtil.splitImage(context, bitmapOriginal, gridLength);
     }
 
