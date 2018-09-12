@@ -4,10 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -18,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import android.support.constraint.ConstraintLayout;
 
@@ -28,14 +27,13 @@ import android.support.v4.content.FileProvider;
 
 import android.support.v7.app.AppCompatActivity;
 
-import java.util.Date;
 
 import android.support.design.widget.Snackbar;
 import fr.uga.julioju.taquingame.R;
+import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import fr.uga.julioju.taquingame.util.CreateView;
 import fr.uga.julioju.taquingame.util.DetectScreen;
 import fr.uga.julioju.taquingame.util.ImageUtil;
-import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import java.io.*;
 
 public class PictureActivity extends AppCompatActivity {
@@ -54,25 +52,26 @@ public class PictureActivity extends AppCompatActivity {
 
     private ConstraintLayout layout;
 
-    private Uri photoURI = null;
+    private File imageFile;
 
-    private String mCurrentPhotoPath;
-
-    // TODO internationalization
-    private void displayError(PictureActivityException exception) {
-        StringWriter sw = new StringWriter();
-        exception.printStackTrace(new PrintWriter(sw));
-        android.util.Log.e("Exception",  sw.toString());
-        Snackbar.make(this.layout, exception.getMessageError(),
-                Snackbar.LENGTH_LONG).show();
-    }
-
-    private void sendIntentToGame() throws PictureActivityException {
-        if (this.photoURI == null) {
+    /** @param photoUri
+      *     null if it's launch in the context of the intent REQUEST_TAKE_PHOTO
+      *             and this.imageFile is no null
+      *     no null if it's launch in the context of the intent
+      *             REQUEST_PICTURE_PICK and this.imageFile is null
+      */
+    private void sendIntentToGame(@Nullable Uri photoUri)
+            throws PictureActivityException {
+        if (this.imageFile != null) {
+            photoUri = Uri.fromFile(this.imageFile);
+        }
+        if (photoUri == null) {
+            // https://en.wikipedia.org/wiki/Defensive_programming
             String messageError = "can't retrieve URI of a picture. " +
                 "Please try again.";
             throw new PictureActivityException(messageError);
         }
+
         Intent intentOutcome = new Intent(this, TaquinActivity.class);
 
         // Third activity called returns its result to the first activity
@@ -84,7 +83,7 @@ public class PictureActivity extends AppCompatActivity {
         // https://stackoverflow.com/a/12905952
         intentOutcome.putExtras(super.getIntent());
 
-        intentOutcome.putExtra(EXTRA_MESSAGE_IMAGE_URI, this.photoURI);
+        intentOutcome.putExtra(EXTRA_MESSAGE_IMAGE_URI, photoUri);
 
         super.startActivity(intentOutcome);
         super.finishAndRemoveTask();
@@ -99,6 +98,7 @@ public class PictureActivity extends AppCompatActivity {
         // // named: // « Some part of second example of
         Intent mediaScanIntent =
             new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        String mCurrentPhotoPath = this.imageFile.getAbsolutePath();
         File f = new File(mCurrentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
@@ -119,12 +119,12 @@ public class PictureActivity extends AppCompatActivity {
             // Instead, a URI to that document will be contained in the return
             // intent provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            this.photoURI = resultData.getData();
+            Uri photoUri = resultData.getData();
 
             boolean isBitmapIsEmpty;
             try {
                 isBitmapIsEmpty = ImageUtil.isBitmapIsEmpty(this,
-                        this.photoURI);
+                        photoUri);
             } catch (IOException e) {
                 String messageError = "The photo you have selected" +
                     " can't be read. Try with an other file.";
@@ -136,7 +136,7 @@ public class PictureActivity extends AppCompatActivity {
                     " has size zero." + " Select an other file.";
                 throw new PictureActivityException(messageError);
             }
-                    this.sendIntentToGame();
+            this.sendIntentToGame(photoUri);
         }
         else {
             String messageError = "Error when you tried to choose a photo."  +
@@ -152,16 +152,16 @@ public class PictureActivity extends AppCompatActivity {
             try {
                 this.onActivityResultPicturePick(resultCode, resultData);
             } catch (PictureActivityException e) {
-                this.displayError(e);
+                PictureActivityException.displayError(this.layout, e);
             }
         }
         else if (requestCode == PictureActivity.REQUEST_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK && resultData != null) {
                 this.galleryAddPic();
                 try {
-                    this.sendIntentToGame();
+                    this.sendIntentToGame(null);
                 } catch (PictureActivityException e) {
-                    this.displayError(e);
+                    PictureActivityException.displayError(this.layout, e);
                 }
             } else {
                 try {
@@ -169,7 +169,7 @@ public class PictureActivity extends AppCompatActivity {
                         " try to take  a photo. " + "Please try again.";
                     throw new PictureActivityException(messageError);
                 } catch (PictureActivityException e) {
-                    this.displayError(e);
+                    PictureActivityException.displayError(this.layout, e);
                 }
             }
         }
@@ -194,124 +194,6 @@ public class PictureActivity extends AppCompatActivity {
         return returnStatement;
     }
 
-    @NonNull
-    private File createStorageDir(boolean
-            isPublicDirectory) throws PictureActivityException {
-
-        File storageDir;
-        if (isPublicDirectory) {
-            // « Create a path where we will place our picture in the user's
-            // public pictures directory and check if the file exists.  If
-            // external storage is not currently mounted this will think the
-            // picture doesn't exist. »
-            // https://developer.android.com/reference/android/os/Environment#getExternalStoragePublicDirectory(java.lang.String)
-
-            // « Unlike Environment.getExternalStoragePublicDirectory(), the
-            // directory returned here will be automatically created for you. »
-            // https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
-
-
-            // Here, thisActivity is the current activity
-            // https://stackoverflow.com/questions/38885982/android-file-mkdirs-always-return-false?rq=1
-            if (this.isNotPermissionsWriteExternal()) {
-                String messageError = "You have not right to take a photo " +
-                    " and save it in a public repository." +
-                    " Check in 'App Info' that you have forbidden the app.";
-                throw new PictureActivityException(messageError);
-            }
-            // Make sure the Pictures directory exists.
-            storageDir = new File(Environment
-                    .getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_PICTURES), "taquingame");
-
-            if (! storageDir.exists()) {
-                    android.util.Log.d("mkdir", "'" + storageDir.toString() +
-                            "' exists.");
-                if (storageDir.mkdirs()) {
-                    android.util.Log.d("mkdir", "'" + storageDir.toString() +
-                            "' successfully created.");
-                }
-                else {
-                    String messageError = "'" + storageDir.toString() + "'" +
-                            " not created.";
-                    throw new PictureActivityException(messageError);
-                }
-            }
-        }
-        else {
-            // Folder:
-            // [...]/Android/data/fr.uga.julioju.taquingame/files/Pictures
-            // See my issue at https://issuetracker.google.com/issues/114402174
-            // named:
-            // « Some part of second example of Context.getExternalFilesDir are
-            // wrong. »
-
-            // « Unlike Environment.getExternalStoragePublicDirectory(), the
-            // directory returned here will be automatically created for you. »
-            // https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
-            storageDir = super.getExternalFilesDir(
-                    Environment.DIRECTORY_PICTURES);
-        }
-        // storageDir could be null.
-        if (storageDir == null || ! storageDir.exists()) {
-            String messageError = "ERROR: can't access app folder " +
-                    "Is the external storage was unmounted ?";
-            throw new PictureActivityException(messageError);
-        }
-        if (! Environment.getExternalStorageState(storageDir).equals(
-                Environment.MEDIA_MOUNTED)) {
-            String messageError = "Permission denied. You have no read / write" +
-                " access to '" + storageDir.toString() + "'.";
-            throw new PictureActivityException(messageError);
-        }
-
-        return storageDir;
-
-    }
-
-    @NonNull
-    private File createImageFile(boolean isPublicDirectory)
-        throws PictureActivityException {
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-            .format(new Date());
-        String imageFileName = "taquinGame" + timeStamp + "_";
-
-        File storageDir = this.createStorageDir(isPublicDirectory);
-
-        // Could not work
-        // https://stackoverflow.com/questions/3660572/android-createtempfile-throws-permission-denied
-        // And especially because
-        // « 09-08 13:11:40.644 1807-1807/com.android.camera2
-        //      E/CAM_StateSavePic: exception while saving result to URI:
-        //      Optional.of(content://fr.uga.julioju.taquingame.fileprovider/images/taquinGame20180908_131135_/.jpg)
-        // »
-        // And can't work ! Because we want a scheme `content:///'
-        // File image = new File(storageDir + "/" + imageFileName + "/"
-        //    + ".jpg");
-
-        // WORKS
-        File image;
-        try {
-            image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
-                    );
-        } catch (IOException ex) {
-            String messageError = "'" + storageDir + "/" + imageFileName  + ".jpg"
-                + "'" + " can't be created.";
-            throw new PictureActivityException(messageError, ex);
-        }
-
-        this.photoURI = Uri.fromFile(image);
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-
-        return image;
-    }
-
 
     // ========= Take new Photo (saved in public folder)  ========== {{{1
     // =============================================================
@@ -319,7 +201,7 @@ public class PictureActivity extends AppCompatActivity {
     private void dispatchTakePictureIntentPublicFolderWithPermission()
             throws PictureActivityException {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photoFile = this.createImageFile(true);
+        this.imageFile = TakePhotoFileUtil.createImageFile(this, true);
 
         // // https://stackoverflow.com/questions/43247674/saving-photos-and-videos-using-android-fileprovider-to-the-gallery/43303823
         // String AUTHORITY_FORMAT = "%s.fileprovider";
@@ -327,10 +209,10 @@ public class PictureActivity extends AppCompatActivity {
         // String authority = String.format(Locale.getDefault(),
         //         AUTHORITY_FORMAT, packageName);
         // Uri uri = FileProvider.getUriForFile(super.getApplicationContext(),
-        //         authority, photoFile);
+        //         authority, this.imageFile);
         Uri photoUriContentScheme = FileProvider.getUriForFile(this,
                 "fr.uga.julioju.taquingame.fileprovider",
-                photoFile);
+                this.imageFile);
 
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                 photoUriContentScheme);
@@ -369,7 +251,7 @@ public class PictureActivity extends AppCompatActivity {
                     this.dispatchTakePictureIntentPublicFolderWithPermission();
                 }
                 catch (PictureActivityException e){
-                    this.displayError(e);
+                    PictureActivityException.displayError(this.layout, e);
                 }
             } else {
                 // A little inspired from:
@@ -463,7 +345,7 @@ public class PictureActivity extends AppCompatActivity {
                 this.dispatchTakePictureIntentPublicFolderWithPermission();
             }
             catch (PictureActivityException e){
-                this.displayError(e);
+                PictureActivityException.displayError(this.layout, e);
             }
         }
 
@@ -493,20 +375,19 @@ public class PictureActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile;
             try {
-                photoFile = this.createImageFile(false);
+                this.imageFile = TakePhotoFileUtil.createImageFile(this, false);
             } catch (PictureActivityException e) {
-                this.displayError(e);
+                PictureActivityException.displayError(this.layout, e);
                 return ;
             }
             // Continue only if the File was successfully created
-            // Uri with scheme `content://' and not `file://' contrary to
-            // `this.photoURI'
+            // Uri with scheme `content://' and not `file://'.
+            // `photoUri' have scheme `file://' because we are in the same app.
             // See https://developer.android.com/reference/android/os/FileUriExposedException
             Uri photoUriContentScheme = FileProvider.getUriForFile(this,
                     "fr.uga.julioju.taquingame.fileprovider",
-                    photoFile);
+                    this.imageFile);
             android.util.Log.d("photoUriContentScheme",
                     photoUriContentScheme.toString());
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -522,7 +403,7 @@ public class PictureActivity extends AppCompatActivity {
                 String messageError = "Your device can't take photo";
                 throw new PictureActivityException(messageError);
             } catch (PictureActivityException e){
-                this.displayError(e);
+                PictureActivityException.displayError(this.layout, e);
             }
         }
     }
