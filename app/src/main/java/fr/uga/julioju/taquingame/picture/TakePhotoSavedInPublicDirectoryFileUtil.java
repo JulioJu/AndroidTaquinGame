@@ -10,7 +10,7 @@ import java.util.Date;
 
 import java.io.*;
 
-class TakePhotoFileUtil  {
+class TakePhotoSavedInPublicDirectoryFileUtil {
 
     @NonNull
     static private File createStorageDir(Activity activity, boolean
@@ -91,7 +91,8 @@ class TakePhotoFileUtil  {
             .format(new Date());
         String imageFileName = "taquinGame" + timeStamp + "_";
 
-        File storageDir = TakePhotoFileUtil.createStorageDir(activity,
+        File storageDir = TakePhotoSavedInPublicDirectoryFileUtil
+            .createStorageDir(activity,
                 isPublicDirectory);
 
         // Could not work
