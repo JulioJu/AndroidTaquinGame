@@ -107,25 +107,11 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
             // Pull that URI using resultData.getData().
             Uri photoUri = resultData.getData();
 
-            boolean isBitmapIsEmpty;
-            try {
-                isBitmapIsEmpty = ImageUtil.isBitmapIsEmpty(this,
-                        photoUri);
-            } catch (IOException e) {
-                String messageError = "The photo you have selected" +
-                    " can't be read. Try with an other file.";
-                throw new PictureActivityException(messageError);
-            }
-
-            if (isBitmapIsEmpty) {
-                String messageError = "The photo you have selected" +
-                    " has size zero." + " Select an other file.";
-                throw new PictureActivityException(messageError);
-            }
+            ImageUtil.isGoodImage(this, photoUri);
             this.sendIntentToGame(photoUri);
         }
         else {
-            String messageError = "Error when you tried to choose a photo."  +
+            String messageError = "Error with the photo."  +
                     "Please try again. ";
             throw new PictureActivityException(messageError);
         }

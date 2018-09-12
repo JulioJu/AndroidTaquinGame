@@ -23,6 +23,7 @@ import android.support.design.widget.Snackbar;
 import fr.uga.julioju.taquingame.R;
 import fr.uga.julioju.taquingame.main.MainActivity;
 import fr.uga.julioju.taquingame.picture.PictureActivity;
+import fr.uga.julioju.taquingame.picture.PictureActivityException;
 import fr.uga.julioju.taquingame.util.ImageUtil;
 
 
@@ -282,16 +283,20 @@ public class TaquinActivity extends AppCompatActivity {
         this.layout.setBackground(super.getDrawable(R.drawable.back));
         super.setContentView(layout);
 
-        // See :
-        // https://developer.android.com/reference/android/view/WindowManager.html#getDefaultDisplay()
-        // https://developer.android.com/reference/android/view/Display.html#getSize(android.graphics.Point)
-        // « The returned size may be adjusted to exclude certain system decor
-        // elements that are always visible ». For example, Navigation bar !
-        Point screenSize = new Point();
-        this.getWindowManager()
-            .getDefaultDisplay()
-            .getSize(screenSize);
-        Toast.makeText(this, screenSize.toString(), Toast.LENGTH_LONG)
+        Point screenSize = ImageUtil.screenSize(this);
+        int[] originalImageSize = new int[2];
+        try {
+            originalImageSize = ImageUtil.isGoodImage(this, uriImage);
+        }
+        catch (PictureActivityException e){
+            Toast.makeText(this, "Error when decode bitmap"
+                , Toast.LENGTH_LONG)
+                .show();
+        }
+        Toast.makeText(this, "Screen:" + screenSize.toString() +
+                "\nImage original: " +
+                    originalImageSize[0] + " " + originalImageSize[1]
+                , Toast.LENGTH_LONG)
             .show();
 
         try {

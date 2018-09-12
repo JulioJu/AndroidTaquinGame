@@ -29,8 +29,10 @@ http://imss-www.upmf-grenoble.fr/~davidjer/dwm/Projet-Taquin2017.pdf
     d'après infos EXIF).
 * L'image doit être adaptée à la taille et résolution de l'écran (pas d'image
     trop pixelisée ou trop grande)
-    * Note from JulioJu: Bitmap should be loaded efficiently
-        https://developer.android.com/topic/performance/graphics/load-bitmap
+    * Note from JulioJu:
+        * Bitmap should be loaded efficiently
+            https://developer.android.com/topic/performance/graphics/load-bitmap
+        * Ratio `Screen / photo < 5`
 * Lorsque le jeux est gagné, un message doit être affiché puis une option pour
 recommencer ou quitter l'appli doit être proposée.
 
@@ -560,6 +562,9 @@ https://developer.android.com/reference/android/content/Intent
     * Warning 2: Android.util.Log.d could mix two logs if they have the same
         first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
+* a / (b / c) - d raise a silent error not shown in Logcat
+
+* Why in ImageUtil.cropImage() when we put a Breakpoint it doesn't stop?
 
 ## My implementation
 * See the comment of the class
