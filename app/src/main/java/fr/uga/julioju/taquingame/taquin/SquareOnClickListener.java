@@ -1,6 +1,8 @@
 package fr.uga.julioju.taquingame.taquin;
 
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Toast;
 
 // https://developer.android.com/guide/topics/ui/ui-events
@@ -9,7 +11,7 @@ import android.widget.Toast;
   */
 class SquareOnClickListener implements View.OnClickListener {
 
-    private final TaquinActivity activity;
+    private final TaquinActivity taquinActivity;
 
     /**
       * If a Neighbour of the Square clicked is the
@@ -18,6 +20,8 @@ class SquareOnClickListener implements View.OnClickListener {
       * If exists, initialized in this.getNeighbour().
       */
     private Square neighbourSquareEmpty = null;
+
+    private String neighbourSquareEmptyCardinalDirection;
 
     /**
       * Parse Neighbour Square.
@@ -31,6 +35,7 @@ class SquareOnClickListener implements View.OnClickListener {
         if (squareNeighbour != null) {
             if (squareNeighbour.getOrderOfTheContent() == 0) {
                 this.neighbourSquareEmpty = squareNeighbour;
+                this.neighbourSquareEmptyCardinalDirection = cardinalDirection;
             }
             return "The Square with row " + squareNeighbour.getRow() +
                 " with column " + squareNeighbour.getColumn() + " is to the " +
@@ -40,6 +45,28 @@ class SquareOnClickListener implements View.OnClickListener {
         else {
             return "There is a border to the " + cardinalDirection;
         }
+    }
+
+    private void translateAnimation(Square squareClicked,
+            int photoGoOffFromXDelta, int photoGoOffToXDelta,
+            int photoGoOffFromYDelta, int photoGoOffToYDelta,
+            int photoGoInFromXDelta, int photoGoInToXDelta,
+            int photoGoInFromYDelta, int photoGoInToYDelta
+            ) {
+        TranslateAnimation photoGoOff = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, photoGoOffFromXDelta,
+                Animation.RELATIVE_TO_SELF, photoGoOffToXDelta,
+                Animation.RELATIVE_TO_SELF, photoGoOffFromYDelta,
+                Animation.RELATIVE_TO_SELF, photoGoOffToYDelta);
+        photoGoOff.setDuration(4500);
+        photoGoOff.setAnimationListener(
+                new SquareOnClickListenerAnimationListener
+                    (this.neighbourSquareEmpty, squareClicked,
+                     this.taquinActivity, true,
+                     photoGoInFromXDelta, photoGoInToXDelta,
+                     photoGoInFromYDelta, photoGoInToYDelta));
+        squareClicked.startAnimation(photoGoOff);
+
     }
 
     /**
@@ -64,19 +91,19 @@ class SquareOnClickListener implements View.OnClickListener {
         Square squareEast   = null;
         Square squareSouth  = null;
         if (squareClickedRow > 0) {
-            squareWest = this.activity.getGrid()[squareClickedColumn]
+            squareWest = this.taquinActivity.getGrid()[squareClickedColumn]
                 [squareClickedRow - 1];
         }
         if (squareClickedColumn > 0) {
-            squareNorth = this.activity.getGrid()[squareClickedColumn - 1]
+            squareNorth = this.taquinActivity.getGrid()[squareClickedColumn - 1]
                 [squareClickedRow];
         }
-        if (squareClickedRow < this.activity.getGridLength() - 1) {
-            squareEast = this.activity.getGrid()[squareClickedColumn]
+        if (squareClickedRow < this.taquinActivity.getGridLength() - 1) {
+            squareEast = this.taquinActivity.getGrid()[squareClickedColumn]
                 [squareClickedRow + 1];
         }
-        if (squareClickedColumn < this.activity.getGridLength() - 1) {
-            squareSouth = this.activity.getGrid()[squareClickedColumn + 1]
+        if (squareClickedColumn < this.taquinActivity.getGridLength() - 1) {
+            squareSouth = this.taquinActivity.getGrid()[squareClickedColumn + 1]
                 [squareClickedRow ];
         }
 
@@ -94,16 +121,32 @@ class SquareOnClickListener implements View.OnClickListener {
                 "\n\t"  + parseSquareNeighbour(squareEast, "east")    +
                 "\n\t"  + parseSquareNeighbour(squareSouth, "south"));
         if (this.neighbourSquareEmpty != null) {
-            this.neighbourSquareEmpty
-                .setOrderOfTheContent(squareClicked.getOrderOfTheContent(),
-                        this.activity.getBackgroundArray()[squareClicked
-                            .getOrderOfTheContent()]);
-            squareClicked.setEmptySquare();
+
+            switch (this.neighbourSquareEmptyCardinalDirection) {
+                case "west":
+                    this.translateAnimation(squareClicked,
+                            1, 1, 0, 0, 1, 0, 0, 0);
+                    break;
+                case "north":
+                    this.translateAnimation(squareClicked,
+                            0, 0, 1, 1, 0, 0, 1, 0);
+                    break;
+                case "east":
+                    this.translateAnimation(squareClicked,
+                            0, 1, 0, 0, 1, 1, 0, 0);
+                    break;
+
+                case "south":
+                    this.translateAnimation(squareClicked,
+                            0, 0, 0, 1, 0, 0, 1, 1);
+                    break;
+            }
+
             CharSequence text = "Around the Square clicked, there is a" +
                 "Square that is the Empty Square. The Square clicked" +
                 " is moved on it.";
-            Toast.makeText(this.activity, text, Toast.LENGTH_SHORT).show();
-            activity.displayDialogIfGameIsWin();
+            Toast.makeText(this.taquinActivity, text, Toast.LENGTH_SHORT).show();
+
             // BECAUSE IF THE INSTANCE OF THIS CLASS IS NOT GARBAGED
             // we continue to have `this.neighbourSquareEmpty != null`
             this.neighbourSquareEmpty = null;
@@ -111,12 +154,12 @@ class SquareOnClickListener implements View.OnClickListener {
         else {
             CharSequence text = "Around the Square clicked, there is "  +
                 "Not a Square that is the Empty Square. NOTHING DONE.";
-            Toast.makeText(this.activity, text, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.taquinActivity, text, Toast.LENGTH_SHORT).show();
         }
     }
 
-    SquareOnClickListener(TaquinActivity activity) {
-        this.activity = activity;
+    SquareOnClickListener(TaquinActivity taquinActivity) {
+        this.taquinActivity = taquinActivity;
     }
 
 }

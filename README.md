@@ -39,6 +39,8 @@ recommencer ou quitter l'appli doit être proposée.
 ### Les plus :
 * une animation lors du déplacement d'un bout d'image
     http://developer.android.com/reference/android/view/animation/TranslateAnimation.html
+    * Note by JulioJu. When there is the animation, mouse click
+        should done nothing.
 * faire tourner l'application quand on tourne le téléphone.
 
 ### Packaging

@@ -1,6 +1,7 @@
 package fr.uga.julioju.taquingame.taquin;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -73,9 +74,9 @@ class Square extends android.support.v7.widget.AppCompatTextView {
         if (this.orderOfTheContent != 0) {
             super.setBackgroundDrawable(background);
         }
-        else {
-            super.setBackgroundResource(R.drawable.back);
-        }
+        // else {
+        //     super.setBackgroundResource(R.drawable.back);
+        // }
 
         // Add text to view
         super.setText(String.valueOf(this.orderOfTheContent));
@@ -118,7 +119,7 @@ class Square extends android.support.v7.widget.AppCompatTextView {
     void setEmptySquare() {
         this.orderOfTheContent = 0;
         super.setText(String.valueOf(this.orderOfTheContent));
-        super.setBackgroundResource(R.drawable.back);
+        super.setBackgroundColor(Color.TRANSPARENT);
     }
 
     void setOrderOfTheContent(int orderOfTheContent,
