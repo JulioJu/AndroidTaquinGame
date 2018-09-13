@@ -20,7 +20,7 @@ import fr.uga.julioju.taquingame.picture.PictureActivityException;
 
 public class ImageUtil  {
 
-    private static int RATIO_SCREEN_IMAGE = 5;
+    private static final int RATIO_SCREEN_IMAGE = 5;
 
     // Source http://www.chansek.com/splittingdividing-image-into-smaller/
     @NonNull
@@ -115,104 +115,48 @@ public class ImageUtil  {
         return image;
     }
 
-    private static boolean isCropPhotoWidth(int screenWidth, int screenHeight,
-            int imageWidth, int imageHeight) {
-        return (screenWidth - imageWidth) <= (screenHeight - imageHeight);
-    }
-
-    private static boolean isImageGreaterThanScreen(int screenWidth, int
-            screenHeight, int imageWidth, int imageHeight) {
-        return screenWidth < imageWidth && screenHeight < imageHeight;
-    }
-
-    /** I've found it alone ^^ !  */
-    // a / (b / c) - d raise a silent error not shown in Logcat
-    private static double pixelWidthToRemove(int screenWidth, int screenHeight,
-            int imageWidth, int imageHeight) {
-        double imageHeightScreenHeightRatio =
-            (double) imageHeight / (double) screenHeight;
-        double imageWidthRatioScreen = imageWidth /
-            imageHeightScreenHeightRatio;
-        return imageWidthRatioScreen - screenWidth;
-    }
-
-    static private double ratioScreenImage(int screenLength, int imageLength) {
-        return (double) screenLength / (double) imageLength;
-    }
-
-    /** I've found it alone ^^ ! */
-    // a / (b / c) - d raise a silent error not shown in Logcat
-    private static double pixelHeightToRemove(int screenWidth, int screenHeight,
-            int imageWidth, int imageHeight) {
-        double imageWidthScreenWidthRatio =
-            (double) imageWidth / (double) screenWidth;
-        double imageHeightRatioScreen = imageHeight /
-            imageWidthScreenWidthRatio;
-        return imageHeightRatioScreen - screenHeight;
-    }
-
     /** I've found it alone ^^ ! */
     private static Bitmap cropImage(Bitmap image, BitmapFactory.Options
             bitmapOption, int screenWidth, int screenHeight) {
 
-        int imageWidth = bitmapOption.outWidth;
-        int imageHeight = bitmapOption.outHeight;
+        double imageWidthOrigin  = (double) bitmapOption.outWidth;
+        double imageHeightOrigin = (double) bitmapOption.outHeight;
 
+        double ratioScreenWidthScreenHeight =
+            (double) screenWidth / (double) screenHeight;
 
-        boolean isCropPhotoWidth =
-            ImageUtil.isCropPhotoWidth(screenWidth, screenHeight, imageWidth,
-                imageHeight);
+        boolean isCropPhotoWidth = (screenWidth - imageWidthOrigin)
+            <= (screenHeight - imageHeightOrigin);
 
-        double pixelWidthToRemove;
-        double pixelHeightToRemove;
-
-        double ratioScreenImage;
-
-        double xCoord = 0;
-        double yCoord = 0;
-        double chunkWidth = imageWidth;
-        double chunkHeight = imageHeight;
-
-        boolean isImageGreaterThanScreen = ImageUtil.isImageGreaterThanScreen(
-                screenWidth, screenHeight, imageWidth, imageHeight);
+        double xCoord       = 0;
+        double yCoord       = 0;
+        double chunkWidth   = imageWidthOrigin;
+        double chunkHeight  = imageHeightOrigin;
 
         if (isCropPhotoWidth) {
-            pixelWidthToRemove =  ImageUtil
-                .pixelWidthToRemove(screenWidth, screenHeight,
-                        imageWidth, imageHeight);
-            if (isImageGreaterThanScreen) {
-                xCoord = pixelWidthToRemove / 2;
-            } else {
-                ratioScreenImage = ImageUtil
-                    .ratioScreenImage(screenHeight, imageHeight);
-                xCoord = pixelWidthToRemove / 2;
-                xCoord = xCoord / ratioScreenImage;
-            }
-            chunkWidth = imageWidth - xCoord;
+            chunkWidth  = imageHeightOrigin * ratioScreenWidthScreenHeight;
+            xCoord      = (imageWidthOrigin - chunkWidth) / 2;
         }
         else {
-            pixelHeightToRemove = ImageUtil
-                .pixelHeightToRemove(screenWidth, screenHeight,
-                        imageWidth, imageHeight);
-            if (isImageGreaterThanScreen) {
-                ratioScreenImage =  ImageUtil
-                    .ratioScreenImage(screenWidth, imageWidth);
-                yCoord = pixelHeightToRemove / 2;
-                yCoord = yCoord / ratioScreenImage;
-            } else {
-                yCoord = pixelHeightToRemove / 2;
-            }
-            chunkHeight = imageHeight - yCoord;
+            chunkHeight = imageWidthOrigin / ratioScreenWidthScreenHeight;
+            yCoord      = (imageHeightOrigin - chunkHeight) / 2;
         }
 
-        android.util.Log.i("crop", "screenWidth: "  + screenWidth     +
-                "\nscreenHeight: "                  + screenHeight    +
-                "\nimageWidthOrigin: "              + imageWidth      +
-                "\nimageHeightOrigin: "             + imageHeight     +
-                "\nxCoord: "                        + xCoord          +
-                "\nchunkWidth: "                    + chunkWidth      +
-                "\nyCoord: "                        + yCoord          +
-                "\nchunkHeight: "                   + chunkHeight );
+        android.util.Log.i("crop", "size in pixels"                      +
+                "\nscreenWidth: "   + screenWidth                        +
+                "\nscreenHeight: "                   + screenHeight      +
+                "\nRatio screenWidth / screenHeight: "                   +
+                    ratioScreenWidthScreenHeight                         +
+                "\nimageWidthOrigin: "               + imageWidthOrigin  +
+                "\nimageHeightOrigin: "              + imageHeightOrigin +
+                "\nRatio imageWidthOrigin / imageHeightOrigin: "         +
+                    (imageWidthOrigin / imageHeightOrigin)               +
+                "\nchunkWidth: "                     + chunkWidth        +
+                "\nchunkHeight: "                    + chunkHeight       +
+                "\nRatio chunkWidth / chunkHeight: "                     +
+                    (chunkWidth / chunkHeight)                           +
+                "\nxCoord: "                         + xCoord            +
+                "\nyCoord: "                         + yCoord            );
         return Bitmap.createBitmap(image, (int) xCoord, (int) yCoord,
             (int) chunkWidth, (int) chunkHeight);
     }

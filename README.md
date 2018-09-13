@@ -65,11 +65,12 @@ recommencer ou quitter l'appli doit être proposée.
 * Do not use the file explorer `Amaze`. Little bit buggy (don't recognize
     some root folders). Use `ES File Explorer`.
     Install it simply by download it, then drag and drop to the VM screen.
-* On my Arch Linux, when Genymotion is launched, can't hear noise
-    when I start a new `vlc` or `Youtube.com`. Simply stop the VM then `vlc` or
-    Youtube video works, then start again the VM and all continue to work
-    fine! Then, you could also restart `vlc` or `youtube` and all
-    continue to work!
+* On my Arch Linux, when Genymotion is launched, can't hear noise from the
+    computer.  E.g. when I start a new `vlc` or `Youtube.com` (with Chrome or
+    Firefox), or even the sound manager can't hear noise from it.  Simply stop
+    the VM then `vlc` or Youtube video works, then start again the VM and all
+    continue to work fine! Then, you could also restart `vlc` or `youtube` and
+    all continue to work! Probably, Genymotion take a lock if it can.
 * When import, we must build to see some errors disappear.
 * I've experienced errors with `Google AVD` (Android Emulator)
     * https://stackoverflow.com/questions/38450717/session-app-error-while-installing-apk
@@ -562,10 +563,6 @@ https://developer.android.com/reference/android/content/Intent
     * Warning 2: Android.util.Log.d could mix two logs if they have the same
         first param : `e.g. Log.d("Title", "aa"); Log.d("Title", "bb");`
 
-* a / (b / c) - d raise a silent error not shown in Logcat
-
-* Why in ImageUtil.cropImage() when we put a Breakpoint it doesn't stop?
-
 ## My implementation
 * See the comment of the class
     ./app/src/main/java/fr/uga/julioju/taquingame/taquin/TaquinActivity.java
@@ -587,3 +584,4 @@ https://developer.android.com/reference/android/content/Intent
     2. « Custom Phone - 8.0 - API 26 - 768x1280 »
 * Landscape mode is actually not optimised.
 * It's sure, could not work with `API < 21` (Android 5.0)
+* Sometimes, when we try to load a picture, it's crash: TODO investigate logs.

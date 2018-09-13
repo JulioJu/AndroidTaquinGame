@@ -111,7 +111,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
             this.sendIntentToGame(photoUri);
         }
         else {
-            String messageError = "Error with the photo."  +
+            String messageError = "Error with the photo. "  +
                     "Please try again. ";
             throw new PictureActivityException(messageError);
         }
