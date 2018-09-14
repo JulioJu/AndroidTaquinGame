@@ -42,6 +42,7 @@ recommencer ou quitter l'appli doit être proposée.
     * Note by JulioJu. When there is the animation, mouse click
         should done nothing.
 * faire tourner l'application quand on tourne le téléphone.
+    * Note by JulioJu: without loose the state.
 
 ### Packaging
 * L'appli doit être déployable et livrée sous forme d'un APK.
@@ -586,4 +587,5 @@ https://developer.android.com/reference/android/content/Intent
     2. « Custom Phone - 8.0 - API 26 - 768x1280 »
 * Landscape mode is actually not optimised.
 * It's sure, could not work with `API < 21` (Android 5.0)
-* Sometimes, when we try to load a picture, it's crash: TODO investigate logs.
+* ~~Sometimes, when we try to load a picture, there is crashs.~~
+    never experimented again.

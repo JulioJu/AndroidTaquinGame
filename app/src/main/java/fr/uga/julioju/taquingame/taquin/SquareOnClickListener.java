@@ -66,7 +66,6 @@ class SquareOnClickListener implements View.OnClickListener {
                      photoGoInFromXDelta, photoGoInToXDelta,
                      photoGoInFromYDelta, photoGoInToYDelta));
         squareClicked.startAnimation(photoGoOff);
-
     }
 
     /**

@@ -49,6 +49,19 @@ public class TaquinActivity extends AppCompatActivity {
     private Square[][] grid;
 
     /**
+      * unordered sequence of numbers
+      * between 0 and (this.gridLength * this.gridLength - 1).
+      * This param is not needed only for the instantiation of grid[][]. After
+      * this instantiation, it could be deduced from grid[][].
+      * The goal of the game is to ordered this Array.
+      * This Array IS UPDATED ONLY only in
+      *     this.onSaveInstanceState(Bundle bundle)
+      */
+    private int[] unorderedSequence;
+
+    private static final String UNORDERED_SEQUENCE_SAVED = "unorderedSequence";
+
+    /**
       * Array of size gridLength * 2 that contains images.
       * backgroundArray[0] is never displayed during the game.
       * Therefore it is null.
@@ -157,12 +170,11 @@ public class TaquinActivity extends AppCompatActivity {
         // ============================
         // ============================
 
-        int squareNumberIndex = 0;
+        short squareNumberIndex = 0;
 
         int squareWidth = screenSize.x / this.gridLength;
         int squareHeight = screenSize.y / this.gridLength;
 
-        int[] unorderedSequence = this.createUnorderedSequence();
         int marginLeftFirstColumn = screenSize.x % this.gridLength / 2;
         int marginTopFirstRow = screenSize.y % this.gridLength / 2;
         // Loop that populate array above
@@ -181,9 +193,10 @@ public class TaquinActivity extends AppCompatActivity {
                 : 0;
 
             Square square = new Square (this, this.layout,
-                    unorderedSequence[squareNumberIndex], row, column,
+                    this.unorderedSequence[squareNumberIndex], row, column,
                     squareWidth, squareHeight,
-                    this.backgroundArray[unorderedSequence[squareNumberIndex]],
+                    this.backgroundArray[this
+                        .unorderedSequence[squareNumberIndex]],
                     marginLeft, marginTop);
 
             this.grid[column][row] = square;
@@ -242,8 +255,12 @@ public class TaquinActivity extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
     }
 
+    /**
+      * Could also use `this.unorderedSequence[]' if it was updated.
+      * But at this point, generally it isn't updated.
+      */
     void displayDialogIfGameIsWin() {
-        int squareNumberIndex = 0;
+        short squareNumberIndex = 0;
         for (int column = 0 ; column < this.gridLength ; column++) {
             for (int row = 0 ; row < this.gridLength ; row++) {
                 if (this.grid[column][row].getOrderOfTheContent()
@@ -257,6 +274,21 @@ public class TaquinActivity extends AppCompatActivity {
             .show(super.getSupportFragmentManager(), "");
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        short squareNumberIndex = 0;
+        for (int column = 0 ; column < this.gridLength ; column++) {
+            for (int row = 0 ; row < this.gridLength ; row++) {
+                this.unorderedSequence[squareNumberIndex] =
+                    this.grid[column][row]
+                        .getOrderOfTheContent();
+                squareNumberIndex++;
+            }
+        }
+        outState.putIntArray(TaquinActivity.UNORDERED_SEQUENCE_SAVED,
+                this.unorderedSequence);
+    }
 
     /** Should be seen as the Constructor of this class */
     @Override
@@ -270,6 +302,23 @@ public class TaquinActivity extends AppCompatActivity {
                         .EXTRA_MESSAGE_GRID_LENGTH, 10);
         Uri uriImage = intentIncome.getParcelableExtra(PictureActivity
                 .EXTRA_MESSAGE_IMAGE_URI);
+
+        if (savedInstanceState == null) {
+            // This Array is updated only in
+            //      `this.onSaveInstanceState(Bundle bundle);'
+            this.unorderedSequence = this.createUnorderedSequence();
+        }
+        else {
+            this.unorderedSequence = savedInstanceState
+                .getIntArray(UNORDERED_SEQUENCE_SAVED);
+            if (this.unorderedSequence == null
+                    || this.unorderedSequence.length
+                        != (this.gridLength * this.gridLength)) {
+                android.util.Log.e("Retrieve state error",
+                        "this.unorderedSequence couldn't be retrieve.");
+                this.unorderedSequence = this.createUnorderedSequence();
+            }
+        }
 
         this.grid = new Square[gridLength][gridLength];
 
