@@ -37,7 +37,7 @@ public class PictureActivityException extends Exception {
         View snackView = snackbar.getView();
         TextView snackTextView = snackView.
             findViewById(android.support.design.R.id.snackbar_text);
-        snackTextView.setMaxLines(6);
+        snackTextView.setMaxLines(7);
         snackbar.show();
     }
 

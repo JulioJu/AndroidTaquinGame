@@ -294,6 +294,8 @@ public class TaquinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        String carriageReturn;
+
         super.onCreate(savedInstanceState);
 
         // Get the Intent that started this activity and extract the string

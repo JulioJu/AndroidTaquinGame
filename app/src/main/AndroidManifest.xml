@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
 
         <!-- https://developer.android.com/training/camera/photobasics#TaskPath -->
         <provider
@@ -39,6 +40,7 @@
         activities in its stack even after a long period. -->
         <activity android:name=".main.MainActivity"
                 android:alwaysRetainTaskState="true"
+                android:theme="@style/Theme.AppCompat.NoActionBar"
             >
             <intent-filter>
                 <!--
@@ -52,7 +54,9 @@
         </activity>
 
         <activity
-                android:name=".picture.PictureActivity" >
+                android:name=".picture.PictureActivity"
+                android:theme="@style/Theme.AppCompat.NoActionBar"
+                >
         </activity>
 
         <activity

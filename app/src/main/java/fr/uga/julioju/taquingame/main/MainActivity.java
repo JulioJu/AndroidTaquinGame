@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import fr.uga.julioju.taquingame.picture.PictureActivity;
+import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import fr.uga.julioju.taquingame.util.CreateView;
 import fr.uga.julioju.taquingame.util.DetectScreen;
-import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 
 /** Choose number of squares the game should be */
 public class MainActivity extends AppCompatActivity
@@ -41,7 +42,17 @@ public class MainActivity extends AppCompatActivity
     private void createRadioGroup(Context context,
             ConstraintLayout layout) {
 
-        int numberOfButtons = 9;
+        int smallestWidth = DetectScreen.getSmallestWidth(this);
+
+        int orientation = super.getResources().getConfiguration().orientation;
+
+        int numberOfButtons;
+        if (smallestWidth >= 600) {
+            numberOfButtons = 9;
+        }
+        else {
+            numberOfButtons = 7;
+        }
         this.radioButtonArray = new ArrayList<>(numberOfButtons);
 
         RadioGroup radioGroup = new RadioGroup(context);
@@ -77,12 +88,14 @@ public class MainActivity extends AppCompatActivity
 
         // Create title
         int titleId = CreateView.createTextView(new TextView(this), layout,
-                "Choose dimension of the puzzle", smallestWidth, true);
+                "Choose dimension\nof the puzzle", null, smallestWidth, true,
+                false);
 
         // ConstraintSet should be set after layout.addView(radioButton);
         CreateView.centerAView(layout, radioGroupId);
         CreateView.viewCenteredInTopOfOtherView(layout, titleId,
-                radioGroupId);
+                radioGroupId,
+                orientation == Configuration.ORIENTATION_LANDSCAPE);
     }
 
     /** Should be seen as the Constructor of this class */

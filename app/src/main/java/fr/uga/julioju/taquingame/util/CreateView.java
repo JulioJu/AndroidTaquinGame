@@ -1,6 +1,8 @@
 package fr.uga.julioju.taquingame.util;
 
 import android.app.Activity;
+import android.text.Spanned;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,25 +25,47 @@ public class CreateView  {
       *     on top of an other object, and a little bit bigger
       */
     static public int createTextView(TextView textView,
-            ViewGroup layout, String string, int smallestWidth,
-            boolean isTitle) {
+            ViewGroup layout, String string, Spanned span, int smallestWidth,
+            boolean isTitle, boolean isButtons) {
         int textViewId = View.generateViewId();
         textView.setId(textViewId);
-        ConstraintLayout.LayoutParams layoutParamsWrap =
-            new ConstraintLayout.LayoutParams(
-                    ConstraintSet.WRAP_CONTENT,
-                    ConstraintSet.WRAP_CONTENT);
+        textView.setGravity(Gravity.CENTER);
+        ViewGroup.MarginLayoutParams layoutParamsWrap;
+        if (isButtons) {
+            layoutParamsWrap = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.MarginLayoutParams.MATCH_PARENT,
+                    ViewGroup.MarginLayoutParams.WRAP_CONTENT);
+            if (smallestWidth >= 600) {
+                layoutParamsWrap.setMargins(250, 30, 250, 35);
+                textView.setTextSize(10);
+            } else {
+                layoutParamsWrap.setMargins(125, 10, 125, 10);
+                textView.setTextSize(25);
+            }
+        }
+        else {
+            layoutParamsWrap = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.MarginLayoutParams.WRAP_CONTENT,
+                    ViewGroup.MarginLayoutParams.WRAP_CONTENT);
+        }
         if (isTitle) {
             if (smallestWidth >= 600) {
-                layoutParamsWrap.setMargins(0, 0, 0, 22);
+                // Bottom margin should be set in set.connect
+                // layoutParamsWrap.setMargins(0, 0, 0, 22);
                 textView.setTextSize(45);
             } else {
-                layoutParamsWrap.setMargins(0, 0, 0, 12);
+                // Bottom margin should be set in set.connect
+                // layoutParamsWrap.setMargins(0, 0, 0, 12);
                 textView.setTextSize(25);
             }
         }
         textView.setLayoutParams(layoutParamsWrap);
-        textView.setText(string);
+        if (string != null) {
+            textView.setText(string);
+        }
+        else {
+            textView.setText(span);
+        }
         CreateView.setTextSize(textView, smallestWidth);
         layout.addView(textView);
         return textViewId;
@@ -52,11 +76,17 @@ public class CreateView  {
       * and put on top on another view
       */
     static public void viewCenteredInTopOfOtherView (ConstraintLayout layout,
-            int viewId, int toViewId) {
+            int viewId, int toViewId, boolean isLandscape) {
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
-        set.connect(viewId, ConstraintSet.BOTTOM, toViewId,
-                ConstraintSet.TOP);
+        if (isLandscape) {
+            set.connect(viewId, ConstraintSet.BOTTOM, toViewId,
+                    ConstraintSet.TOP, 0);
+        }
+        else {
+            set.connect(viewId, ConstraintSet.BOTTOM, toViewId,
+                    ConstraintSet.TOP, 30);
+        }
         set.connect(viewId, ConstraintSet.LEFT, ConstraintSet.PARENT_ID,
                 ConstraintSet.LEFT);
         set.connect(viewId, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID,

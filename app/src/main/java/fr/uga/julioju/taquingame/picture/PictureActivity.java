@@ -2,9 +2,12 @@ package fr.uga.julioju.taquingame.picture;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +17,7 @@ import android.widget.TextView;
 
 import android.support.annotation.Nullable;
 
-import android.support.constraint.ConstraintLayout;
-
-
 import android.support.v4.content.FileProvider;
-
-
 
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import fr.uga.julioju.taquingame.util.CreateView;
@@ -254,11 +252,13 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
     // =============================================================
 
     private void createOneButton(ViewGroup buttonGroup, String text,
+            Spanned span,
             View.OnClickListener onClickListener, int smallestWidth) {
         Button buttonPicturePick = new Button(this);
         buttonPicturePick.setOnClickListener(onClickListener);
-        CreateView.createTextView(buttonPicturePick, buttonGroup,
-                text, smallestWidth, false);
+        buttonPicturePick.setAllCaps(false);
+        CreateView.createTextView(buttonPicturePick, buttonGroup, text,
+                span, smallestWidth, false, true);
     }
 
     /**
@@ -266,22 +266,36 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
       * @return id of the group
       */
     private int createButtonGroup(int smallestWidth) {
+        String carriageReturn;
+
+        int orientation = super.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            carriageReturn = "";
+        } else {
+            carriageReturn = "\n";
+        }
+
         LinearLayout buttonGroup = new LinearLayout(this);
         int buttonGroupId = View.generateViewId();
         buttonGroup.setId(buttonGroupId);
         buttonGroup.setOrientation(LinearLayout.VERTICAL);
         buttonGroup.setGravity(Gravity.CENTER);
-        buttonGroup.setLayoutParams(new ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT));
+        buttonGroup.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+        this.createOneButton(buttonGroup, null, Html
+                    .fromHtml("Take new photo " + carriageReturn +
+                        "<small>(displayable in Gallery)</small>",
+                        Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
+                    view ->
+                        PictureActivity
+                            .super.dispatchTakePictureIntentPublicFolder(),
+                    smallestWidth);
 
-        this.createOneButton(buttonGroup, "Take new photo\n" +
-                "(saved in public folder)", view ->
-                PictureActivity.super.dispatchTakePictureIntentPublicFolder(),
-                smallestWidth);
-
-        this.createOneButton(buttonGroup, "Pick a picture\nin gallery", view ->
-                PictureActivity.this.pickPictureFromGallery(),
+        this.createOneButton(buttonGroup, "Pick a picture" + carriageReturn
+                + "in gallery", null,
+                view ->
+                    PictureActivity.this.pickPictureFromGallery(),
                 smallestWidth);
 
         View lineView = new View(this);
@@ -293,12 +307,18 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         lineView.setBackgroundColor(0xFFFFFFFF);
         buttonGroup.addView(lineView);
 
-        this.createOneButton(buttonGroup, "Take new photo\n" +
-                "(saved in app's folder\nnot displayed in gallery)", view ->
-                PictureActivity.this.dispatchTakePictureIntentPrivateFolder(),
-                smallestWidth);
+        this.createOneButton(buttonGroup, null,
+            Html.fromHtml("Take new photo " + carriageReturn +
+                " <small>(not displayable in Gallery)</small>",
+                Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
+            view ->
+                PictureActivity
+                    .this.dispatchTakePictureIntentPrivateFolder(),
+            smallestWidth);
 
-        this.createOneButton(buttonGroup, "Pick a picture\nin filesystem",
+        this.createOneButton(buttonGroup, "Pick a picture " + carriageReturn +
+                " in filesystem",
+                null,
                 view -> PictureActivity.this.performFileSearch(),
                 smallestWidth);
 
@@ -313,6 +333,8 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
 
         super.onCreate(savedInstanceState);
 
+        int orientation = super.getResources().getConfiguration().orientation;
+
         int smallestWidth = DetectScreen.getSmallestWidth(this);
         super.layout = CreateView.createLayout(this);
 
@@ -321,10 +343,12 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         CreateView.centerAView(super.layout, buttonGroupId);
 
         int titleId = CreateView.createTextView(new TextView(this), super.layout,
-                "Retrieve photo for the puzzle", smallestWidth, true);
+                "Retrieve photo for the puzzle", null, smallestWidth, true,
+                false);
 
         CreateView.viewCenteredInTopOfOtherView(super.layout,
-                titleId, buttonGroupId);
+                titleId, buttonGroupId,
+                orientation == Configuration.ORIENTATION_LANDSCAPE);
 
     }
 
