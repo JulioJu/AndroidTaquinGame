@@ -28,10 +28,10 @@ import fr.uga.julioju.taquingame.util.DetectScreen;
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
 
-    public static final String EXTRA_MESSAGE_GRID_LENGTH =
+    public static final String INTENT_GRID_LENGTH =
         "fr.uga.julioju.taquingame.main.NUMBER_OF_SQUARES";
 
-    private static final int IS_END_OF_APP_REQUEST = 27;
+    private static final int INTENT_IS_END_OF_APP = 27;
 
     private ArrayList<RadioButton> radioButtonArray;
 
@@ -115,13 +115,13 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult (int requestCode, int resultCode,
             Intent intentIncome) {
         // Check which request we're responding to
-        if (requestCode == MainActivity.IS_END_OF_APP_REQUEST) {
+        if (requestCode == MainActivity.INTENT_IS_END_OF_APP) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK) {
                 // The user picked a contact.
                 // The Intent's data Uri identifies which contact was selected.
                 boolean isEndOfApp = intentIncome.getBooleanExtra(TaquinActivity
-                        .EXTRA_MESSAGE_IS_END_OF_APP, true);
+                        .INTENT_IS_END_OF_APP, true);
                 android.util.Log.d("isEndOfApp", "" + isEndOfApp);
                 if (isEndOfApp) {
                     super.finishAndRemoveTask();
@@ -135,9 +135,9 @@ public class MainActivity extends AppCompatActivity
         RadioButton radioButton = (RadioButton) view;
         int gridLength = this.radioButtonArray.indexOf(radioButton) + 2;
         Intent intent = new Intent(this, PictureActivity.class);
-            intent.putExtra(EXTRA_MESSAGE_GRID_LENGTH, gridLength);
+            intent.putExtra(INTENT_GRID_LENGTH, gridLength);
         super.startActivityForResult(intent,
-                MainActivity.IS_END_OF_APP_REQUEST);
+                MainActivity.INTENT_IS_END_OF_APP);
     }
 
 }

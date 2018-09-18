@@ -19,7 +19,7 @@ public class GameWinFireDialog extends DialogFragment {
     private void finishActivityOrApp(boolean isEndOfApp) {
         Activity activity = super.getActivity();
         Intent intent = new Intent(activity, PictureActivity.class);
-        intent.putExtra(TaquinActivity.EXTRA_MESSAGE_IS_END_OF_APP, isEndOfApp);
+        intent.putExtra(TaquinActivity.INTENT_IS_END_OF_APP, isEndOfApp);
         activity.setResult(Activity.RESULT_OK, intent);
         if (isEndOfApp) {
             activity.finishAndRemoveTask();

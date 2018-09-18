@@ -31,9 +31,9 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         AppCompatActivity {
 
     private static final int
-        REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 50;
+        INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE = 50;
 
-    private static final int REQUEST_ANDROID_SETTINGS = 1000;
+    private static final int INTENT_ANDROID_SETTINGS = 1000;
 
     protected ConstraintLayout layout;
     // package private
@@ -72,14 +72,14 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                 photoUriContentScheme);
         super.startActivityForResult(takePictureIntent,
-                PictureActivity.REQUEST_TAKE_PHOTO);
+                PictureActivity.INTENT_TAKE_PHOTO);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent resultData) {
         if (requestCode == TakePhotoSavedInPublicDirectory
-                .REQUEST_ANDROID_SETTINGS) {
+                .INTENT_ANDROID_SETTINGS) {
             this.dispatchTakePictureIntentPublicFolder();
         }
     }
@@ -101,7 +101,7 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         // « Verify that each required permission has been granted, otherwise
         // return false. »
         if (requestCode == TakePhotoSavedInPublicDirectory
-                    .REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE) {
+                    .INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE) {
             android.util.Log.i("permission",
                     "Received response for permissions request.");
 
@@ -133,7 +133,7 @@ public abstract class TakePhotoSavedInPublicDirectory extends
                                 intent.setData(uri);
                                 super.startActivityForResult(intent,
                                         TakePhotoSavedInPublicDirectory
-                                        .REQUEST_ANDROID_SETTINGS);
+                                        .INTENT_ANDROID_SETTINGS);
                             })
                 .show();
             }
@@ -147,7 +147,7 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     TakePhotoSavedInPublicDirectory
-                    .REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                    .INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE);
     }
 
     // package private

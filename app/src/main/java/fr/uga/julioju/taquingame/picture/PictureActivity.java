@@ -27,12 +27,12 @@ import java.io.*;
 
 public class PictureActivity extends TakePhotoSavedInPublicDirectory {
 
-    public static final String EXTRA_MESSAGE_IMAGE_URI =
+    public static final String INTENT_IMAGE_URI =
         "fr.uga.julioju.taquingame.picture.PICTURE_URI";
 
-    static final int REQUEST_TAKE_PHOTO = 25;
+    static final int INTENT_TAKE_PHOTO = 25;
 
-    private static final int REQUEST_PICTURE_PICK = 17;
+    private static final int INTENT_PICTURE_PICK = 17;
 
     // ====================== onActivityResult =====================
     // =============================================================
@@ -41,10 +41,10 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
     // =============================================================
 
     /** @param photoUri
-      *     null if it's launch in the context of the intent REQUEST_TAKE_PHOTO
+      *     null if it's launch in the context of the intent INTENT_TAKE_PHOTO
       *             and super.imageFile is no null
       *     no null if it's launch in the context of the intent
-      *             REQUEST_PICTURE_PICK and super.imageFile is null
+      *             INTENT_PICTURE_PICK and super.imageFile is null
       */
     private void sendIntentToGame(@Nullable Uri photoUri)
             throws PictureActivityException {
@@ -69,7 +69,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         // https://stackoverflow.com/a/12905952
         intentOutcome.putExtras(super.getIntent());
 
-        intentOutcome.putExtra(EXTRA_MESSAGE_IMAGE_URI, photoUri);
+        intentOutcome.putExtra(INTENT_IMAGE_URI, photoUri);
 
         super.startActivity(intentOutcome);
         super.finishAndRemoveTask();
@@ -94,7 +94,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         // Source:
         // https://developer.android.com/guide/topics/providers/document-provider#results
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // REQUEST_PICTURE_PICK. If the request code seen here doesn't
+        // INTENT_PICTURE_PICK. If the request code seen here doesn't
         // match, it's the response to some other intent, and the code below
         // shouldn't run at all.
         if (resultCode == Activity.RESULT_OK && resultData != null) {
@@ -119,14 +119,14 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
     protected void onActivityResult(int requestCode, int resultCode,
             Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == PictureActivity.REQUEST_PICTURE_PICK) {
+        if (requestCode == PictureActivity.INTENT_PICTURE_PICK) {
             try {
                 this.onActivityResultPicturePick(resultCode, resultData);
             } catch (PictureActivityException e) {
                 PictureActivityException.displayError(super.layout, e);
             }
         }
-        else if (requestCode == PictureActivity.REQUEST_TAKE_PHOTO) {
+        else if (requestCode == PictureActivity.INTENT_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK && resultData != null) {
                 // Could not be added if it a app private folder
                 // Method executed but without result in this case.
@@ -163,7 +163,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         // Even if there is no chooser displayed, better to use
         // createChooser in case of there isn't provider app installed.
         super.startActivityForResult(Intent.createChooser(intent,
-                   "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
+                   "Select Picture"), PictureActivity.INTENT_PICTURE_PICK);
 
     }
 
@@ -195,7 +195,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
             takePictureIntent
                 .setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             super.startActivityForResult(takePictureIntent,
-                    PictureActivity.REQUEST_TAKE_PHOTO);
+                    PictureActivity.INTENT_TAKE_PHOTO);
         }
         else {
             // Permission has already been granted
@@ -241,7 +241,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         // directly to a system-supplied UI for obtaining content, bypassing any
         // chooser, on Android 4.4+.
         super.startActivityForResult(Intent.createChooser(intent,
-                    "Select Picture"), PictureActivity.REQUEST_PICTURE_PICK);
+                    "Select Picture"), PictureActivity.INTENT_PICTURE_PICK);
 
     }
 
@@ -266,13 +266,13 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
       * @return id of the group
       */
     private int createButtonGroup(int smallestWidth) {
-        String carriageReturn;
+        String carriageReturn = "";
+        String carriageReturnHtml = "";
 
         int orientation = super.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            carriageReturn = "";
-        } else {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             carriageReturn = "\n";
+            carriageReturnHtml = "<br />";
         }
 
         LinearLayout buttonGroup = new LinearLayout(this);
@@ -284,7 +284,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
         this.createOneButton(buttonGroup, null, Html
-                    .fromHtml("Take new photo " + carriageReturn +
+                    .fromHtml("Take new photo " + carriageReturnHtml +
                         "<small>(displayable in Gallery)</small>",
                         Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
                     view ->
@@ -308,7 +308,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         buttonGroup.addView(lineView);
 
         this.createOneButton(buttonGroup, null,
-            Html.fromHtml("Take new photo " + carriageReturn +
+            Html.fromHtml("Take new photo " + carriageReturnHtml +
                 " <small>(not displayable in Gallery)</small>",
                 Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
             view ->

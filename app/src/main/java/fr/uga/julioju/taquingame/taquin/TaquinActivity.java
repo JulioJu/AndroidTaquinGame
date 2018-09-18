@@ -36,7 +36,7 @@ import fr.uga.julioju.taquingame.util.ImageUtil;
   */
 public class TaquinActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE_IS_END_OF_APP =
+    public static final String INTENT_IS_END_OF_APP =
         "fr.uga.julioju.taquingame.taquin.IS_END_OF_APP";
 
     /** Do not use GridLayout */
@@ -294,16 +294,14 @@ public class TaquinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        String carriageReturn;
-
         super.onCreate(savedInstanceState);
 
         // Get the Intent that started this activity and extract the string
         Intent intentIncome = super.getIntent();
         this.gridLength = intentIncome.getIntExtra(MainActivity
-                        .EXTRA_MESSAGE_GRID_LENGTH, 10);
+                        .INTENT_GRID_LENGTH, 10);
         Uri uriImage = intentIncome.getParcelableExtra(PictureActivity
-                .EXTRA_MESSAGE_IMAGE_URI);
+                .INTENT_IMAGE_URI);
 
         if (savedInstanceState == null) {
             // This Array is updated only in
