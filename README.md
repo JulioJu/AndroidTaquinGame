@@ -410,6 +410,10 @@ https://developer.android.com/reference/android/content/Intent
         ` Some part of second example of Context.getExternalFilesDir are wrong`
     2. https://issuetracker.google.com/issues/114554343 relative to
         `Activity[Compat].shouldShowRequestPermissionRationale`
+        * Response of the developer team:
+            « *We intentionally do not want to explain in which cases this API
+            returns true and false. This allows the API to implement more
+            complex logic if needed.* »
 
 * Interesting links:
     * https://github.com/googlesamples/android-RuntimePermissions/
@@ -589,3 +593,30 @@ https://developer.android.com/reference/android/content/Intent
 * It's sure, could not work with `API < 21` (Android 5.0)
 * ~~Sometimes, when we try to load a picture, there is crashs.~~
     never experimented again.
+
+* Sometimes we have the following error:
+    ```
+    09-17 14:12:22.029  1628  1628 E Decode image error: Error when try to retrieve selected picture. No picture is displayed in Squares.
+    09-17 14:12:22.040  1628  1628 E Exception: java.io.IOException: Fail to decode bitmap from Urifile:///storage/emulated/0/Pictures/taquingame/taquinGame20180917_135820_6044549262338316943.jpg
+    09-17 14:12:22.040  1628  1628 E Exception:     at fr.uga.julioju.taquingame.util.ImageUtil.decodeSampledBitmapFromStream(ImageUtil.java:200)
+    09-17 14:12:22.040  1628  1628 E Exception:     at fr.uga.julioju.taquingame.util.ImageUtil.generateBitmapDrawableArray(ImageUtil.java:221)
+    09-17 14:12:22.040  1628  1628 E Exception:     at fr.uga.julioju.taquingame.taquin.TaquinActivity.onCreate(TaquinActivity.java:355)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.Activity.performCreate(Activity.java:6975)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1213)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2770)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2892)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.ActivityThread.-wrap11(Unknown Source:0)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1593)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.os.Handler.dispatchMessage(Handler.java:105)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.os.Looper.loop(Looper.java:164)
+    09-17 14:12:22.040  1628  1628 E Exception:     at android.app.ActivityThread.main(ActivityThread.java:6541)
+    09-17 14:12:22.040  1628  1628 E Exception:     at java.lang.reflect.Method.invoke(Native Method)
+    09-17 14:12:22.040  1628  1628 E Exception:     at com.android.internal.os.Zygote$MethodAndArgsCaller.run(Zygote.java:240)
+    09-17 14:12:22.040  1628  1628 E Exception:     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:767)
+    ```
+    * note : now line 202 is 208 with:
+        ```
+        if (image == null) {
+            throw new IOException(messageError);
+        }
+        ```

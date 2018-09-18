@@ -354,7 +354,7 @@ public class TaquinActivity extends AppCompatActivity {
             this.backgroundArray = ImageUtil
                 .generateBitmapDrawableArray(this, this.gridLength,
                         screenSize.x, screenSize.y, uriImage);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             String messageError = "Error when try to retrieve selected" +
                 " picture." +
                 " No picture is displayed in Squares.";

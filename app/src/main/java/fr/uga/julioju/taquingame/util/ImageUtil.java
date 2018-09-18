@@ -164,7 +164,8 @@ public class ImageUtil  {
     // https://developer.android.com/topic/performance/graphics/load-bitmap
     @NonNull
     private static Bitmap decodeSampledBitmapFromStream(Context context, Uri
-            uri, int screenWidth, int screenHeight) throws IOException {
+            uri, int screenWidth, int screenHeight) throws IOException,
+            InterruptedException {
 
         String messageError = "Fail to decode bitmap from Uri" +
             uri.toString();
@@ -176,7 +177,7 @@ public class ImageUtil  {
         // https://stackoverflow.com/a/6228188
         // bitmapOption.inDither=true; //optional (deprecated)
         // bitmapOption.inPreferredConfig=Bitmap.Config.ARGB_8888;//optional
-        ImageUtil.getBitmapFromUri(context, uri,
+        Bitmap image = ImageUtil.getBitmapFromUri(context, uri,
                 bitmapOption, messageError);
 
         // // https://stackoverflow.com/a/6228188
@@ -194,8 +195,16 @@ public class ImageUtil  {
         bitmapOption.inSampleSize = ImageUtil
             .calculateInSampleSize(bitmapOption, screenWidth, screenHeight);
 
-        Bitmap image = ImageUtil.getBitmapFromUri(context, uri,
-                bitmapOption, messageError);
+        for (int i = 0 ; image == null && i < 5  ; i++) {
+            image = ImageUtil.getBitmapFromUri(context, uri,
+                    bitmapOption, messageError);
+            if (image == null) {
+                android.util.Log.e("image is null",
+                        "image is null, retrying: " + i);
+                Thread.sleep(4000);
+            }
+        }
+
         if (image == null) {
             throw new IOException(messageError);
         }
@@ -215,7 +224,7 @@ public class ImageUtil  {
     public static BitmapDrawable[] generateBitmapDrawableArray(Context context,
             int gridLength, int screenWidth, int screenHeight,
             @NonNull Uri uriImage)
-            throws IOException {
+            throws IOException, InterruptedException {
         // Bitmap bitmapOriginal = ImageUtil.getBitmapFromUri(context,
         //         uriImage, null, "test");
         Bitmap bitmapOriginal = ImageUtil.decodeSampledBitmapFromStream(
