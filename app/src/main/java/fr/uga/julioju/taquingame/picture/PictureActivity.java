@@ -21,7 +21,7 @@ import android.support.v4.content.FileProvider;
 
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import fr.uga.julioju.taquingame.util.CreateView;
-import fr.uga.julioju.taquingame.util.DetectScreen;
+import fr.uga.julioju.taquingame.util.DetectScreenUtil;
 import fr.uga.julioju.taquingame.util.ImageUtil;
 import java.io.*;
 
@@ -335,7 +335,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
 
         int orientation = super.getResources().getConfiguration().orientation;
 
-        int smallestWidth = DetectScreen.getSmallestWidth(this);
+        int smallestWidth = DetectScreenUtil.getSmallestWidth(this);
         super.layout = CreateView.createLayout(this);
 
         int buttonGroupId = this.createButtonGroup(smallestWidth);

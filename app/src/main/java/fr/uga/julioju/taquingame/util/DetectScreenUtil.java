@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.util.DisplayMetrics;
 
-public class DetectScreen  {
+public abstract class DetectScreenUtil {
 
     // Inspired from:
     // https://stackoverflow.com/questions/15055458/detect-7-inch-and-10-inch-tablet-programmatically/15133776#15133776

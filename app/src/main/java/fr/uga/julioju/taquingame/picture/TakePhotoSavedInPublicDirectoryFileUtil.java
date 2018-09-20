@@ -10,7 +10,7 @@ import java.util.Date;
 
 import java.io.*;
 
-class TakePhotoSavedInPublicDirectoryFileUtil {
+abstract class TakePhotoSavedInPublicDirectoryFileUtil {
 
     @NonNull
     static private File createStorageDir(Activity activity, boolean

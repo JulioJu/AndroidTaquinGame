@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import fr.uga.julioju.taquingame.picture.PictureActivityException;
 
-public class ImageUtil  {
+public abstract class ImageUtil  {
 
     private static final int RATIO_SCREEN_IMAGE = 5;
 

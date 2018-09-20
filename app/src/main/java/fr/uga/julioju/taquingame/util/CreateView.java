@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 
-public class CreateView  {
+public abstract class CreateView  {
 
     static public void setTextSize (TextView textView, int smallestWidth) {
         // TODO optimize for other screen size

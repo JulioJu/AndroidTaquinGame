@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import fr.uga.julioju.taquingame.picture.PictureActivity;
 import fr.uga.julioju.taquingame.taquin.TaquinActivity;
 import fr.uga.julioju.taquingame.util.CreateView;
-import fr.uga.julioju.taquingame.util.DetectScreen;
+import fr.uga.julioju.taquingame.util.DetectScreenUtil;
 
 /** Choose number of squares the game should be */
 public class MainActivity extends AppCompatActivity
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     private void createRadioGroup(Context context,
             ConstraintLayout layout) {
 
-        int smallestWidth = DetectScreen.getSmallestWidth(this);
+        int smallestWidth = DetectScreenUtil.getSmallestWidth(this);
 
         int orientation = super.getResources().getConfiguration().orientation;
 
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
 
-        this.smallestWidth = DetectScreen.getSmallestWidth(this);
+        this.smallestWidth = DetectScreenUtil.getSmallestWidth(this);
         ConstraintLayout layout = CreateView.createLayout(this);
 
         this.createRadioGroup(this, layout);
