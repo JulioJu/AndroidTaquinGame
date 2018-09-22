@@ -3,6 +3,13 @@ package fr.uga.julioju.taquingame.taquin;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
+/**
+  * Animate the move of a Drawable from a Square to another, therefore when a
+  * Square clicked contains a neighbour with
+  * `Square.getOrderOfTheContent() == 0`.
+  * If the user click on another Square during the animation, no other new move
+  * of Drawable could be triggered before the end of the current Animation.
+  */
 public class SquareOnClickListenerAnimationListener
     implements Animation.AnimationListener {
 
@@ -52,8 +59,7 @@ public class SquareOnClickListenerAnimationListener
         } else {
             this.neighbourSquareEmpty
                 .setOrderOfTheContent(squareClicked.getOrderOfTheContent(),
-                        this.taquinActivity.getBackgroundArray()[squareClicked
-                        .getOrderOfTheContent()]);
+                        squareClicked.getBackground());
         }
     }
 

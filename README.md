@@ -426,6 +426,17 @@ https://developer.android.com/reference/android/content/Intent
     «  If you are using the camera by invoking an existing camera app, your
     application does not need to request this permission. »
 
+* Use the Gallery App not needs permission READ_EXTERNAL_STORAGE.
+    Probably it's the same mechanism as when we use the Camera App,
+    our App not needs to have camera permission
+    https://developer.android.com/guide/topics/media/camera#manifest .
+
+* As our app create a subfolder in
+    `getExternalFilesDir(Environment.DIRECTORY_PICTURES)`,
+    we need storage permission. Furthermore, the file is created by
+    our app, not by the Camera app (I've tested, Camera app
+    can't create a file when it's called from an other app).
+
 
 #### Work with images and files
 * To simply take a photo, read:
@@ -551,6 +562,11 @@ https://developer.android.com/reference/android/content/Intent
     `Uri.parse(new File("/sdcard/cats.jpg").toString()`
     because it can't work on Android API 26+.
     https://stackoverflow.com/questions/3004713/get-content-uri-from-file-path-in-android#comment88013079_3005936
+
+### Class diagram
+* https://en.wikipedia.org/wiki/Class_diagram
+* https://www.cs.odu.edu/~zeil/cs330/s14/Public/classDiagrams/classDiagrams__html.html
+* https://www.uml-diagrams.org/
 
 ### Notes misc
 * « Although this is often more concise than a named class, for classes with

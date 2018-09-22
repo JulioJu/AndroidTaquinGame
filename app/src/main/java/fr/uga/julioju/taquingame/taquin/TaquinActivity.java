@@ -62,13 +62,6 @@ public class TaquinActivity extends AppCompatActivity {
     private static final String UNORDERED_SEQUENCE_SAVED = "unorderedSequence";
 
     /**
-      * Array of size gridLength * 2 that contains images.
-      * backgroundArray[0] is never displayed during the game.
-      * Therefore it is null.
-      */
-    private Drawable backgroundArray[];
-
-    /**
       * Create an Array, with values that are aun unordered sequence of
       * number between 0 and (gridNumberOfSquares - 1).
       * if this.gridLength == 2, return always the same sequence.
@@ -164,7 +157,7 @@ public class TaquinActivity extends AppCompatActivity {
       * Create a grid like below.
       * If this.gridLength < 3, draw with letters and "."
       */
-    private void createGrid(Point screenSize) {
+    private void createGrid(Point screenSize, Drawable[] backgroundArray) {
 
         // Create Square of the grid
         // ============================
@@ -195,7 +188,7 @@ public class TaquinActivity extends AppCompatActivity {
             Square square = new Square (this, this.layout,
                     this.unorderedSequence[squareNumberIndex], row, column,
                     squareWidth, squareHeight,
-                    this.backgroundArray[this
+                    backgroundArray[this
                         .unorderedSequence[squareNumberIndex]],
                     marginLeft, marginTop);
 
@@ -348,8 +341,14 @@ public class TaquinActivity extends AppCompatActivity {
                 , Toast.LENGTH_LONG)
             .show();
 
+
+        // Array of size gridLength * 2 that contains images.
+        // backgroundArray[0] is never displayed during the game.
+        // Therefore it is null.
+        Drawable backgroundArray[] = null;
+
         try {
-            this.backgroundArray = ImageUtil
+            backgroundArray = ImageUtil
                 .generateBitmapDrawableArray(this, this.gridLength,
                         screenSize.x, screenSize.y, uriImage);
         } catch (IOException | InterruptedException e) {
@@ -362,16 +361,16 @@ public class TaquinActivity extends AppCompatActivity {
             android.util.Log.e("Exception",  sw.toString());
             Snackbar.make(this.layout, messageError,
                     Snackbar.LENGTH_INDEFINITE).show();
-            this.backgroundArray =
+            backgroundArray =
                 new Drawable[this.gridLength * this.gridLength];
             for (int backgroundArrayIndex = 0 ;
                     backgroundArrayIndex < backgroundArray.length ;
                     backgroundArrayIndex++) {
-                this.backgroundArray[backgroundArrayIndex] = super
+                backgroundArray[backgroundArrayIndex] = super
                     .getDrawable(R.drawable.back);
             }
         } finally {
-            this.createGrid(screenSize);
+            this.createGrid(screenSize, backgroundArray);
             // If drawn in right order
             this.displayDialogIfGameIsWin();
         }
@@ -402,10 +401,6 @@ public class TaquinActivity extends AppCompatActivity {
 
     Square[][] getGrid() {
         return this.grid;
-    }
-
-    Drawable[] getBackgroundArray() {
-        return backgroundArray;
     }
 
 }

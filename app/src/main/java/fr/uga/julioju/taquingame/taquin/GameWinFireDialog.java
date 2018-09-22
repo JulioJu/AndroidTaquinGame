@@ -13,6 +13,14 @@ import android.support.v4.app.DialogFragment;
 import fr.uga.julioju.taquingame.picture.PictureActivity;
 
 // SuppressWarnings because DialogFragment should be `public`
+/**
+  * Displayed if the Array of integer `TaquinActivity.grid.orderOfTheContent` is
+  * ordered.
+  *
+  * SquareOnClickListenerAnimationListener call
+  * `TaquinActivity.displayDialogIfGameIsWin()`, then if it's win
+  * GameWinFireDialog is displayed.
+  */
 @SuppressWarnings("WeakerAccess")
 public class GameWinFireDialog extends DialogFragment {
 
@@ -34,7 +42,8 @@ public class GameWinFireDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(super
+                .getActivity());
         builder.setMessage("Congratulation !!! Game turns wins !!!")
                .setPositiveButton("Play again !", (dialog, id) ->
                        GameWinFireDialog.this.finishActivityOrApp(false))

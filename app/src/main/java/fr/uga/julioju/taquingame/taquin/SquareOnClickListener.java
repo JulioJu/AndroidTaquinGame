@@ -7,7 +7,20 @@ import android.widget.Toast;
 
 // https://developer.android.com/guide/topics/ui/ui-events
 /**
-  * Manage actions when we click on a Square
+  * Manage actions when we click on a Square.
+  * Quickly garbaged.
+  *
+  * If exists, `neighbourSquareEmpty` is the neighbour Square than has
+  * Square.orderOfTheContent == 0.
+  *
+  * In this case performs:
+  * ```
+  * neighbourSquareEmpty.setOrderOfTheContent(
+  *          squareClicked.orderOfTheContent,
+  *          squareClicked.getBackground());
+  * squareClicked.setEmptySquare();
+  * ```
+  * (currently done in class `SquareOnClickListenerAnimationListener`)
   */
 class SquareOnClickListener implements View.OnClickListener {
 
