@@ -255,8 +255,13 @@ public abstract class ImageUtil  {
         return screenSize;
     }
 
-    public static int[] isGoodImage(Activity activity, Uri photoUri)
+    public static int[] isGoodImage(Activity activity, @Nullable Uri photoUri)
             throws PictureActivityException {
+        if (photoUri == null) {
+            String messageError = "The photo" +
+                " can't be read. Try with an other file.";
+            throw new PictureActivityException(messageError);
+        }
         final BitmapFactory.Options bitmapOption =
             new BitmapFactory.Options();
         bitmapOption.inJustDecodeBounds = true;

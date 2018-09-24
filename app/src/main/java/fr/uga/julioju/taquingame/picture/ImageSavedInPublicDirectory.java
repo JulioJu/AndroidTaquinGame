@@ -1,6 +1,7 @@
 package fr.uga.julioju.taquingame.picture;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,7 +19,6 @@ import android.support.v4.content.FileProvider;
 
 import android.support.v7.app.AppCompatActivity;
 
-
 import android.support.design.widget.Snackbar;
 import fr.uga.julioju.taquingame.R;
 import java.io.*;
@@ -27,13 +27,20 @@ import java.io.*;
   * All code to take a photo and save it in public Directory,
   * except onActivityResult() that is in the child class
   */
-public abstract class TakePhotoSavedInPublicDirectory extends
+public abstract class ImageSavedInPublicDirectory extends
         AppCompatActivity {
 
-    private static final int
-        INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE = 50;
+    static final int INTENT_TAKE_PHOTO = 25;
+    static final int INTENT_TAKE_PHOTO_PERMISSION_WRITE_EXTERNAL_STORAGE =
+        ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO;
 
-    private static final int INTENT_ANDROID_SETTINGS = 1000;
+    static final int INTENT_PICTURE_PICK = 17;
+    static final int INTENT_PICTURE_PICK_PERMISSION_WRITE_EXTERNAL_STORAGE =
+        ImageSavedInPublicDirectory.INTENT_PICTURE_PICK;
+
+    private static final int INTENT_ANDROID_SETTINGS_TAKE_PHOTO = 1000;
+
+    private static final int INTENT_ANDROID_SETTINGS_PICK_PICTURE = 1001;
 
     protected ConstraintLayout layout;
     // package private
@@ -52,7 +59,7 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         return returnStatement;
     }
 
-    private void dispatchTakePictureIntentPublicFolderWithPermission()
+    private void dispatchTakePhotoPublicFolderWithPermission()
             throws PictureActivityException {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         this.imageFile = TakePhotoSavedInPublicDirectoryFileUtil
@@ -72,15 +79,90 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                 photoUriContentScheme);
         super.startActivityForResult(takePictureIntent,
-                PictureActivity.INTENT_TAKE_PHOTO);
+                ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO);
     }
+
+    /** Pick picture from gallery */
+    private void dispatchPickPictureFromGalleryWithPermission() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // Even if there is no chooser displayed, better to use
+        // createChooser in case of there isn't provider app installed.
+        super.startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"),
+                ImageSavedInPublicDirectory.INTENT_PICTURE_PICK);
+
+    }
+
+    private void dispatchTakePictureOrPublicFolderWitnPermission(int
+            requestCode) {
+            switch (requestCode) {
+                case ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO :
+                    try {
+                        this.dispatchTakePhotoPublicFolderWithPermission();
+                    }
+                    catch (PictureActivityException e){
+                        PictureActivityException.displayError(this.layout, e);
+                    }
+                    break;
+                case ImageSavedInPublicDirectory.INTENT_PICTURE_PICK :
+                    this.dispatchPickPictureFromGalleryWithPermission();
+                    break;
+            }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent resultData) {
-        if (requestCode == TakePhotoSavedInPublicDirectory
-                .INTENT_ANDROID_SETTINGS) {
-            this.dispatchTakePictureIntentPublicFolder();
+        if (requestCode ==
+                ImageSavedInPublicDirectory.INTENT_ANDROID_SETTINGS_TAKE_PHOTO
+                ||  requestCode
+                == ImageSavedInPublicDirectory
+                .INTENT_ANDROID_SETTINGS_PICK_PICTURE
+           )
+            // if (resultCode != Activity.RESULT_OK) {
+            //     try {
+            //         String messageError = "There was a " +
+            //             "problem during execution of the Settings.";
+            //         throw new PictureActivityException(messageError);
+            //     } catch (PictureActivityException e) {
+            //         PictureActivityException.displayError(this.layout, e);
+            //     }
+            // }
+            // else {
+                switch (requestCode) {
+                    case ImageSavedInPublicDirectory
+                            .INTENT_ANDROID_SETTINGS_TAKE_PHOTO :
+                        this.checkWritePermissionDispatchAction(
+                                ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO);
+                        break;
+                    case ImageSavedInPublicDirectory
+                            .INTENT_ANDROID_SETTINGS_PICK_PICTURE:
+                        this.checkWritePermissionDispatchAction(
+                                ImageSavedInPublicDirectory
+                                    .INTENT_PICTURE_PICK);
+                    break;
+                }
+            // }
+    }
+
+    private void onRequestPermissionsResulSettingsButton(int requestCode,
+            Intent intent) {
+        switch (requestCode) {
+            case ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO :
+                super.startActivityForResult(intent,
+                        ImageSavedInPublicDirectory
+                            .INTENT_ANDROID_SETTINGS_TAKE_PHOTO);
+                break;
+            case ImageSavedInPublicDirectory
+                    .INTENT_PICTURE_PICK :
+                super.startActivityForResult(intent,
+                        ImageSavedInPublicDirectory
+                            .INTENT_ANDROID_SETTINGS_PICK_PICTURE);
+                break;
         }
     }
 
@@ -98,10 +180,23 @@ public abstract class TakePhotoSavedInPublicDirectory extends
         // Strongly inspired from         :
         // https://github.com/googlesamples/android-RuntimePermissions/blob/master/Application/src/main/java/com/example/android/system/runtimepermissions/PermissionUtil.java
 
+        // Remind that ImageSavedInPublicDirectory
+        //      .INTENT_TAKE_PHOTO_PERMISSION_WRITE_EXTERNAL_STORAGE
+        //      == ImageSavedInPublicDirectory
+        //          .INTENT_TAKE_PHOTO
+        // Remind that ImageSavedInPublicDirectory
+        //      .INTENT_PICTURE_PICK_PERMISSION_WRITE_EXTERNAL_STORAGE
+        //      == ImageSavedInPublicDirectory
+        //          .INTENT_PICTURE_PICK
+        // (Reverse of
+        //      `this.activityCompatRequestPermissions(requestCode)`)
+
         // « Verify that each required permission has been granted, otherwise
         // return false. »
-        if (requestCode == TakePhotoSavedInPublicDirectory
-                    .INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE) {
+        if (requestCode == ImageSavedInPublicDirectory
+                        .INTENT_TAKE_PHOTO_PERMISSION_WRITE_EXTERNAL_STORAGE
+                    || requestCode == ImageSavedInPublicDirectory
+                        .INTENT_PICTURE_PICK_PERMISSION_WRITE_EXTERNAL_STORAGE){
             android.util.Log.i("permission",
                     "Received response for permissions request.");
 
@@ -110,12 +205,8 @@ public abstract class TakePhotoSavedInPublicDirectory extends
             if (PermissionUtil.verifyPermissions(permissions, grantResults)) {
                 // « All required permissions have been granted, »
                 // launch the game
-                try {
-                    this.dispatchTakePictureIntentPublicFolderWithPermission();
-                }
-                catch (PictureActivityException e){
-                    PictureActivityException.displayError(this.layout, e);
-                }
+                this.dispatchTakePictureOrPublicFolderWitnPermission(
+                        requestCode);
             } else {
                 // A little inspired from:
                 // https://www.vladmarton.com/granted-denied-and-permanently-denied-permissions-in-android/
@@ -131,9 +222,8 @@ public abstract class TakePhotoSavedInPublicDirectory extends
                                 Uri uri = Uri.fromParts("package",
                                         super.getPackageName(), null);
                                 intent.setData(uri);
-                                super.startActivityForResult(intent,
-                                        TakePhotoSavedInPublicDirectory
-                                        .INTENT_ANDROID_SETTINGS);
+                                this.onRequestPermissionsResulSettingsButton(
+                                        requestCode, intent);
                             })
                 .show();
             }
@@ -141,17 +231,31 @@ public abstract class TakePhotoSavedInPublicDirectory extends
 
     }
 
-    private void activityCompatRequestPermissions() {
+    private void activityCompatRequestPermissions(int requestCode) {
         // « request the permission
         // The callback method gets the result of the request. »
+
+        // Remind that ImageSavedInPublicDirectory
+        //      .INTENT_TAKE_PHOTO_PERMISSION_WRITE_EXTERNAL_STORAGE
+        //      == ImageSavedInPublicDirectory
+        //          .INTENT_TAKE_PHOTO
+        // Remind that ImageSavedInPublicDirectory
+        //      .INTENT_PICTURE_PICK_PERMISSION_WRITE_EXTERNAL_STORAGE
+        //      == ImageSavedInPublicDirectory
+        //          .INTENT_PICTURE_PICK
+        // (reverse of `this.onRequestPermissionsResulSettingsButton()`)
+
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    TakePhotoSavedInPublicDirectory
-                    .INTENT_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                requestCode);
     }
 
     // package private
-    void dispatchTakePictureIntentPublicFolder() {
+    /**
+      * @param requestCode either ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO
+      *     or ImageSavedInPublicDirectory.INTENT_PICTURE_PICK
+      */
+    void checkWritePermissionDispatchAction(int requestCode) {
         // See:
         // https://developer.android.com/guide/topics/permissions/overview
         // Inspired from:
@@ -189,29 +293,24 @@ public abstract class TakePhotoSavedInPublicDirectory extends
                 // context for the use of the permission.  For example if the
                 // user has previously denied the permission. »
                 android.util.Log.i("permission",
-                        "You must storage permission to write in public " +
-                        "directory.");
+                        "You must storage permission to write or read " +
+                        "in public " + "directory.");
                 Snackbar
                     .make(layout, R.string
                             .permission_write_external_storage_rationale,
                             Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.ok, view ->
-                        this.activityCompatRequestPermissions()
+                        this.activityCompatRequestPermissions(requestCode)
                     )
                 .show();
             }
             else {
                 // No explanation needed, we can request the permission.
-                this.activityCompatRequestPermissions();
+                this.activityCompatRequestPermissions(requestCode);
             }
         } else {
             // Permission has already been granted
-            try {
-                this.dispatchTakePictureIntentPublicFolderWithPermission();
-            }
-            catch (PictureActivityException e){
-                PictureActivityException.displayError(this.layout, e);
-            }
+            this.dispatchTakePictureOrPublicFolderWitnPermission(requestCode);
         }
 
     }

@@ -19,6 +19,17 @@ public abstract class CreateView  {
         }
     }
 
+    static public ViewGroup.MarginLayoutParams viewMarginForLinealLayout(
+                int smallestWidth,
+                ViewGroup.MarginLayoutParams layoutParamsWrap) {
+        if (smallestWidth >= 600) {
+            layoutParamsWrap.setMargins(250, 30, 250, 35);
+        } else {
+            layoutParamsWrap.setMargins(125, 10, 125, 10);
+        }
+        return layoutParamsWrap;
+    }
+
     /**
       * Create a TextView object and return its id
       * @param isTitle true if the text is a title that should be displayed
@@ -35,11 +46,11 @@ public abstract class CreateView  {
             layoutParamsWrap = new ViewGroup.MarginLayoutParams(
                     ViewGroup.MarginLayoutParams.MATCH_PARENT,
                     ViewGroup.MarginLayoutParams.WRAP_CONTENT);
+            CreateView.viewMarginForLinealLayout(smallestWidth,
+                    layoutParamsWrap);
             if (smallestWidth >= 600) {
-                layoutParamsWrap.setMargins(250, 30, 250, 35);
                 textView.setTextSize(10);
             } else {
-                layoutParamsWrap.setMargins(125, 10, 125, 10);
                 textView.setTextSize(25);
             }
         }

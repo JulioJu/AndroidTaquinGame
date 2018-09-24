@@ -25,14 +25,10 @@ import fr.uga.julioju.taquingame.util.DetectScreenUtil;
 import fr.uga.julioju.taquingame.util.ImageUtil;
 import java.io.*;
 
-public class PictureActivity extends TakePhotoSavedInPublicDirectory {
+public class PictureActivity extends ImageSavedInPublicDirectory {
 
     public static final String INTENT_IMAGE_URI =
         "fr.uga.julioju.taquingame.picture.PICTURE_URI";
-
-    static final int INTENT_TAKE_PHOTO = 25;
-
-    private static final int INTENT_PICTURE_PICK = 17;
 
     // ====================== onActivityResult =====================
     // =============================================================
@@ -104,7 +100,6 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
             // intent provided to this method as a parameter.
             // Pull that URI using resultData.getData().
             Uri photoUri = resultData.getData();
-
             ImageUtil.isGoodImage(this, photoUri);
             this.sendIntentToGame(photoUri);
         }
@@ -119,17 +114,18 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
     protected void onActivityResult(int requestCode, int resultCode,
             Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == PictureActivity.INTENT_PICTURE_PICK) {
+        if (requestCode == ImageSavedInPublicDirectory.INTENT_PICTURE_PICK) {
             try {
                 this.onActivityResultPicturePick(resultCode, resultData);
             } catch (PictureActivityException e) {
                 PictureActivityException.displayError(super.layout, e);
             }
         }
-        else if (requestCode == PictureActivity.INTENT_TAKE_PHOTO) {
+        else if (requestCode == ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO) {
             if (resultCode == Activity.RESULT_OK && resultData != null) {
                 // Could not be added if it a app private folder
-                // Method executed but without result in this case.
+                // Method executed but without result in the case
+                // of `this.dispatchTakePictureIntentPrivateFolder`
                 this.galleryAddPic();
                 try {
                     this.sendIntentToGame(null);
@@ -149,23 +145,8 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
     }
 
     // ====================== Buttons action =======================
-    // =============================================================
-    // =============================================================
-    // =============================================================
-    // =============================================================
-
-    /** Pick picture from gallery */
-    private void pickPictureFromGallery() {
-
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        // Even if there is no chooser displayed, better to use
-        // createChooser in case of there isn't provider app installed.
-        super.startActivityForResult(Intent.createChooser(intent,
-                   "Select Picture"), PictureActivity.INTENT_PICTURE_PICK);
-
-    }
+    // ====================== that don't need special permissions =======
+    // ==================================================================
 
     /** Take new Photo (saved in app's folder not display in gallery) */
     // https://developer.android.com/training/camera/photobasics#TaskPath
@@ -195,7 +176,7 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
             takePictureIntent
                 .setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             super.startActivityForResult(takePictureIntent,
-                    PictureActivity.INTENT_TAKE_PHOTO);
+                    ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO);
         }
         else {
             // Permission has already been granted
@@ -241,7 +222,8 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
         // directly to a system-supplied UI for obtaining content, bypassing any
         // chooser, on Android 4.4+.
         super.startActivityForResult(Intent.createChooser(intent,
-                    "Select Picture"), PictureActivity.INTENT_PICTURE_PICK);
+                    "Select Picture"),
+                ImageSavedInPublicDirectory.INTENT_PICTURE_PICK);
 
     }
 
@@ -284,43 +266,49 @@ public class PictureActivity extends TakePhotoSavedInPublicDirectory {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
         this.createOneButton(buttonGroup, null, Html
-                    .fromHtml("Take new photo " + carriageReturnHtml +
-                        "<small>(displayable in Gallery)</small>",
+                    .fromHtml("Take photo " + carriageReturnHtml +
+                        "<small>(added in Gallery)</small>",
                         Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
                     view ->
                         PictureActivity
-                            .super.dispatchTakePictureIntentPublicFolder(),
+                            .super.checkWritePermissionDispatchAction(
+                                ImageSavedInPublicDirectory.INTENT_TAKE_PHOTO
+                                ),
                     smallestWidth);
 
-        this.createOneButton(buttonGroup, "Pick a picture" + carriageReturn
+        this.createOneButton(buttonGroup, "Pick a picture " + carriageReturn
                 + "in gallery", null,
                 view ->
-                    PictureActivity.this.pickPictureFromGallery(),
+                    PictureActivity
+                            .super.checkWritePermissionDispatchAction(
+                                ImageSavedInPublicDirectory.INTENT_PICTURE_PICK
+                                ),
                 smallestWidth);
 
         View lineView = new View(this);
         ViewGroup.MarginLayoutParams layoutParamsWrap =
             new ViewGroup.MarginLayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, 2);
-        layoutParamsWrap.setMargins(0, 10, 0, 10);
+        CreateView.viewMarginForLinealLayout(smallestWidth, layoutParamsWrap);
         lineView.setLayoutParams(layoutParamsWrap);
-        lineView.setBackgroundColor(0xFFFFFFFF);
+        lineView.setBackgroundColor(0xA9A9A9A9);
         buttonGroup.addView(lineView);
 
         this.createOneButton(buttonGroup, null,
-            Html.fromHtml("Take new photo " + carriageReturnHtml +
-                " <small>(not displayable in Gallery)</small>",
+            Html.fromHtml("Take photo " + carriageReturnHtml +
+                " <small>(not in Gallery, no perm)</small>",
                 Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
             view ->
                 PictureActivity
                     .this.dispatchTakePictureIntentPrivateFolder(),
             smallestWidth);
 
-        this.createOneButton(buttonGroup, "Pick a picture " + carriageReturn +
-                " in filesystem",
-                null,
-                view -> PictureActivity.this.performFileSearch(),
-                smallestWidth);
+        this.createOneButton(buttonGroup, null,
+            Html.fromHtml("Pick a picture " + carriageReturn +
+                " in filesystem <small>(no perm)</small>",
+                Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE),
+            view -> PictureActivity.this.performFileSearch(),
+            smallestWidth);
 
         super.layout.addView(buttonGroup);
 

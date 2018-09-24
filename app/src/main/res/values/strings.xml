@@ -13,7 +13,7 @@
     </string-array>
     <string name="ok">OK</string>
     <string name="permission_write_external_storage_rationale">
-        Storage permission is needed to save photo that could be accessible
-        by the Gallery.
+        Storage permission is needed to access picture shared in public
+        directory
     </string>
 </resources>

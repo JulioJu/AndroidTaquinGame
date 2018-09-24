@@ -430,6 +430,15 @@ https://developer.android.com/reference/android/content/Intent
     Probably it's the same mechanism as when we use the Camera App,
     our App not needs to have camera permission
     https://developer.android.com/guide/topics/media/camera#manifest .
+    * But, when the orientation of the Screen changes, and TaquinActivity
+        is destroyed, then created again, the activity loose the read permission
+        on the `android.net.Uri` (probably it looses the URI permission).
+        * Maybe see
+            https://developer.android.com/guide/topics/providers/content-provider-basics#Permissions
+        * This problems doesn't occur for the `ContentProvider`,
+            more precisely for the `DocumentProvider`, more precisely the app
+            named "`Files`" version 8.0.0. It occurs with the `Gallery` version
+            1.1.40030.
 
 * As our app create a subfolder in
     `getExternalFilesDir(Environment.DIRECTORY_PICTURES)`,
@@ -636,3 +645,20 @@ https://developer.android.com/reference/android/content/Intent
             throw new IOException(messageError);
         }
         ```
+    * To resolve this, I've added a loop that retry this five times with
+        delays.
+
+## TODO
+* Make an abstract class ActiviyException and replace PictureActivity by
+    ActiviyException in ImageUtil + see TODO in TaquinActivity.  It's not a very
+    important todo, because generally there isn't error when a file is decoded
+    from URI. If there is an error, it's could be a bug  by Android !  Or maybe
+    the more serious error it's if a SecurityException (URI permission lost) is
+    raised or if the photo is deleted.
+    It's an very easy TODO.
+    * To avoid this problem, maybe photo could be temporally copied in
+        `Context.getFilesDir()`. Then the commit of september, 25 could be
+        reverted and the code simplified.. `Context.getFilesDir()` is only
+        accessible with root access by a File explorer. As by default no File
+        explorer are installed that allow root access, standard user can't
+        delete it.

@@ -213,7 +213,7 @@ public class TaquinActivity extends AppCompatActivity {
       * Commented code is inspired from:
       *     https://github.com/googlesamples/android-ImmersiveMode/blob/master/Application/src/main/java/com/example/android/immersivemode/ImmersiveModeFragment.java
       */
-    private void gotoImmersiveMode () {
+    private void gotoFullscreen () {
         // // The UI options currently enabled are represented by a bitfield.
         // // getSystemUiVisibility() gives us that bitfield.
         // int newUiOptions = this.getWindow().getDecorView()
@@ -307,6 +307,7 @@ public class TaquinActivity extends AppCompatActivity {
             if (this.unorderedSequence == null
                     || this.unorderedSequence.length
                         != (this.gridLength * this.gridLength)) {
+                // TODO throw an exception and display a message
                 android.util.Log.e("Retrieve state error",
                         "this.unorderedSequence couldn't be retrieve.");
                 this.unorderedSequence = this.createUnorderedSequence();
@@ -380,7 +381,7 @@ public class TaquinActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        this.gotoImmersiveMode();
+        this.gotoFullscreen();
 
     }
 
