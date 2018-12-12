@@ -1,5 +1,41 @@
 # TP Développement Web Mobile : Création d'un jeu de taquin
 
+## Table of Contents
+
+<!-- vim-markdown-toc GFM -->
+
+* [Teacher's instruction and JulioJu functionalities](#teachers-instruction-and-julioju-functionalities)
+    * [Consignes](#consignes)
+* [Fonctionnalités](#fonctionnalités)
+    * [Les plus :](#les-plus-)
+    * [Packaging](#packaging)
+    * [Architecture/code](#architecturecode)
+* [Notes from JulioJu](#notes-from-julioju)
+    * [Genymotion and IntelliJ](#genymotion-and-intellij)
+        * [IntelliJ vs Android Studio](#intellij-vs-android-studio)
+        * [Editorconfig file](#editorconfig-file)
+        * [NeoVim and the Language Server Protocol (based on Eclipse)](#neovim-and-the-language-server-protocol-based-on-eclipse)
+    * [Git history](#git-history)
+    * [Android Source Code and documentation](#android-source-code-and-documentation)
+    * [Examples downloaded at Google Samples](#examples-downloaded-at-google-samples)
+    * [AndroidManifest.xml](#androidmanifestxml)
+        * [`<intent-filter>`](#intent-filter)
+    * [Constraint Layout and Layout docs](#constraint-layout-and-layout-docs)
+    * [Tasks and back-stack](#tasks-and-back-stack)
+    * [Intents](#intents)
+        * [Android Permissions](#android-permissions)
+        * [Work with images and files](#work-with-images-and-files)
+    * [MediaScannerConnection / Intent.ACTION_MEDIA_SCANNER_SCAN_FILE](#mediascannerconnection--intentaction_media_scanner_scan_file)
+    * [Class diagram](#class-diagram)
+    * [Notes misc](#notes-misc)
+* [My implementation](#my-implementation)
+    * [./app/src/main/java/fr/uga/julioju/taquingame/taquin/TaquinActivity.java](#appsrcmainjavafrugajuliojutaquingametaquintaquinactivityjava)
+    * [Square board prototype](#square-board-prototype)
+* [Tested](#tested)
+* [TODO](#todo)
+
+<!-- vim-markdown-toc -->
+
 ## Teacher's instruction and JulioJu functionalities
 Développement Web mobile
 2017-2018
@@ -98,6 +134,16 @@ recommencer ou quitter l'appli doit être proposée.
 * The code have line with `max_line_length = 80`.
 * As Jet Brains could show parameter name hint, this barrier could be crossed.
     But it's a false positive.
+
+#### NeoVim and the Language Server Protocol (based on Eclipse)
+
+Maybe investigate following for other projects:
+
+* See https://github.com/neoclide/coc-java
+* See https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-446508968
+    (for VSCode, but should work for NeoVim)
+
+
 
 ### Git history
 * For a newbie, the three firsts commits are interesting.
